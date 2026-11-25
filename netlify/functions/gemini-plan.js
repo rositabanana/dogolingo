@@ -22,6 +22,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 5. CALIBRACIÓN POR EXPERIENCIA PREVIA (OBLIGATORIO):
    - Si "priorTraining" es "Sí" (el perro ya tiene educación previa) o "tutorConditioning" / "tutorBodyLanguage" es "Intermedio" o "Conozco lo básico", OMITÍ por completo ejercicios nivel cero (como "El plato como punto de inflexión", "Mirame básico en living" o "Cómo usar premios"). Arrancá directamente en nivel intermedio/avanzado: retirada de cebo (fading luring), autocontrol en movimiento, gestión de distancia/umbral en exteriores y resolución directa de su "mainProblem" y "walkBehavior".
    - Adaptá las lecciones específicamente al "mainProblem" elegido (ej. si es "Tironeo de correa", priorizá correa floja, giros en U y paseo en arco; si es "Impulsividad / Saltos", protocolo de puertas, visitas y permanencias con distracciones; si es "Ansiedad / Inquietud", descompresión olfativa profunda y calma en entornos nuevos).
+   - USO DE BOZAL: Si "requiresMuzzle" es "No" (o no está especificado), ESTÁ PROHIBIDO incluir nodos o menciones sobre bozal en el plan. Solo incluí positivización de bozal si "requiresMuzzle" es "Sí".
 
 6. DEPENDENCIA CRUZADA TUTOR -> CAN:
    - Los nodos avanzados de la ruta del perro deben exigir en "requiresTutorIds" el ID del nodo teórico correspondiente de la ruta del tutor.
@@ -183,6 +184,7 @@ Generá una regresión pedagógica amable (bajando criterio, distancia y distrac
 - Edad/Etapa: ${profile.dogAge || "Joven"}
 - Estado físico: ${profile.physicalState || "Sin restricciones"}
 - Sale a pasear: ${profile.walksOutside || "Sí"} | Comportamiento en paseo: ${profile.walkBehavior || "Tira de la correa"}
+- Requiere uso de bozal: ${profile.requiresMuzzle || "No"}
 - Educación previa: ${profile.priorTraining || "No"}
 - Mayor desafío: ${profile.mainProblem || "Tironeo de correa"}
 - Perfil sensorial en casa: ${JSON.stringify(profile.sensory || {})}
