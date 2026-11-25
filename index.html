@@ -1196,10 +1196,11 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(data?.error || `HTTP ${response.status}`);
       }
-      return await response.json();
+      return data;
     }
 
     function normalizeStageNodes(aiPlan, startAvailable) {
