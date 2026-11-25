@@ -1352,7 +1352,7 @@
     // --- CONEXIÓN CON NETLIFY FUNCTION (GEMINI IA) ---
     async function callGeminiPlanner(payload) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 14000);
+      const timeoutId = setTimeout(() => controller.abort(new Error('Tiempo de espera agotado')), 25000);
       try {
         const res = await fetch(AI_ENDPOINT, {
           method: 'POST',
