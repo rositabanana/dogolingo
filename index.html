@@ -554,131 +554,6 @@
             </div>
           </div>
 
-          <button onclick="resetToHome()" title="Volver al inicio" class="min-w-[44px] min-h-[44px] rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600 text-xs font-bold px-2.5">
-            Salir
-          </button>
-        </div>
-
-        <!-- Botón Prominente Mobile-First: + Sumar comportamiento deseado -->
-        <div class="mb-2.5">
-          <button onclick="openBehaviorModal()" class="w-full min-h-[48px] rounded-2xl bg-teal-600 hover:bg-teal-700 text-white shadow-[0_3px_0_0_#115e59] active:translate-y-0.5 font-display font-extrabold text-xs sm:text-sm px-3.5 py-2 flex items-center justify-between transition">
-            <span class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-base font-black">+</span>
-              <span>Sumar comportamiento deseado</span>
-            </span>
-            <span id="active-behaviors-count" class="text-[10px] font-extrabold bg-teal-900/50 text-teal-100 px-2 py-0.5 rounded-full">
-              Personalizar
-            </span>
-          </button>
-          <div id="added-behaviors-bar" class="hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 pb-0.5"></div>
-        </div>
-
-        <!-- Selector de Ruta -->
-        <div class="grid grid-cols-2 gap-2 pb-3">
-          <button id="tab-route-tutor" onclick="switchRouteTab('tutor')" class="min-h-[48px] rounded-2xl border-2 border-emerald-500 bg-emerald-50 px-3 py-2 flex items-center justify-between transition">
-            <div class="text-left">
-              <div class="font-display font-extrabold text-xs sm:text-sm text-emerald-950">🧠 Ruta del Tutor</div>
-              <div class="text-[10px] text-emerald-700 font-medium">Tu capacitación</div>
-            </div>
-            <span id="tutor-progress-badge" class="font-display font-black text-xs bg-emerald-600 text-white px-2 py-1 rounded-xl">0/5</span>
-          </button>
-
-          <button id="tab-route-dog" onclick="switchRouteTab('dog')" class="min-h-[48px] rounded-2xl border-2 border-stone-200 bg-stone-50 px-3 py-2 flex items-center justify-between transition">
-            <div class="text-left">
-              <div class="font-display font-extrabold text-xs sm:text-sm text-stone-700">🐾 Ruta del Can</div>
-              <div class="text-[10px] text-stone-500 font-medium">Práctica y entorno</div>
-            </div>
-            <span id="dog-progress-badge" class="font-display font-black text-xs bg-stone-300 text-stone-700 px-2 py-1 rounded-xl">0/6</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Camino Vertical de Nodos Estilo Duolingo -->
-      <div id="roadmap-scroll-area" class="flex-1 overflow-y-auto no-scrollbar px-4 py-6 bg-stone-50 relative">
-        <div id="route-context-card" class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-sm mb-8 flex items-center gap-3">
-          <span id="route-context-icon" class="text-2xl">🎓</span>
-          <p id="route-context-text" class="text-xs text-stone-600 leading-snug">
-            Completá tus lecciones para desbloquear ejercicios avanzados en la ruta de tu perro.
-          </p>
-        </div>
-
-        <div id="nodes-container" class="flex flex-col items-center space-y-7 pb-6 relative"></div>
-
-        <!-- Botón de Scroll Infinito por Etapas (Generación Incremental con IA) -->
-        <div id="infinite-stage-box" class="mt-4 mb-10 flex flex-col items-center">
-          <div class="w-1.5 h-6 rounded-full bg-stone-200 mb-3"></div>
-          <button id="load-next-stage-btn" onclick="loadNextStageWithAI()"
-            class="w-full max-w-[320px] btn-duo bg-stone-900 hover:bg-stone-800 text-white shadow-[0_4px_0_0_#44403c] rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
-            <div class="text-left">
-              <div id="next-stage-title" class="font-display font-extrabold text-xs sm:text-sm text-emerald-400">
-                ✨ Generar Etapa 2 con IA
-              </div>
-              <div class="text-[11px] text-stone-300">Desbloqueá el siguiente bloque de lecciones</div>
-            </div>
-            <span class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-base shrink-0">∞</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- MODAL / BOTTOM SHEET: LECCIÓN + FEEDBACK ADAPTATIVO       -->
-    <!-- ========================================================= -->
-    <div id="lesson-modal" class="hidden fixed inset-0 z-40 bg-stone-950/60 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
-      <div class="w-full max-w-[440px] max-h-[92vh] bg-white rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden shadow-2xl animate-slide-up">
-        <div class="p-4 border-b border-stone-200 flex items-center justify-between gap-3 shrink-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span id="modal-route-pill" class="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
-              Ruta del Tutor
-            </span>
-            <span id="modal-duration-pill" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-stone-100 text-stone-700">
-              ⏱️ 10 min
-            </span>
-          </div>
-          <button onclick="closeLessonModal()" class="min-w-[48px] min-h-[48px] rounded-2xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 font-black text-lg">
-            ✕
-          </button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-4">
-          <div>
-            <div id="modal-tags" class="flex flex-wrap gap-1.5 mb-2"></div>
-            <h3 id="modal-title" class="font-display font-black text-xl text-stone-900 leading-tight">
-              Título de la lección
-            </h3>
-          </div>
-
-          <div id="modal-adaptive-alert" class="hidden bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 space-y-1.5">
-            <div class="flex items-center gap-1.5 text-xs font-extrabold text-amber-900 uppercase">
-              <span>✨ Ajuste adaptativo de IA activado</span>
-            </div>
-            <p id="modal-adaptive-text" class="text-xs text-amber-950 leading-relaxed">
-              Bajamos el criterio de dificultad y reducimos distracciones para que el ejercicio sea un éxito seguro.
-            </p>
-          </div>
-
-          <div id="modal-media-box" class="rounded-2xl overflow-hidden border-2 border-stone-200 bg-stone-900 text-white"></div>
-
-          <div id="modal-ai-resources" class="bg-stone-50 border-2 border-stone-200 rounded-2xl p-3.5 space-y-2.5"></div>
-
-          <div class="space-y-2.5">
-            <h4 class="font-display font-extrabold text-sm text-stone-800 uppercase tracking-wider">Paso a paso práctico</h4>
-            <ol id="modal-steps" class="space-y-2.5 text-sm text-stone-700"></ol>
-          </div>
-
-          <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-3 flex items-start gap-2.5">
-            <span class="text-base leading-none mt-0.5">💚</span>
-            <p class="text-[11px] text-emerald-950 leading-relaxed">
-              <strong>Bienestar primero:</strong> Cero tirones, gritos ni castigos. Si notás miedo intenso, bloqueo o reactividad severa, frená la sesión y consultá con un educador canino amable presencial.
-            </p>
-          </div>
-        </div>
-
-        <div class="p-4 bg-stone-50 border-t border-stone-200 shrink-0 space-y-2">
-          <div class="text-xs font-bold text-center text-stone-500 mb-1">¿Cómo resultó esta actividad?</div>
-          <button onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
-            <span>✅ Salió bien (Completar y avanzar)</span>
-          </button>
           <div class="flex items-center gap-1.5 shrink-0">
             <button onclick="openResetPlanModal()" title="Resetear plan y volver al cuestionario" class="min-h-[44px] rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-900 text-xs font-bold px-2.5 active:scale-95 transition">
               Resetear
@@ -690,6 +565,114 @@
         </div>
 
         <!-- Botón Prominente Mobile-First: + Sumar comportamiento deseado -->
+        <button type="button" onclick="openBehaviorModal()" class="w-full min-h-[48px] mb-2.5 px-3.5 py-2 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white shadow-[0_3px_0_0_#115e59] active:translate-y-0.5 transition flex items-center justify-between gap-2">
+          <span class="flex items-center gap-2 font-display font-extrabold text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-base leading-none">+</span>
+            <span>Sumar comportamiento deseado</span>
+          </span>
+          <span id="active-behaviors-count" class="text-[11px] font-extrabold bg-teal-800/80 text-teal-100 px-2.5 py-0.5 rounded-full">
+            Personalizar
+          </span>
+        </button>
+
+        <!-- Barra de chips de comportamientos agregados -->
+        <div id="added-behaviors-bar" class="hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2.5"></div>
+
+        <!-- Selector de Doble Ruta -->
+        <div class="grid grid-cols-2 gap-2 pb-3">
+          <button type="button" id="tab-route-tutor" onclick="switchRouteTab('tutor')" class="min-h-[48px] rounded-2xl border-2 border-emerald-500 bg-emerald-50 px-3 py-2 flex items-center justify-between transition">
+            <div class="text-left min-w-0">
+              <div class="font-display font-extrabold text-xs text-stone-900 truncate">🧠 Ruta del Tutor</div>
+              <div class="text-[10px] font-semibold text-stone-500 truncate">Tu capacitación</div>
+            </div>
+            <span id="tutor-progress-badge" class="text-xs font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full shrink-0">0/5</span>
+          </button>
+
+          <button type="button" id="tab-route-dog" onclick="switchRouteTab('dog')" class="min-h-[48px] rounded-2xl border-2 border-stone-200 bg-stone-50 px-3 py-2 flex items-center justify-between transition">
+            <div class="text-left min-w-0">
+              <div class="font-display font-extrabold text-xs text-stone-900 truncate">🐾 Ruta del Can</div>
+              <div class="text-[10px] font-semibold text-stone-500 truncate">Práctica y entorno</div>
+            </div>
+            <span id="dog-progress-badge" class="text-xs font-black bg-stone-600 text-white px-2 py-0.5 rounded-full shrink-0">0/6</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cuerpo del Roadmap con Scroll -->
+      <div class="flex-1 overflow-y-auto no-scrollbar p-4 pb-16 space-y-6">
+        <div class="bg-white rounded-2xl p-3 border border-stone-200 flex items-start gap-2.5 shadow-sm">
+          <span id="route-context-icon" class="text-lg leading-none mt-0.5">🎓</span>
+          <p id="route-context-text" class="text-xs text-stone-600 leading-relaxed">
+            Tu capacitación directa: cada lección que completás habilita ejercicios más avanzados.
+          </p>
+        </div>
+
+        <!-- Camino de nodos zigzag -->
+        <div id="nodes-container" class="flex flex-col items-center py-2"></div>
+
+        <!-- Scroll Infinito: Cargar siguiente etapa con IA -->
+        <div class="pt-4 pb-6">
+          <button type="button" id="load-next-stage-btn" onclick="loadNextStageWithAI()" class="w-full btn-duo bg-stone-900 hover:bg-stone-800 text-white shadow-[0_4px_0_0_#44403c] rounded-2xl px-4 py-3 flex flex-col items-center justify-center text-center">
+            <span id="next-stage-title" class="font-display font-extrabold text-sm text-emerald-400">✨ Generar Etapa 2 con IA</span>
+            <span class="text-[11px] text-stone-300 mt-0.5">Nuevos ejercicios sin repeticiones · Sube dificultad progresiva</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL / BOTTOM SHEET: DETALLE DE LECCIÓN                  -->
+    <!-- ========================================================= -->
+    <div id="lesson-modal" class="hidden fixed inset-0 z-40 bg-stone-950/60 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
+      <div class="w-full max-w-[430px] max-h-[90vh] bg-white rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden shadow-2xl animate-slide-up">
+        <div class="p-4 border-b border-stone-200 flex items-start justify-between gap-3 shrink-0">
+          <div class="space-y-1.5 min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span id="modal-route-pill" class="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Ruta del Tutor</span>
+              <span id="modal-duration-pill" class="text-[11px] font-bold text-stone-500 bg-stone-100 px-2.5 py-1 rounded-full">⏱️ 8 min</span>
+            </div>
+            <h3 id="modal-title" class="font-display font-black text-lg text-stone-900 leading-snug">Título de la lección</h3>
+            <div id="modal-tags" class="flex flex-wrap gap-1"></div>
+          </div>
+          <button type="button" onclick="closeLessonModal()" class="min-w-[48px] min-h-[48px] rounded-2xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 font-black text-lg shrink-0">
+            ✕
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
+          <div id="modal-adaptive-alert" class="hidden bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 flex items-start gap-2.5">
+            <span class="text-lg leading-none">⚡</span>
+            <div class="text-xs text-amber-950 leading-relaxed">
+              <strong class="block font-extrabold mb-0.5">Modo Repaso Adaptativo Activado</strong>
+              <span id="modal-adaptive-text">Bajamos el criterio de dificultad y reducimos distracciones.</span>
+            </div>
+          </div>
+
+          <div id="modal-media-box"></div>
+          <div id="modal-ai-resources" class="bg-stone-50 border-2 border-stone-200 rounded-2xl p-3.5 space-y-2.5"></div>
+
+          <div>
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-500 mb-2">Paso a paso práctico</h4>
+            <ul id="modal-steps" class="space-y-2"></ul>
+          </div>
+        </div>
+
+        <div class="p-4 bg-stone-50 border-t border-stone-200 shrink-0 space-y-2">
+          <div class="text-xs font-bold text-center text-stone-500 mb-1">¿Cómo resultó esta actividad?</div>
+          <button type="button" onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
+            <span>✅ Salió bien (Completar y avanzar)</span>
+          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="submitLessonFeedback('difficulty')" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
+              <span>⚡ Tuve dificultad</span>
+            </button>
+            <button type="button" onclick="submitLessonFeedback('repeat')" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
+              <span>🔄 Repetir ejercicio</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ========================================================= -->
     <!-- MODAL / BOTTOM SHEET: SUMAR COMPORTAMIENTO DESEADO        -->
@@ -730,17 +713,17 @@
           </div>
 
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2">
-          <button onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
-            <span>✅ Salió bien (Completar y avanzar)</span>
-          </button>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="submitLessonFeedback('difficulty')" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
-              <span>⚡ Tuve dificultad</span>
-            </button>
-            <button onclick="submitLessonFeedback('repeat')" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
-              <span>🔄 Repetir ejercicio</span>
-            </button>
+            <span class="text-base leading-none mt-0.5">⏱️</span>
+            <p class="text-[11px] text-amber-950 leading-relaxed">
+              Las nuevas actividades se integran respetando el <strong>límite máximo de 15 minutos activos diarios</strong> para tu perro.
+            </p>
           </div>
+        </div>
+
+        <div class="p-4 bg-stone-50 border-t border-stone-200 shrink-0">
+          <button type="button" onclick="addDesiredBehaviorToPlan()" class="w-full btn-duo bg-teal-600 hover:bg-teal-700 text-white shadow-[0_4px_0_0_#115e59] rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
+            <span>+ Agregar comportamiento a mi plan</span>
+          </button>
         </div>
       </div>
     </div>
