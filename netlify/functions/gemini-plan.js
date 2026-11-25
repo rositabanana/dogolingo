@@ -41,6 +41,7 @@ PRINCIPIOS Y REGLAS INQUEBRANTABLES:
 MODOS DE OPERACIÓN:
 - Si recibís acción "GENERATE_STAGE": Devolvé el JSON con los nuevos nodos para "tutor" y "dog" correspondientes a la etapa solicitada.
 - Si recibís acción "ADAPT_DIFFICULTY": Devolvé un ajuste suave (regresión controlada) para el nodo que presentó dificultad, bajando criterios y distracciones.
+- FORMATO DE ÍCONOS: En el campo "icon" de cada nodo devolvé ÚNICAMENTE un solo emoji real (ej. "🐾", "🧠", "👃", "🦮", "🎯", "💤", "🥣", "🌿", "🛡️", "🎾"), NUNCA nombres de Material Icons en inglés como "directions_walk" o "linear_scale".
 
 Respondé ÚNICAMENTE con un objeto JSON válido, en español rioplatense/neutro cercano y claro para leer en celular.`;
 
