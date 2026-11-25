@@ -152,8 +152,8 @@ exports.handler = async function (event) {
       userPrompt += `\nEl usuario reportó dificultad en esta lección: ${JSON.stringify(failedNode)}. Generá una versión adaptada más suave y progresiva.\n`;
     }
 
-    // Llamada oficial a Gemini usando los modelos vigentes de la familia Flash
-    const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-flash-latest"];
+    // Llamada oficial a Gemini priorizando el modelo estable de producción y rotando si hay alta demanda (503/429/404)
+    const modelsToTry = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-3-flash-preview"];
     let response = null;
     let data = null;
 
@@ -174,6 +174,7 @@ exports.handler = async function (event) {
           ],
           generationConfig: {
             temperature: 0.6,
+            thinkingConfig: { thinkingBudget: 0 },
             responseMimeType: "application/json",
             responseSchema: RESPONSE_SCHEMA
           }
@@ -181,7 +182,8 @@ exports.handler = async function (event) {
       });
 
       data = await response.json();
-      if (response.status !== 404) break;
+      if (response.ok) break;
+      if (![404, 429, 500, 503].includes(response.status)) break;
     }
 
     if (!response.ok) {
