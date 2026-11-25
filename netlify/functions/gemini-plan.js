@@ -199,71 +199,95 @@ Instrucciones de IDs para Etapa ${stageNumber}:
 - Asegurate de que los nodos avanzados del can referencien en "requiresTutorIds" a los IDs de esta misma etapa (o queden vacíos en los primeros nodos).`;
     }
 
-    // Llamada única y directa a gemini-3.8-flash (modelo vigente indicado por Google AI Studio)
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
-    const modelController = new AbortController();
-    const modelTimer = setTimeout(() => modelController.abort(), 8800);
-    let response = null;
-    let data = null;
+    const candidateModels = ["gemini-3.8-flash", "gemini-flash-latest"];
+    const startTime = Date.now();
+    const maxTotalMs = 8800;
+    let lastErrorStatus = 502;
+    let lastErrorMessage = "Error al consultar Gemini";
+    let parsedPlan = null;
 
-    try {
-      response = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: modelController.signal,
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: SYSTEM_PROMPT }]
-          },
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: userPrompt }]
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    for (const modelName of candidateModels) {
+      // Intentamos hasta 2 veces por modelo si responde 503/429 (alta demanda)
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        const remainingMs = maxTotalMs - (Date.now() - startTime);
+        if (remainingMs < 1800) break;
+
+        const perRequestTimeout = Math.min(4300, remainingMs - 200);
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        const modelController = new AbortController();
+        const modelTimer = setTimeout(() => modelController.abort(), perRequestTimeout);
+
+        try {
+          const response = await fetch(geminiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: modelController.signal,
+            body: JSON.stringify({
+              systemInstruction: {
+                parts: [{ text: SYSTEM_PROMPT }]
+              },
+              contents: [
+                {
+                  role: "user",
+                  parts: [{ text: userPrompt }]
+                }
+              ],
+              generationConfig: {
+                temperature: 0.55,
+                maxOutputTokens: 1900,
+                thinkingConfig: { thinkingBudget: 0 },
+                responseMimeType: "application/json",
+                responseSchema: RESPONSE_SCHEMA
+              }
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (response.ok) {
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!rawText) {
+              lastErrorStatus = 502;
+              lastErrorMessage = "Gemini devolvió una respuesta vacía.";
+              break;
             }
-          ],
-          generationConfig: {
-            temperature: 0.55,
-            maxOutputTokens: 1900,
-            thinkingConfig: { thinkingBudget: 0 },
-            responseMimeType: "application/json",
-            responseSchema: RESPONSE_SCHEMA
+            parsedPlan = JSON.parse(rawText);
+            break;
           }
-        })
-      });
 
-      data = await response.json();
-    } catch (fetchErr) {
-      return {
-        statusCode: 504,
-        headers,
-        body: JSON.stringify({
-          error: "Gemini demoró más de 8.8s en responder; activando plan local."
-        })
-      };
-    } finally {
-      clearTimeout(modelTimer);
+          lastErrorStatus = response.status;
+          lastErrorMessage = `Gemini (${response.status}): ${data?.error?.message || "Error al consultar Gemini"}`;
+
+          // Si es 503 o 429 (pico de demanda), esperamos brevemente y reintentamos antes de rotar
+          if ((response.status === 503 || response.status === 429) && attempt < 2) {
+            const waitMs = Math.min(650, maxTotalMs - (Date.now() - startTime) - 1500);
+            if (waitMs > 100) await sleep(waitMs);
+            continue;
+          }
+          break;
+        } catch (fetchErr) {
+          lastErrorStatus = 504;
+          lastErrorMessage = fetchErr.name === "AbortError"
+            ? `Timeout en ${modelName}; activando plan local.`
+            : `Error de red en ${modelName}: ${fetchErr.message}`;
+          break;
+        } finally {
+          clearTimeout(modelTimer);
+        }
+      }
+
+      if (parsedPlan) break;
     }
 
-    if (!response || !response.ok) {
+    if (!parsedPlan) {
       return {
-        statusCode: (response && response.status) || 502,
+        statusCode: lastErrorStatus,
         headers,
-        body: JSON.stringify({
-          error: `Gemini (${(response && response.status) || 502}): ${data?.error?.message || "Error al consultar Gemini"}`
-        })
+        body: JSON.stringify({ error: lastErrorMessage })
       };
     }
-
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!rawText) {
-      return {
-        statusCode: 502,
-        headers,
-        body: JSON.stringify({ error: "Gemini devolvió una respuesta vacía." })
-      };
-    }
-
-    const parsedPlan = JSON.parse(rawText);
 
     return {
       statusCode: 200,
