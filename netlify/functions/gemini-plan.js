@@ -13,12 +13,12 @@ PRINCIPIOS Y REGLAS INQUEBRANTABLES:
    - Liderazgo amable y gestión de la dependencia: el perro depende del tutor para navegar un mundo humano impredecible; ser un buen líder significa dar estructura, coherencia, seguridad y protección, nunca dominancia ni fuerza.
    - Regulación emocional y tono del tutor: enseñar cómo no perder la calma al entrenar (pausar la sesión si el humano se frustra) y cómo usar el tono de voz correcto (suave, claro, sereno y alegre para marcar aciertos, evitando tonos bruscos o repetitivos).
 4. PRIORIZACIÓN SENSORIAL Y FÍSICA: Si el perfil indica canales sensoriales bajos (olfativa, sonora, gustativa, visual, texturas), priorizá enriquecimiento ambiental en las primeras lecciones. Si el perro es Senior o tiene restricciones físicas, evitá ejercicios de impacto.
-5. DEPENDENCIA CRUZADA TUTOR -> CAN: Los nodos avanzados de la ruta del perro deben exigir en "requiresTutorIds" el ID del nodo teórico correspondiente de la ruta del tutor.
-6. GENERACIÓN POR ETAPAS (SCROLL INFINITO SIN REPETICIONES): Generá bloques de 5 a 6 nodos por ruta por etapa. ESTÁ PROHIBIDO repetir títulos, ejercicios o dinámicas de etapas anteriores: cada nueva etapa debe escalar progresivamente la dificultad (aumentando duración de permanencia, retirando el cebo/luring, sumando distancia a distracciones y pasando de casa -> patio/vereda tranquila -> parque con estímulos medios).
-7. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO:
-   - Asigná en el campo "videos" las URLs exactas de esta lista verificada cuando coincidan con el tema del nodo:
-     * Cuadrante de Skinner / Estructura: https://www.youtube.com/watch?v=rYRhnF4-NUg
-     * Lectura corporal / Señales de calma: https://www.youtube.com/watch?v=RppFTzWkFOw
+5. CALIBRACIÓN POR EXPERIENCIA PREVIA (OBLIGATORIO):
+   - Si "priorTraining" es "Sí" (el perro ya tiene educación previa) o "tutorConditioning" / "tutorBodyLanguage" es "Intermedio" o "Conozco lo básico", OMITÍ por completo ejercicios nivel cero (como "El plato como punto de inflexión", "Mirame básico en living" o "Cómo usar premios"). Arrancá directamente en nivel intermedio/avanzado: retirada de cebo (fading luring), autocontrol en movimiento, gestión de distancia/umbral en exteriores y resolución directa de su "mainProblem" y "walkBehavior".
+   - Adaptá las lecciones específicamente al "mainProblem" elegido (ej. si es "Tironeo de correa", priorizá correa floja, giros en U y paseo en arco; si es "Impulsividad / Saltos", protocolo de puertas, visitas y permanencias con distracciones; si es "Ansiedad / Inquietud", descompresión olfativa profunda y calma en entornos nuevos).
+6. DEPENDENCIA CRUZADA TUTOR -> CAN: Los nodos avanzados de la ruta del perro deben exigir en "requiresTutorIds" el ID del nodo teórico correspondiente de la ruta del tutor.
+7. GENERACIÓN POR ETAPAS (SCROLL INFINITO SIN REPETICIONES): Generá bloques de 5 a 6 nodos por ruta por etapa. ESTÁ PROHIBIDO repetir títulos, ejercicios o dinámicas de etapas anteriores: cada nueva etapa debe escalar progresivamente la dificultad (aumentando duración de permanencia, retirando el cebo/luring, sumando distancia a distracciones y pasando de casa -> patio/vereda tranquila -> parque con estímulos medios).
+8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO:
      * Capturing: https://www.youtube.com/watch?v=WP-wtPet_uI
      * Enriquecimiento sensorial / Alfombras: https://www.youtube.com/watch?v=NAth4ZBEAnE
      * Luring vs Capturing: https://www.youtube.com/watch?v=kRN9KxcrCes
@@ -140,7 +140,12 @@ exports.handler = async function (event) {
     const { action = "GENERATE_STAGE", profile, stageNumber = 1, completedTitles = [], failedNode = null, desiredBehavior = null } = body;
 
     // Construimos el mensaje contextual según lo que pida la app
-    let userPrompt = `Acción solicitada: ${action}\nEtapa a generar: ${stageNumber}\nPerfil completo del binomio (Can y Tutor):\n${JSON.stringify(profile, null, 2)}\n`;
+    const hasPriorTraining = profile?.priorTraining === "Sí";
+    const tutorLevel = `${profile?.tutorConditioning || "Principiante"} / lectura corporal: ${profile?.tutorBodyLanguage || "Principiante"}`;
+    let userPrompt = `Acción solicitada: ${action}\nEtapa a generar: ${stageNumber}\n`;
+    userPrompt += `NIVEL DEL BINOMIO: Perro con educación previa = ${hasPriorTraining ? "SÍ (omitir ejercicios básicos de iniciación como plato de comida o luring cero)" : "NO (iniciar desde bases)"}. Nivel tutor = ${tutorLevel}.\n`;
+    userPrompt += `FOCO PRIORITARIO: Problema principal = "${profile?.mainProblem || "General"}", Comportamiento en paseo = "${profile?.walkBehavior || "No especificado"}", Edad = "${profile?.dogAge || "Adulto"}".\n`;
+    userPrompt += `Perfil completo del binomio (Can y Tutor):\n${JSON.stringify(profile, null, 2)}\n`;
 
     if (completedTitles.length > 0) {
       userPrompt += `\nLecciones ya completadas anteriormente (no repetir, avanzar en complejidad): ${completedTitles.join(", ")}\n`;
