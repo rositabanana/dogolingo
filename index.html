@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DogoLingo — Educación Amable</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Nunito & Inter para legibilidad cálida estilo app educativa -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              green: '#22c55e',
+              greenDark: '#16a34a',
+              amber: '#f59e0b',
+              amberDark: '#d97706',
+              teal: '#0d9488',
+              cream: '#fafaf9',
+              ink: '#1c1917'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Estilos personalizados para ergonomía táctil, botones estilo Duolingo y animaciones */
+    body {
+      background-color: #e7e5e4;
+      color: #1c1917;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+
+    .font-display {
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* Botón 3D estilo Duolingo con área táctil >= 48px */
+    .btn-duo {
+      min-height: 52px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+    }
+    .btn-duo:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .btn-primary {
+      background-color: #22c55e;
+      color: #ffffff;
+      box-shadow: 0 4px 0 0 #15803d;
+    }
+    .btn-primary:hover {
+      background-color: #1fb857;
+    }
+
+    .btn-amber {
+      background-color: #f59e0b;
+      color: #ffffff;
+      box-shadow: 0 4px 0 0 #b45309;
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: #292524;
+      border: 2px solid #e7e5e4;
+      box-shadow: 0 3px 0 0 #d6d3d1;
+    }
+
+    /* Pulso suave para nodo activo */
+    @keyframes nodePulse {
+      0%, 100% {
+        box-shadow: 0 6px 0 0 #15803d, 0 0 0 0 rgba(34, 197, 94, 0.45);
+      }
+      50% {
+        box-shadow: 0 6px 0 0 #15803d, 0 0 0 10px rgba(34, 197, 94, 0);
+      }
+    }
+    .node-active-green {
+      animation: nodePulse 2.2s infinite;
+    }
+
+    @keyframes nodePulseAmber {
+      0%, 100% {
+        box-shadow: 0 6px 0 0 #b45309, 0 0 0 0 rgba(245, 158, 11, 0.45);
+      }
+      50% {
+        box-shadow: 0 6px 0 0 #b45309, 0 0 0 10px rgba(245, 158, 11, 0);
+      }
+    }
+    .node-active-amber {
+      animation: nodePulseAmber 2.2s infinite;
+    }
+
+    /* Zigzag del camino estilo Duolingo */
+    .zigzag-0 { transform: translateX(0px); }
+    .zigzag-1 { transform: translateX(-34px); }
+    .zigzag-2 { transform: translateX(-52px); }
+    .zigzag-3 { transform: translateX(-24px); }
+    .zigzag-4 { transform: translateX(26px); }
+    .zigzag-5 { transform: translateX(48px); }
+
+    /* Ocultar scrollbar en contenedor móvil manteniendo scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Animación entrada bottom sheet */
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slide-up {
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center items-start sm:py-6">
+
+  <!-- Contenedor Mobile-First (ancho completo en celular, centrado estilo app en desktop) -->
+  <div id="app-shell" class="w-full max-w-[430px] min-h-screen sm:min-h-[820px] sm:max-h-[880px] bg-stone-50 sm:rounded-[32px] sm:shadow-2xl sm:border-4 sm:border-stone-800 overflow-hidden flex flex-col relative">
+
+    <!-- Toast / Notificación no intrusiva (reemplaza alert) -->
+    <div id="toast-box" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[400px] pointer-events-none transition-all duration-300 opacity-0 -translate-y-4">
+      <div id="toast-content" class="bg-stone-900 text-white text-sm font-medium px-4 py-3.5 rounded-2xl shadow-xl border border-stone-700 flex items-start gap-3">
+        <span id="toast-icon" class="text-lg leading-none mt-0.5">💡</span>
+        <span id="toast-text" class="leading-snug">Mensaje</span>
+      </div>
+    </div>
+
+    <!-- Banner Superior de Modo Demo (visible cuando isDemo === true) -->
+    <div id="demo-banner" class="hidden bg-amber-100 border-b border-amber-300 px-3.5 py-2.5 flex items-center justify-between gap-2 shrink-0 z-30">
+      <div class="flex items-center gap-2 text-xs text-amber-950 font-medium leading-tight">
+        <span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping shrink-0"></span>
+        <span>Estás en <strong>Modo Demo</strong> (los cambios no se guardan al cerrar)</span>
+      </div>
+      <button onclick="switchDemoToAccount()" class="shrink-0 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-xl min-h-[36px] active:scale-95 transition">
+        Crear cuenta
+      </button>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 1: ACCESO (LOGIN / CREAR CUENTA / MODO DEMO)     -->
+    <!-- ========================================================= -->
+    <section id="screen-auth" class="flex-1 overflow-y-auto no-scrollbar p-5 flex flex-col justify-between">
+      <div>
+        <!-- Header compacto -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-md">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 13.5c-2.33 0-4.31 1.46-5.11 3.5h10.22c-.8-2.04-2.78-3.5-5.11-3.5zm-4.5-2.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm9 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-6.5-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="font-display font-black text-xl text-stone-900 leading-none">DogoLingo</h1>
+              <span class="inline-block mt-1 text-[11px] font-bold tracking-wide text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                Educación canina para todos 100% respetuosa con el animal
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-stone-600 mb-5 leading-relaxed">
+          Entrenamiento canino respetuoso paso a paso. Vos aprendés a leerlo y guiarlo; juntos construyen calma y conexión.
+        </p>
+
+        <!-- Bloque Cuenta Real -->
+        <div class="bg-white rounded-3xl p-4 border-2 border-stone-200 shadow-sm">
+          <div class="grid grid-cols-2 gap-1.5 bg-stone-100 p-1 rounded-2xl mb-4">
+            <button id="tab-login" onclick="setAuthTab('login')" class="min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition">
+              Iniciar sesión
+            </button>
+            <button id="tab-register" onclick="setAuthTab('register')" class="min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition">
+              Crear cuenta
+            </button>
+          </div>
+
+          <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+            <div>
+              <label for="auth-email" class="block text-xs font-bold text-stone-700 mb-1">Email</label>
+              <input id="auth-email" type="email" required placeholder="tuemail@ejemplo.com"
+                class="w-full min-h-[50px] px-4 rounded-2xl border-2 border-stone-200 focus:border-emerald-500 focus:outline-none text-base bg-stone-50" />
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="auth-pass" class="text-xs font-bold text-stone-700">Contraseña</label>
+                <span class="text-[11px] text-stone-400 font-medium">Mín. 6 caracteres · Sin verificación de mail</span>
+              </div>
+              <input id="auth-pass" type="password" minlength="6" required placeholder="••••••"
+                class="w-full min-h-[50px] px-4 rounded-2xl border-2 border-stone-200 focus:border-emerald-500 focus:outline-none text-base bg-stone-50" />
+            </div>
+
+            <button type="submit" id="auth-submit-btn" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-base mt-2">
+              Entrar y guardar mi plan
+            </button>
+          </form>
+        </div>
+
+        <!-- Separador visual -->
+        <div class="relative my-5 flex items-center justify-center">
+          <div class="border-t-2 border-stone-200 w-full"></div>
+          <span class="bg-stone-50 px-3 text-xs font-bold uppercase tracking-wider text-stone-400 whitespace-nowrap">
+            O probá sin registro
+          </span>
+          <div class="border-t-2 border-stone-200 w-full"></div>
+        </div>
+
+        <!-- Bloque Modo Demo -->
+        <div class="space-y-2.5">
+          <button onclick="startDemoFromScratch()" class="w-full btn-duo btn-secondary rounded-2xl px-4 py-3 flex items-center justify-between text-left">
+            <div>
+              <div class="font-display font-extrabold text-sm text-stone-900">Demo desde cero</div>
+              <div class="text-xs text-stone-500">Completá el diagnóstico y probá el flujo completo</div>
+            </div>
+            <span class="text-emerald-600 font-black text-lg">→</span>
+          </button>
+
+          <button onclick="startDemoPreloaded()" class="w-full btn-duo bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 shadow-[0_3px_0_0_#fcd34d] rounded-2xl px-4 py-3 flex items-center justify-between text-left">
+            <div>
+              <div class="font-display font-extrabold text-sm text-amber-950 flex items-center gap-1.5">
+                <span>Demo con caso precargado</span>
+                <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full uppercase">Rápido</span>
+              </div>
+              <div class="text-xs text-amber-800">Explorá el plan de "Toby" (1 año y medio) ya generado</div>
+            </div>
+            <span class="text-amber-600 font-black text-lg">⚡</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-center text-stone-400 mt-5">
+        Refuerzo positivo · Sin castigos · Diseñado para usar con el celu en mano
+      </p>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 2: WIZARD DE ONBOARDING EN 3 PASOS               -->
+    <!-- ========================================================= -->
+    <section id="screen-onboarding" class="hidden flex-1 flex flex-col overflow-hidden">
+      <div class="p-4 bg-white border-b border-stone-200 shrink-0">
+        <div class="flex items-center justify-between gap-3 mb-2.5">
+          <button onclick="prevOnboardingStep()" class="min-w-[48px] min-h-[48px] rounded-2xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 font-bold text-lg active:scale-95">
+            ←
+          </button>
+          <div class="flex-1">
+            <div class="flex justify-between text-xs font-bold text-stone-500 mb-1">
+              <span id="step-label">Paso 1 de 3 · El Can y su Entorno</span>
+              <span id="step-percent">33%</span>
+            </div>
+            <div class="w-full h-3 bg-stone-200 rounded-full overflow-hidden">
+              <div id="onboarding-progress" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 33%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto no-scrollbar p-4 pb-28 space-y-5">
+        <!-- PASO 1: EL CAN Y SU ENTORNO -->
+        <div id="onboarding-step-1" class="space-y-5">
+          <div>
+            <h2 class="font-display font-black text-xl text-stone-900">Contanos sobre tu perro</h2>
+            <p class="text-xs text-stone-500 mt-0.5">Adaptamos cada ejercicio a su etapa vital, cuerpo y entorno.</p>
+          </div>
+
+          <div>
+            <label for="dog-name" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Nombre del can</label>
+            <input id="dog-name" type="text" placeholder="Ej. Toby, Luna, Milo..."
+              class="w-full min-h-[50px] px-4 rounded-2xl border-2 border-stone-200 focus:border-emerald-500 focus:outline-none text-base bg-white font-semibold" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Etapa / Edad</label>
+            <div class="grid grid-cols-2 gap-2" data-chip-group="dogAge">
+              <button type="button" data-value="Cachorro" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">🐶 Cachorro</button>
+              <button type="button" data-value="Joven" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-900">🐕 Joven (1-3 años)</button>
+              <button type="button" data-value="Adulto" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">🦮 Adulto</button>
+              <button type="button" data-value="Senior" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">🤍 Senior (+8 años)</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Estado físico</label>
+            <div class="grid grid-cols-2 gap-2" data-chip-group="physicalState">
+              <button type="button" data-value="Sin restricciones" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-900">Sin restricciones</button>
+              <button type="button" data-value="Energía alta" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">Energía alta</button>
+              <button type="button" data-value="Sensible / Articular" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">Sensible / Articular</button>
+              <button type="button" data-value="Cuidado especial" class="chip-btn min-h-[48px] px-3 rounded-2xl border-2 border-stone-200 bg-white font-bold text-sm text-stone-700">Cuidado especial</button>
+            </div>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-3xl border-2 border-stone-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-stone-600">¿Sale a pasear?</span>
+              <div class="flex gap-2" data-chip-group="walksOutside">
+                <button type="button" data-value="Sí" class="chip-btn min-h-[48px] px-5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-900">Sí</button>
+                <button type="button" data-value="No" class="chip-btn min-h-[48px] px-5 rounded-xl border-2 border-stone-200 bg-stone-50 font-bold text-sm text-stone-700">No aún</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-stone-600 mb-1.5">¿Cómo se comporta en el paseo?</label>
+              <div class="grid grid-cols-2 gap-2" data-chip-group="walkBehavior">
+                <button type="button" data-value="Tranquilo" class="chip-btn min-h-[48px] px-3 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Tranquilo</button>
+                <button type="button" data-value="Tira de la correa" class="chip-btn min-h-[48px] px-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-xs text-emerald-900">Tira de la correa</button>
+                <button type="button" data-value="Reactivo / Ladra" class="chip-btn min-h-[48px] px-3 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Reactivo / Ladra</button>
+                <button type="button" data-value="Con miedo" class="chip-btn min-h-[48px] px-3 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Con miedo / Inseguro</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-3.5 rounded-3xl border-2 border-stone-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-stone-600">¿Tuvo educación previa?</span>
+              <div class="flex gap-2" data-chip-group="priorTraining">
+                <button type="button" data-value="No" class="chip-btn min-h-[48px] px-5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-900">No</button>
+                <button type="button" data-value="Sí" class="chip-btn min-h-[48px] px-5 rounded-xl border-2 border-stone-200 bg-stone-50 font-bold text-sm text-stone-700">Sí</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-stone-600 mb-1.5">Mayor desafío hoy</label>
+              <div class="flex flex-wrap gap-2" data-chip-group="mainProblem">
+                <button type="button" data-value="Tironeo de correa" class="chip-btn min-h-[48px] px-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-xs text-emerald-900">Tironeo de correa</button>
+                <button type="button" data-value="Impulsividad / Saltos" class="chip-btn min-h-[48px] px-3.5 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Impulsividad / Saltos</button>
+                <button type="button" data-value="Falta de atención" class="chip-btn min-h-[48px] px-3.5 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Falta de atención</button>
+                <button type="button" data-value="Ansiedad / Inquietud" class="chip-btn min-h-[48px] px-3.5 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Ansiedad / Inquietud</button>
+                <button type="button" data-value="Mordisqueo" class="chip-btn min-h-[48px] px-3.5 rounded-xl border-2 border-stone-200 bg-stone-50 font-semibold text-xs text-stone-700">Mordisqueo</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-3xl border-2 border-stone-200">
+            <div class="mb-3">
+              <h3 class="font-display font-extrabold text-base text-stone-900">Estimulación ambiental en casa</h3>
+              <p class="text-xs text-stone-500">Evaluá cuánto estímulo recibe hoy en estos 5 canales:</p>
+            </div>
+            <div id="sensory-list" class="space-y-2.5"></div>
+          </div>
+        </div>
+
+        <!-- PASO 2: DIAGNÓSTICO DEL TUTOR -->
+        <div id="onboarding-step-2" class="hidden space-y-5">
+          <div>
+            <h2 class="font-display font-black text-xl text-stone-900">Tu punto de partida como tutor</h2>
+            <p class="text-xs text-stone-500 mt-0.5">No hay respuestas malas: esto calibra las explicaciones de tu ruta.</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-3xl border-2 border-stone-200 space-y-3">
+            <label class="block text-sm font-bold text-stone-800">
+              1. ¿Cuánto sabés sobre condicionamiento conductual y refuerzo positivo?
+            </label>
+            <div class="space-y-2" data-chip-group="tutorConditioning">
+              <button type="button" data-value="Principiante" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-left">
+                <div class="font-bold text-sm text-emerald-950">Principiante</div>
+                <div class="text-xs text-emerald-800">Quiero entender desde cero cómo aprende mi perro sin castigos</div>
+              </button>
+              <button type="button" data-value="Conozco lo básico" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-stone-200 bg-stone-50 text-left">
+                <div class="font-bold text-sm text-stone-800">Conozco lo básico</div>
+                <div class="text-xs text-stone-500">Uso premios a veces, pero me cuesta el timing o la constancia</div>
+              </button>
+              <button type="button" data-value="Intermedio" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-stone-200 bg-stone-50 text-left">
+                <div class="font-bold text-sm text-stone-800">Intermedio</div>
+                <div class="text-xs text-stone-500">Ya manejo refuerzo positivo y quiero estructurar mejor los avances</div>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-3xl border-2 border-stone-200 space-y-3">
+            <label class="block text-sm font-bold text-stone-800">
+              2. ¿Qué tanto reconocés su lenguaje corporal y señales de calma/estrés?
+            </label>
+            <div class="space-y-2" data-chip-group="tutorBodyLanguage">
+              <button type="button" data-value="Principiante" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-left">
+                <div class="font-bold text-sm text-emerald-950">Me cuesta leerlo</div>
+                <div class="text-xs text-emerald-800">Me doy cuenta recién cuando ya ladra, tira o se bloquea</div>
+              </button>
+              <button type="button" data-value="Reconozco algunas señales" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-stone-200 bg-stone-50 text-left">
+                <div class="font-bold text-sm text-stone-800">Reconozco algunas señales</div>
+                <div class="text-xs text-stone-500">Noto si está tenso, pero quiero anticiparme mejor</div>
+              </button>
+              <button type="button" data-value="Intermedio" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-stone-200 bg-stone-50 text-left">
+                <div class="font-bold text-sm text-stone-800">Lo leo bastante bien</div>
+                <div class="text-xs text-stone-500">Identifico bostezos, lamidos de nariz, postura y cola</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 3: TIEMPO DIARIO Y LECTURA -->
+        <div id="onboarding-step-3" class="hidden space-y-5">
+          <div>
+            <h2 class="font-display font-black text-xl text-stone-900">Tu disponibilidad real</h2>
+            <p class="text-xs text-stone-500 mt-0.5">La constancia diaria vale más que sesiones largas una vez por semana.</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-3xl border-2 border-stone-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-stone-800">Tiempo total por día</label>
+              <span class="text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Máx. 60 min/día</span>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2" data-chip-group="dailyMinutes">
+              <button type="button" data-value="15" class="chip-btn min-h-[52px] rounded-2xl border-2 border-stone-200 bg-stone-50 font-display font-black text-base text-stone-700">15m</button>
+              <button type="button" data-value="30" class="chip-btn min-h-[52px] rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-display font-black text-base text-emerald-900">30m</button>
+              <button type="button" data-value="45" class="chip-btn min-h-[52px] rounded-2xl border-2 border-stone-200 bg-stone-50 font-display font-black text-base text-stone-700">45m</button>
+              <button type="button" data-value="60" class="chip-btn min-h-[52px] rounded-2xl border-2 border-stone-200 bg-stone-50 font-display font-black text-base text-stone-700">60m</button>
+            </div>
+
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3.5 flex items-start gap-2.5">
+              <span class="text-lg leading-none">🧠</span>
+              <p class="text-xs text-amber-950 leading-relaxed">
+                <strong>Regla de bienestar:</strong> La práctica activa de comandos de tu perro <strong>nunca supera los 15 minutos diarios</strong> para evitar fatiga mental. El tiempo restante se destina a enriquecimiento ambiental y tu capacitación.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-3xl border-2 border-stone-200 space-y-3">
+            <label class="block text-sm font-bold text-stone-800">
+              ¿Querés sumar lectura complementaria breve?
+            </label>
+            <div class="space-y-2" data-chip-group="wantsReading">
+              <button type="button" data-value="Sí" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-left">
+                <div class="font-bold text-sm text-emerald-950">Sí, sumá lecturas cortas</div>
+                <div class="text-xs text-emerald-800">Me interesa entender la teoría detrás de cada dinámica</div>
+              </button>
+              <button type="button" data-value="No" class="chip-btn w-full min-h-[52px] px-4 py-2.5 rounded-2xl border-2 border-stone-200 bg-stone-50 text-left">
+                <div class="font-bold text-sm text-stone-800">No, preferible más práctico o videos</div>
+                <div class="text-xs text-stone-500">Dame micro-guías visuales y pasos accionables al grano</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-white border-t border-stone-200 shrink-0">
+        <button id="onboarding-next-btn" onclick="nextOnboardingStep()" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-base">
+          Continuar
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 3: CONTRATO DE EQUIPO / VÍNCULO                  -->
+    <!-- ========================================================= -->
+    <section id="screen-contract" class="hidden flex-1 overflow-y-auto no-scrollbar p-5 flex flex-col justify-between bg-gradient-to-b from-emerald-50/70 to-stone-50">
+      <div class="space-y-5 mt-2">
+        <div class="w-16 h-16 rounded-3xl bg-emerald-500 text-white flex items-center justify-center text-3xl shadow-lg mx-auto">
+          🤝
+        </div>
+
+        <div class="text-center space-y-2">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
+            Acuerdo de Equipo
+          </span>
+          <h2 class="font-display font-black text-2xl text-stone-900 leading-tight">
+            Educar es un trabajo en equipo con <span id="contract-dog-name" class="text-emerald-600">tu perro</span>
+          </h2>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 border-2 border-stone-200 shadow-sm space-y-3 text-sm text-stone-700 leading-relaxed">
+          <p>
+            Tu perro no necesita "obediencia ciega": necesita <strong>previsibilidad, estructura amable y un tutor que sepa leerlo</strong>.
+          </p>
+          <p>
+            Cuando vos te capacitás y reducís el estrés de su entorno, la comunicación fluye, baja la frustración y construyen <strong>bienestar y felicidad mutua</strong> mediante refuerzo positivo (cero castigos).
+          </p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 border-2 border-emerald-200 space-y-3">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-stone-400">Tu configuración calibrada</div>
+
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-sm">⏱️</span>
+            <div class="text-xs text-stone-700 leading-snug">
+              <strong id="summary-time" class="text-stone-900 text-sm block">30 minutos diarios totales</strong>
+              Repartidos entre tu ruta de aprendizaje y el bienestar de <span class="dog-name-inline">tu perro</span>.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center shrink-0 text-sm">🎯</span>
+            <div class="text-xs text-stone-700 leading-snug">
+              <strong class="text-stone-900 text-sm block">Tope de 15 min activos/día para el can</strong>
+              Sesiones cortas, divertidas y con premios de alto valor o juego.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-xl bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 text-sm">👃</span>
+            <div class="text-xs text-stone-700 leading-snug">
+              <strong id="summary-sensory" class="text-stone-900 text-sm block">Prioridad: Enriquecimiento Olfativo</strong>
+              Detectamos canales bajos en casa y los atacamos desde el inicio.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-5 pb-2">
+        <button id="generate-plan-btn" onclick="generateTrainingPlan()" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-base flex items-center justify-center gap-2">
+          <span>Generar mi plan de entrenamiento</span>
+        </button>
+
+        <div id="ai-loading-box" class="hidden bg-stone-900 text-white rounded-2xl p-4 text-center space-y-2">
+          <div class="flex items-center justify-center gap-2 font-display font-bold text-sm text-emerald-400">
+            <svg class="animate-spin h-5 w-5 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span>IA personalizando tu doble ruta...</span>
+          </div>
+          <p class="text-xs text-stone-300">Aplicando topes de 15 min, perfil sensorial y dependencias Tutor → Can</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PANTALLA 4: DOBLE ROADMAP ESTILO DUOLINGO                 -->
+    <!-- ========================================================= -->
+    <section id="screen-roadmaps" class="hidden flex-1 flex flex-col overflow-hidden">
+      <div class="bg-white border-b border-stone-200 px-4 pt-3 pb-0 shrink-0 z-20">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 font-display font-black flex items-center justify-center text-lg shrink-0">
+              🐕
+            </div>
+            <div class="truncate">
+              <div class="flex items-center gap-1.5">
+                <h2 id="header-dog-name" class="font-display font-black text-base text-stone-900 truncate">Toby</h2>
+                <span id="header-dog-tag" class="text-[10px] font-bold bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full">Joven</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span id="header-daily-time" class="text-[11px] font-semibold text-stone-500">30 min/día</span>
+                <span class="text-stone-300">•</span>
+                <span class="text-[11px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">Máx. 15 min/día práctica activa</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="resetToHome()" title="Volver al inicio" class="min-w-[44px] min-h-[44px] rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600 text-xs font-bold px-2.5">
+            Salir
+          </button>
+        </div>
+
+        <!-- Botón Prominente Mobile-First: + Sumar comportamiento deseado -->
+        <div class="mb-2.5">
+          <button onclick="openBehaviorModal()" class="w-full min-h-[48px] rounded-2xl bg-teal-600 hover:bg-teal-700 text-white shadow-[0_3px_0_0_#115e59] active:translate-y-0.5 font-display font-extrabold text-xs sm:text-sm px-3.5 py-2 flex items-center justify-between transition">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-base font-black">+</span>
+              <span>Sumar comportamiento deseado</span>
+            </span>
+            <span id="active-behaviors-count" class="text-[10px] font-extrabold bg-teal-900/50 text-teal-100 px-2 py-0.5 rounded-full">
+              Personalizar
+            </span>
+          </button>
+          <div id="added-behaviors-bar" class="hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 pb-0.5"></div>
+        </div>
+
+        <!-- Selector de Ruta -->
+        <div class="grid grid-cols-2 gap-2 pb-3">
+          <button id="tab-route-tutor" onclick="switchRouteTab('tutor')" class="min-h-[48px] rounded-2xl border-2 border-emerald-500 bg-emerald-50 px-3 py-2 flex items-center justify-between transition">
+            <div class="text-left">
+              <div class="font-display font-extrabold text-xs sm:text-sm text-emerald-950">🧠 Ruta del Tutor</div>
+              <div class="text-[10px] text-emerald-700 font-medium">Tu capacitación</div>
+            </div>
+            <span id="tutor-progress-badge" class="font-display font-black text-xs bg-emerald-600 text-white px-2 py-1 rounded-xl">0/5</span>
+          </button>
+
+          <button id="tab-route-dog" onclick="switchRouteTab('dog')" class="min-h-[48px] rounded-2xl border-2 border-stone-200 bg-stone-50 px-3 py-2 flex items-center justify-between transition">
+            <div class="text-left">
+              <div class="font-display font-extrabold text-xs sm:text-sm text-stone-700">🐾 Ruta del Can</div>
+              <div class="text-[10px] text-stone-500 font-medium">Práctica y entorno</div>
+            </div>
+            <span id="dog-progress-badge" class="font-display font-black text-xs bg-stone-300 text-stone-700 px-2 py-1 rounded-xl">0/6</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Camino Vertical de Nodos Estilo Duolingo -->
+      <div id="roadmap-scroll-area" class="flex-1 overflow-y-auto no-scrollbar px-4 py-6 bg-stone-50 relative">
+        <div id="route-context-card" class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-sm mb-8 flex items-center gap-3">
+          <span id="route-context-icon" class="text-2xl">🎓</span>
+          <p id="route-context-text" class="text-xs text-stone-600 leading-snug">
+            Completá tus lecciones para desbloquear ejercicios avanzados en la ruta de tu perro.
+          </p>
+        </div>
+
+        <div id="nodes-container" class="flex flex-col items-center space-y-7 pb-6 relative"></div>
+
+        <!-- Botón de Scroll Infinito por Etapas (Generación Incremental con IA) -->
+        <div id="infinite-stage-box" class="mt-4 mb-10 flex flex-col items-center">
+          <div class="w-1.5 h-6 rounded-full bg-stone-200 mb-3"></div>
+          <button id="load-next-stage-btn" onclick="loadNextStageWithAI()"
+            class="w-full max-w-[320px] btn-duo bg-stone-900 hover:bg-stone-800 text-white shadow-[0_4px_0_0_#44403c] rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
+            <div class="text-left">
+              <div id="next-stage-title" class="font-display font-extrabold text-xs sm:text-sm text-emerald-400">
+                ✨ Generar Etapa 2 con IA
+              </div>
+              <div class="text-[11px] text-stone-300">Desbloqueá el siguiente bloque de lecciones</div>
+            </div>
+            <span class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-base shrink-0">∞</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODAL / BOTTOM SHEET: LECCIÓN + FEEDBACK ADAPTATIVO       -->
+    <!-- ========================================================= -->
+    <div id="lesson-modal" class="hidden fixed inset-0 z-40 bg-stone-950/60 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
+      <div class="w-full max-w-[440px] max-h-[92vh] bg-white rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden shadow-2xl animate-slide-up">
+        <div class="p-4 border-b border-stone-200 flex items-center justify-between gap-3 shrink-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="modal-route-pill" class="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
+              Ruta del Tutor
+            </span>
+            <span id="modal-duration-pill" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-stone-100 text-stone-700">
+              ⏱️ 10 min
+            </span>
+          </div>
+          <button onclick="closeLessonModal()" class="min-w-[48px] min-h-[48px] rounded-2xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 font-black text-lg">
+            ✕
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-4">
+          <div>
+            <div id="modal-tags" class="flex flex-wrap gap-1.5 mb-2"></div>
+            <h3 id="modal-title" class="font-display font-black text-xl text-stone-900 leading-tight">
+              Título de la lección
+            </h3>
+          </div>
+
+          <div id="modal-adaptive-alert" class="hidden bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 space-y-1.5">
+            <div class="flex items-center gap-1.5 text-xs font-extrabold text-amber-900 uppercase">
+              <span>✨ Ajuste adaptativo de IA activado</span>
+            </div>
+            <p id="modal-adaptive-text" class="text-xs text-amber-950 leading-relaxed">
+              Bajamos el criterio de dificultad y reducimos distracciones para que el ejercicio sea un éxito seguro.
+            </p>
+          </div>
+
+          <div id="modal-media-box" class="rounded-2xl overflow-hidden border-2 border-stone-200 bg-stone-900 text-white"></div>
+
+          <div id="modal-ai-resources" class="bg-stone-50 border-2 border-stone-200 rounded-2xl p-3.5 space-y-2.5"></div>
+
+          <div class="space-y-2.5">
+            <h4 class="font-display font-extrabold text-sm text-stone-800 uppercase tracking-wider">Paso a paso práctico</h4>
+            <ol id="modal-steps" class="space-y-2.5 text-sm text-stone-700"></ol>
+          </div>
+
+          <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-3 flex items-start gap-2.5">
+            <span class="text-base leading-none mt-0.5">💚</span>
+            <p class="text-[11px] text-emerald-950 leading-relaxed">
+              <strong>Bienestar primero:</strong> Cero tirones, gritos ni castigos. Si notás miedo intenso, bloqueo o reactividad severa, frená la sesión y consultá con un educador canino amable presencial.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-stone-50 border-t border-stone-200 shrink-0 space-y-2">
+          <div class="text-xs font-bold text-center text-stone-500 mb-1">¿Cómo resultó esta actividad?</div>
+          <button onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
+            <span>✅ Salió bien (Completar y avanzar)</span>
+          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="submitLessonFeedback('difficulty')" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1">
+              <span>⚡ Con dificultad</span>
+            </button>
+            <button onclick="submitLessonFeedback('retry')" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1">
+              <span>🔄 No salió / Repasar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL / BOTTOM SHEET: SUMAR COMPORTAMIENTO DESEADO        -->
+    <!-- ========================================================= -->
+    <div id="behavior-modal" class="hidden fixed inset-0 z-40 bg-stone-950/60 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
+      <div class="w-full max-w-[430px] max-h-[90vh] bg-white rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden shadow-2xl animate-slide-up">
+        <div class="p-4 border-b border-stone-200 flex items-center justify-between gap-3 shrink-0">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-700 bg-teal-100 px-2.5 py-0.5 rounded-full">
+              Expansión de Plan con IA
+            </span>
+            <h3 class="font-display font-black text-lg text-stone-900 mt-1">
+              Sumar comportamiento deseado
+            </h3>
+          </div>
+          <button onclick="closeBehaviorModal()" class="min-w-[48px] min-h-[48px] rounded-2xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 font-black text-lg">
+            ✕
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Elegí un objetivo cotidiano o escribí el tuyo. La IA agregará nodos específicos en <strong>Ruta del Tutor</strong> (técnica) y <strong>Ruta del Can</strong> (práctica amable ≤ 15 min/día).
+          </p>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Objetivos frecuentes</label>
+            <div id="preset-behaviors-grid" class="grid grid-cols-1 gap-2"></div>
+          </div>
+
+          <div class="bg-stone-50 p-3.5 rounded-2xl border-2 border-stone-200 space-y-2">
+            <label for="custom-behavior-input" class="block text-xs font-bold text-stone-800">
+              O escribí otro comportamiento deseado:
+            </label>
+            <input id="custom-behavior-input" type="text" oninput="handleCustomBehaviorInput(this.value)"
+              placeholder="Ej. Esperar tranquilo al abrir la puerta, subir al auto..."
+              class="w-full min-h-[48px] px-3.5 rounded-xl border-2 border-stone-200 focus:border-teal-500 focus:outline-none text-sm bg-white" />
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2">
+            <span class="text-base leading-none">🛡️</span>
+            <p class="text-[11px] text-amber-950 leading-snug">
+              <strong>Criterio de diseño:</strong> Elementos como bozal, pretal o correa se trabajan mediante <em>desensibilización positiva y manejo cooperativo</em>, nunca por imposición.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-white border-t border-stone-200 shrink-0">
+          <button id="confirm-behavior-btn" onclick="addDesiredBehaviorToPlan()" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
+            <span>Agregar al plan de entrenamiento</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- LÓGICA DE ESTADO, REGLAS DE NEGOCIO Y RENDERIZADO         -->
+  <!-- ========================================================= -->
+  <script>
+    const AI_ENDPOINT = '/.netlify/functions/gemini-plan';
+
+    // Estado global de la aplicación
+    const state = {
+      isDemo: false,
+      authMode: 'login',
+      currentStep: 1,
+      currentStage: 1,
+      isGeneratingAI: false,
+      activeRoute: 'tutor',
+      activeNodeId: null,
+      selectedPresetBehavior: null,
+      customBehaviorText: '',
+      addedBehaviors: [],
+      profile: {
+        dogName: '',
+        dogAge: 'Joven',
+        physicalState: 'Sin restricciones',
+        walksOutside: 'Sí',
+        walkBehavior: 'Tira de la correa',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
+        sensory: {
+          Olfativa: 'Bajo',
+          Sonora: 'Medio',
+          Gustativa: 'Bajo',
+          Visual: 'Medio',
+          Texturas: 'Medio'
+        },
+        tutorConditioning: 'Principiante',
+        tutorBodyLanguage: 'Principiante',
+        dailyMinutes: 30,
+        wantsReading: 'Sí'
+      },
+      roadmaps: {
+        tutor: [],
+        dog: []
+      }
+    };
+
+    // Catálogo de los 5 canales sensoriales
+    const SENSORY_CHANNELS = [
+      { key: 'Olfativa', icon: '👃', hint: 'Búsqueda, rastreo, alfombras' },
+      { key: 'Sonora', icon: '👂', hint: 'Ruidos cotidianos y habituación' },
+      { key: 'Gustativa', icon: '🦴', hint: 'Masticación y licky mats' },
+      { key: 'Visual', icon: '👀', hint: 'Observación calma del entorno' },
+      { key: 'Texturas', icon: '🐾', hint: 'Superficies variadas y contacto' }
+    ];
+
+    // Objetivos frecuentes para "+ Sumar comportamiento deseado" con videos curados
+    const PRESET_BEHAVIORS = [
+      {
+        id: 'muzzle',
+        label: 'Ponerse el bozal',
+        icon: '🦺',
+        desc: 'Desensibilización positiva al bozal tipo canasta',
+        tutorTitle: 'Manejo Cooperativo: Positivizar el Bozal',
+        tutorBody: 'El bozal nunca debe ponerse a la fuerza. Usamos luring y refuerzo positivo para que el perro meta el hocico por elección propia.',
+        tutorSteps: [
+          'Elegí un bozal tipo canasta (Baskerville) que le permita jadear y recibir premios.',
+          'Presentá el bozal quieto en tu mano con pasta de hígado o queso untable en el fondo.',
+          'Dejá que él acerque el hocico y lo retire cuando quiera sin abrocharlo aún.'
+        ],
+        dogTitle: 'Juego del Hocico en el Bozal (5 min)',
+        dogBody: 'Asociamos el bozal con premios de altísimo valor en micro-sesiones divertidas.',
+        dogSteps: [
+          'Sostené el bozal frente a {dog} con premios adentro y dejá que coma 3 segundos.',
+          'Retirá el bozal antes de que se incomode (terminar siempre en positivo).',
+          'Recién cuando meta el hocico con entusiasmo 5 veces seguidas, practicá apoyar la correa detrás de las orejas.'
+        ],
+        adaptiveTip: 'Si duda al acercarse, apoyá el bozal abierto en el suelo con premios alrededor para que lo explore sin presión.',
+        videos: [
+          { title: 'Desensibilización positiva al bozal tipo canasta', url: 'https://www.youtube.com/shorts/PktcGcFK0U4' }
+        ]
+      },
+      {
+        id: 'harness',
+        label: 'Poner el pretal',
+        icon: '🎽',
+        desc: 'Colocación sin miedo ni huida usando luring',
+        tutorTitle: 'Luring y Consentimiento al Poner el Pretal',
+        tutorBody: 'Muchos perros huyen del pretal porque se les pasa brusco por encima de la cabeza. Enseñamos a pasar la cabeza voluntariamente.',
+        tutorSteps: [
+          'Sostené la abertura del cuello del pretal con una mano y un premio del otro lado.',
+          'Dejá que el perro atraviese el aro con su cabeza para alcanzar el premio (luring).',
+          'Evitá inclinar tu cuerpo encima de él; ponete de costado y a su altura.'
+        ],
+        dogTitle: 'Pasar la Cabeza por el Pretal con Premio',
+        dogBody: 'Práctica cooperativa para que ponerse el pretal sea sinónimo de salir a disfrutar.',
+        dogSteps: [
+          'Mostrá el pretal y premiá con luring apenas {dog} asome la nariz por la abertura.',
+          'Repetí 3 veces sin abrochar los broches laterales.',
+          'Al abrochar, entregá un premio simultáneo para asociar el sonido del clip con algo rico.'
+        ],
+        adaptiveTip: 'Premiá primero solo por mirar y oler el pretal en el suelo antes de pedir que pase la cabeza.',
+        videos: [
+          { title: 'Manejo cooperativo: cómo poner el pretal sin miedo', url: 'https://www.youtube.com/watch?v=0GNAXQaeJhA' }
+        ]
+      },
+      {
+        id: 'leash',
+        label: 'Poner la correa',
+        icon: '🦮',
+        desc: 'Calma previa al enganche para salir sin ansiedad',
+        tutorTitle: 'Rutina de Calma Antes de Enganchar la Correa',
+        tutorBody: 'Si enganchamos la correa mientras el perro salta excitado, reforzamos la sobreexcitación antes de cruzar la puerta.',
+        tutorSteps: [
+          'Tomá la correa y quedate quieto/a en silencio si empieza a saltar.',
+          'Apenas apoye las 4 patas en el piso (capturing), acercá el mosquetón.',
+          'Si vuelve a saltar, pausá el movimiento sin retarlo (castigo negativo suave).'
+        ],
+        dogTitle: '4 Patas en el Piso al Ver la Correa',
+        dogBody: 'Bajamos la ansiedad previa al paseo premiando la quietud.',
+        dogSteps: [
+          'Agarrá la correa; si {dog} se calma 2 segundos, premiá con comida en el piso.',
+          'Enganchá el mosquetón suavemente mientras come del suelo o te mira tranquilo.',
+          'Esperá 3 segundos de calma antes de abrir la puerta.'
+        ],
+        adaptiveTip: 'Practicá agarrar y dejar la correa varias veces al día sin salir a la calle para bajar la euforia.',
+        videos: [
+          { title: 'Rutina de calma antes de enganchar la correa', url: 'https://www.youtube.com/watch?v=XGzavHuQDmA' }
+        ]
+      },
+      {
+        id: 'barking',
+        label: 'Bajar ladridos',
+        icon: '🤫',
+        desc: 'Gestión ambiental y redirigir atención con olfato',
+        tutorTitle: 'Gestión de Estímulos y Descompresión de Ladridos',
+        tutorBody: 'Gritar "¡Basta!" cuando ladra suele sonar como que vos también estás ladrando. Trabajamos gestión visual/sonora y conductas incompatibles.',
+        tutorSteps: [
+          'Identificá qué dispara el ladrido (timbre, ruidos en el pasillo, ventana a la calle).',
+          'Bloqueá visualmente la ventana con vinilo esmerilado o cortina si vigila todo el día.',
+          'Ante el primer sonido, pedí una conducta incompatible como "Buscá" (premios al piso).'
+        ],
+        dogTitle: 'Juego de "Buscá" Ante Ruidos o Estímulos',
+        dogBody: 'Olfatear el suelo baja la frecuencia cardíaca y es incompatible con ladrar.',
+        dogSteps: [
+          'En un momento tranquilo, tirá 3 premios al piso diciendo "Buscá" para asociar la palabra.',
+          'Cuando escuche un ruido leve a distancia, adelantate con "Buscá" antes de que ladre.',
+          'Premiá cada segundo de silencio y observación tranquila (capturing).'
+        ],
+        adaptiveTip: 'Aumentá la distancia al estímulo o usá ruido blanco/música suave en casa durante horas pico.',
+        videos: [
+          { title: 'Gestión ambiental y conducta incompatible para bajar ladridos', url: 'https://www.youtube.com/watch?v=ZlxllSurxM0' }
+        ]
+      },
+      {
+        id: 'nipping',
+        label: 'Bajar mordiscones al caminar',
+        icon: '🧸',
+        desc: 'Redirección a mordedor y pausas de descompresión',
+        tutorTitle: 'Por Qué Muerde la Correa o los Pies al Caminar',
+        tutorBody: 'Los mordiscones en el paseo suelen ser descarga de sobreestimulación, estrés o juego brusco. Nunca tironees ni forces la boca.',
+        tutorSteps: [
+          'Llevá siempre un mordedor largo o soga en el bolsillo durante los paseos.',
+          'Si muerde la correa o tus pantalones, quedate inmóvil como una estatua para quitarle diversión.',
+          'Apenas suelte, ofrecé el mordedor o tirá premios al pasto para que olfatee.'
+        ],
+        dogTitle: 'Pausas de Olfato y Redirección al Mordedor',
+        dogBody: 'Canalizamos la necesidad oral hacia un objeto permitido y bajamos revoluciones.',
+        dogSteps: [
+          'Acortá el paseo a 10-12 minutos en zonas tranquilas para evitar sobreexcitación.',
+          'Cada 2 minutos de caminata, hacé una pausa de olfato tirando premios en el césped.',
+          'Si aparece el impulso de morder, redirigí a {dog} hacia su mordedor propio.'
+        ],
+        adaptiveTip: 'Si ocurre siempre al final del paseo, es señal de cansancio mental: volvé a casa 5 minutos antes.',
+        videos: [
+          { title: 'Cómo redirigir mordiscones al caminar sin retos', url: 'https://www.youtube.com/watch?v=nkFNMYbJhy8' }
+        ]
+      },
+      {
+        id: 'jumping',
+        label: 'Frenar el salto al recibir una persona',
+        icon: '🐾',
+        desc: 'Saludo amable con 4 patas en el suelo',
+        tutorTitle: 'Protocolo de Saludo con 4 Patas en el Piso',
+        tutorBody: 'El perro salta buscando contacto facial y atención. Si lo empujamos con las manos o le hablamos, estamos premiando el salto.',
+        tutorSteps: [
+          'Pedí a las visitas que ignoren al perro (sin mirar, hablar ni tocar) mientras salta.',
+          'Apenas apoye las 4 patas en el suelo, saludar con voz calma y premiar abajo.',
+          'Anticipate tirando un puñado de premios al piso al abrir la puerta.'
+        ],
+        dogTitle: 'Premios al Suelo al Llegar Visitas (5 min)',
+        dogBody: 'Enseñar que lo más rentable al recibir gente es mantener las patas abajo.',
+        dogSteps: [
+          'Practicá primero vos entrando y saliendo de una habitación.',
+          'Apenas {dog} te mire sin saltar, tirá 2 premios al piso para mantener su foco abajo.',
+          'Repetí con una visita tranquila pactando el protocolo antes de entrar.'
+        ],
+        adaptiveTip: 'Usá una correa corta o barrera bebé los primeros 2 minutos de la visita hasta que baje la euforia.',
+        videos: [
+          { title: 'Protocolo de saludo tranquilo: frenar el salto al recibir visitas', url: 'https://www.youtube.com/watch?v=3Lx2VMRC1D4' }
+        ]
+      }
+    ];
+
+    // --- INICIALIZACIÓN ---
+    window.onload = function () {
+      renderSensoryInputs();
+      setupChipListeners();
+      renderPresetBehaviors();
+    };
+
+    // --- UTILIDADES UI ---
+    function showScreen(screenId) {
+      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    let toastTimeout;
+    function showToast(text, icon = '💡') {
+      const box = document.getElementById('toast-box');
+      document.getElementById('toast-text').textContent = text;
+      document.getElementById('toast-icon').textContent = icon;
+      box.classList.remove('opacity-0', '-translate-y-4');
+      box.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        box.classList.add('opacity-0', '-translate-y-4');
+        box.classList.remove('opacity-100', 'translate-y-0');
+      }, 3600);
+    }
+
+    function updateDemoBanner() {
+      const banner = document.getElementById('demo-banner');
+      if (state.isDemo) {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    // --- PANTALLA 1: AUTH & MODO DEMO ---
+    function setAuthTab(mode) {
+      state.authMode = mode;
+      const tabLogin = document.getElementById('tab-login');
+      const tabReg = document.getElementById('tab-register');
+      const btn = document.getElementById('auth-submit-btn');
+
+      if (mode === 'login') {
+        tabLogin.className = 'min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition';
+        tabReg.className = 'min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition';
+        btn.textContent = 'Entrar y guardar mi plan';
+      } else {
+        tabReg.className = 'min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition';
+        tabLogin.className = 'min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition';
+        btn.textContent = 'Crear cuenta y empezar';
+      }
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      state.isDemo = false;
+      updateDemoBanner();
+      state.currentStep = 1;
+      updateOnboardingUI();
+      showScreen('screen-onboarding');
+      showToast('Sesión iniciada. Armemos el perfil de tu perro.', '✅');
+    }
+
+    function startDemoFromScratch() {
+      state.isDemo = true;
+      updateDemoBanner();
+      state.profile.dogName = '';
+      document.getElementById('dog-name').value = '';
+      state.currentStep = 1;
+      updateOnboardingUI();
+      showScreen('screen-onboarding');
+      showToast('Modo Demo activo: completá los 3 pasos sin registro.', '🧪');
+    }
+
+    function startDemoPreloaded() {
+      state.isDemo = true;
+      updateDemoBanner();
+      state.currentStage = 1;
+      state.profile = {
+        dogName: 'Toby',
+        dogAge: 'Joven',
+        physicalState: 'Energía alta',
+        walksOutside: 'Sí',
+        walkBehavior: 'Tira de la correa',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
+        sensory: {
+          Olfativa: 'Bajo',
+          Sonora: 'Medio',
+          Gustativa: 'Bajo',
+          Visual: 'Alto',
+          Texturas: 'Medio'
+        },
+        tutorConditioning: 'Principiante',
+        tutorBodyLanguage: 'Principiante',
+        dailyMinutes: 30,
+        wantsReading: 'Sí'
+      };
+      state.addedBehaviors = [];
+      buildRoadmapsFromProfile();
+      // Precargamos 1 nodo completado en Tutor para mostrar progreso real
+      state.roadmaps.tutor[0].status = 'completed';
+      state.roadmaps.tutor[1].status = 'available';
+      renderRoadmapsScreen();
+      showScreen('screen-roadmaps');
+      showToast('Caso precargado de Toby listo para explorar.', '⚡');
+    }
+
+    function switchDemoToAccount() {
+      state.isDemo = false;
+      updateDemoBanner();
+      setAuthTab('register');
+      showScreen('screen-auth');
+      showToast('Creá tu cuenta para guardar tu progreso en la nube.', '☁️');
+    }
+
+    function resetToHome() {
+      state.isDemo = false;
+      updateDemoBanner();
+      showScreen('screen-auth');
+    }
+
+    // --- PANTALLA 2: ONBOARDING WIZARD ---
+    function renderSensoryInputs() {
+      const container = document.getElementById('sensory-list');
+      container.innerHTML = SENSORY_CHANNELS.map(ch => {
+        const currentVal = state.profile.sensory[ch.key];
+        return `
+          <div class="flex items-center justify-between gap-2 bg-stone-50 p-2.5 rounded-2xl border border-stone-200">
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-stone-800 flex items-center gap-1.5">
+                <span>${ch.icon}</span>
+                <span>${ch.key}</span>
+              </div>
+              <div class="text-[11px] text-stone-500 truncate">${ch.hint}</div>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              ${['Bajo', 'Medio', 'Alto'].map(lvl => {
+                const active = currentVal === lvl;
+                const activeClass = lvl === 'Bajo'
+                  ? 'bg-amber-500 text-white border-amber-600'
+                  : 'bg-emerald-500 text-white border-emerald-600';
+                return `
+                  <button type="button" onclick="setSensoryLevel('${ch.key}', '${lvl}')"
+                    class="min-w-[48px] min-h-[44px] px-2 rounded-xl border text-xs font-bold transition ${active ? activeClass : 'bg-white text-stone-600 border-stone-200'}">
+                    ${lvl}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setSensoryLevel(channel, level) {
+      state.profile.sensory[channel] = level;
+      renderSensoryInputs();
+    }
+
+    function setupChipListeners() {
+      document.querySelectorAll('[data-chip-group]').forEach(group => {
+        const key = group.getAttribute('data-chip-group');
+        group.querySelectorAll('.chip-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.getAttribute('data-value');
+            state.profile[key] = key === 'dailyMinutes' ? Number(val) : val;
+
+            group.querySelectorAll('.chip-btn').forEach(b => {
+              b.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-900', 'text-emerald-950');
+              b.classList.add('border-stone-200', 'bg-white');
+            });
+            btn.classList.remove('border-stone-200', 'bg-white', 'bg-stone-50');
+            btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+          });
+        });
+      });
+    }
+
+    function updateOnboardingUI() {
+      [1, 2, 3].forEach(s => {
+        document.getElementById(`onboarding-step-${s}`).classList.toggle('hidden', s !== state.currentStep);
+      });
+
+      const labels = {
+        1: ['Paso 1 de 3 · El Can y su Entorno', '33%', 'Continuar'],
+        2: ['Paso 2 de 3 · Diagnóstico del Tutor', '66%', 'Continuar'],
+        3: ['Paso 3 de 3 · Tiempo y Lectura', '100%', 'Ver mi acuerdo de equipo']
+      };
+      const [label, pct, btnText] = labels[state.currentStep];
+      document.getElementById('step-label').textContent = label;
+      document.getElementById('step-percent').textContent = pct;
+      document.getElementById('onboarding-progress').style.width = pct;
+      document.getElementById('onboarding-next-btn').textContent = btnText;
+    }
+
+    function nextOnboardingStep() {
+      if (state.currentStep === 1) {
+        const nameInput = document.getElementById('dog-name').value.trim();
+        state.profile.dogName = nameInput || 'Toby';
+        state.currentStep = 2;
+        updateOnboardingUI();
+      } else if (state.currentStep === 2) {
+        state.currentStep = 3;
+        updateOnboardingUI();
+      } else {
+        prepareContractScreen();
+        showScreen('screen-contract');
+      }
+    }
+
+    function prevOnboardingStep() {
+      if (state.currentStep > 1) {
+        state.currentStep--;
+        updateOnboardingUI();
+      } else {
+        showScreen('screen-auth');
+      }
+    }
+
+    // --- PANTALLA 3: CONTRATO DE EQUIPO ---
+    function prepareContractScreen() {
+      const name = state.profile.dogName || 'tu perro';
+      document.getElementById('contract-dog-name').textContent = name;
+      document.querySelectorAll('.dog-name-inline').forEach(el => el.textContent = name);
+      document.getElementById('summary-time').textContent = `${state.profile.dailyMinutes} minutos diarios totales`;
+
+      const lowChannels = Object.entries(state.profile.sensory)
+        .filter(([, lvl]) => lvl === 'Bajo')
+        .map(([ch]) => ch);
+
+      const sensoryText = lowChannels.length > 0
+        ? `Prioridad: Estimulación ${lowChannels.slice(0, 2).join(' y ')}`
+        : 'Prioridad: Mantenimiento sensorial y foco';
+      document.getElementById('summary-sensory').textContent = sensoryText;
+
+      document.getElementById('generate-plan-btn').classList.remove('hidden');
+      document.getElementById('ai-loading-box').classList.add('hidden');
+    }
+
+    // Helper para llamar a la función de Gemini en Netlify con respaldo local seguro
+    async function callGeminiPlanner(payload) {
+      const response = await fetch(AI_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return await response.json();
+    }
+
+    function normalizeStageNodes(aiPlan, startAvailable) {
+      const tutorNodes = (aiPlan.tutor || []).map((n, idx) => ({
+        ...n,
+        route: 'tutor',
+        status: startAvailable && idx === 0 ? 'available' : 'locked',
+        videos: n.videos || [],
+        steps: n.steps || []
+      }));
+
+      const dogNodes = (aiPlan.dog || []).map((n, idx) => ({
+        ...n,
+        route: 'dog',
+        status: startAvailable && idx === 0 ? 'available' : 'locked',
+        requiresTutorIds: n.requiresTutorIds || [],
+        videos: n.videos || [],
+        steps: n.steps || []
+      }));
+
+      return { tutor: tutorNodes, dog: dogNodes };
+    }
+
+    async function generateTrainingPlan() {
+      const btn = document.getElementById('generate-plan-btn');
+      const loader = document.getElementById('ai-loading-box');
+      btn.classList.add('hidden');
+      loader.classList.remove('hidden');
+
+      state.addedBehaviors = [];
+      state.currentStage = 1;
+
+      try {
+        const aiPlan = await callGeminiPlanner({
+          action: 'GENERATE_STAGE',
+          stageNumber: 1,
+          profile: state.profile
+        });
+
+        if (aiPlan && Array.isArray(aiPlan.tutor) && aiPlan.tutor.length > 0) {
+          const normalized = normalizeStageNodes(aiPlan, true);
+          state.roadmaps.tutor = normalized.tutor;
+          state.roadmaps.dog = normalized.dog;
+          renderRoadmapsScreen();
+          showScreen('screen-roadmaps');
+          showToast(`¡Plan personalizado con IA para ${state.profile.dogName} listo!`, '🤖');
+          return;
+        }
+        throw new Error('Respuesta IA vacía');
+      } catch (err) {
+        // Respaldo local automático si se abre el HTML directo sin servidor Netlify
+        buildRoadmapsFromProfile();
+        renderRoadmapsScreen();
+        showScreen('screen-roadmaps');
+        showToast(`Plan de ${state.profile.dogName} generado (modo local activo).`, '🎉');
+      }
+    }
+
+    // --- SCROLL INFINITO: GENERAR SIGUIENTE ETAPA CON IA ---
+    async function loadNextStageWithAI() {
+      if (state.isGeneratingAI) return;
+      state.isGeneratingAI = true;
+
+      const btn = document.getElementById('load-next-stage-btn');
+      const titleEl = document.getElementById('next-stage-title');
+      const nextStage = state.currentStage + 1;
+      const originalText = titleEl.textContent;
+
+      btn.disabled = true;
+      btn.classList.add('opacity-75');
+      titleEl.textContent = `⏳ Generando Etapa ${nextStage} con Gemini...`;
+
+      const completedTitles = [
+        ...state.roadmaps.tutor.map(n => n.title),
+        ...state.roadmaps.dog.map(n => n.title)
+      ];
+
+      try {
+        const aiPlan = await callGeminiPlanner({
+          action: 'GENERATE_STAGE',
+          stageNumber: nextStage,
+          profile: state.profile,
+          completedTitles
+        });
+
+        if (aiPlan && Array.isArray(aiPlan.tutor) && aiPlan.tutor.length > 0) {
+          const prevTutorDone = state.roadmaps.tutor[state.roadmaps.tutor.length - 1]?.status === 'completed';
+          const prevDogDone = state.roadmaps.dog[state.roadmaps.dog.length - 1]?.status === 'completed';
+
+          const existingSet = new Set(completedTitles.map(t => t.toLowerCase().trim()));
+
+          const newTutor = aiPlan.tutor.map((n, i) => {
+            const safeTitle = existingSet.has((n.title || '').toLowerCase().trim())
+              ? `${n.title} — Nivel ${nextStage} (Mayor dificultad)`
+              : n.title;
+            return {
+              ...n,
+              id: `${n.id || 't'}_s${nextStage}_${i}`,
+              title: safeTitle,
+              route: 'tutor',
+              status: prevTutorDone && i === 0 ? 'available' : 'locked',
+              videos: n.videos || [],
+              steps: n.steps || []
+            };
+          });
+
+          const newDog = aiPlan.dog.map((n, i) => {
+            const safeTitle = existingSet.has((n.title || '').toLowerCase().trim())
+              ? `${n.title} — Nivel ${nextStage} (Mayor dificultad)`
+              : n.title;
+            return {
+              ...n,
+              id: `${n.id || 'd'}_s${nextStage}_${i}`,
+              title: safeTitle,
+              route: 'dog',
+              status: prevDogDone && i === 0 ? 'available' : 'locked',
+              requiresTutorIds: n.requiresTutorIds || [],
+              videos: n.videos || [],
+              steps: n.steps || []
+            };
+          });
+
+          state.roadmaps.tutor.push(...newTutor);
+          state.roadmaps.dog.push(...newDog);
+          state.currentStage = nextStage;
+
+          updateProgressBadges();
+          renderNodesList();
+          updateNextStageButtonUI();
+          showToast(`¡Etapa ${nextStage} agregada con nuevos desafíos!`, '✨');
+        } else {
+          throw new Error('Sin nodos en respuesta');
+        }
+      } catch (err) {
+        appendLocalFallbackStage(nextStage);
+        state.currentStage = nextStage;
+        updateProgressBadges();
+        renderNodesList();
+        updateNextStageButtonUI();
+        showToast(`Etapa ${nextStage} desbloqueada con mayor nivel de dificultad.`, '🚀');
+      } finally {
+        state.isGeneratingAI = false;
+        btn.disabled = false;
+        btn.classList.remove('opacity-75');
+        if (titleEl.textContent.startsWith('⏳')) {
+          titleEl.textContent = originalText;
+        }
+      }
+    }
+
+    function updateNextStageButtonUI() {
+      const nextStage = state.currentStage + 1;
+      const titleEl = document.getElementById('next-stage-title');
+      if (titleEl) {
+        titleEl.textContent = `✨ Generar Etapa ${nextStage} con IA`;
+      }
+    }
+
+    // Generador progresivo sin repeticiones: escala dificultad, criterios y entornos en cada etapa
+    function appendLocalFallbackStage(stageNum) {
+      const dog = state.profile.dogName || 'tu perro';
+      const prevTutorDone = state.roadmaps.tutor[state.roadmaps.tutor.length - 1]?.status === 'completed';
+      const prevDogDone = state.roadmaps.dog[state.roadmaps.dog.length - 1]?.status === 'completed';
+
+      const UNIQUE_CURRICULUM = [
+        {
+          tutorIcon: '🎙️',
+          tutorTitle: 'Principio de Premack y Tono de Voz Sereno',
+          tutorTags: ['Principio de Premack', 'Tono de Voz', 'Liderazgo Amable'],
+          tutorMediaTitle: 'Usar permisos cotidianos como recompensa natural',
+          tutorMediaBody: 'El Principio de Premack refuerza conductas tranquilas dando acceso a lo que tu perro más desea (salir a olfatear, jugar, saludar), manteniendo siempre un tono calmo sin repetir órdenes.',
+          tutorSteps: [
+            'Identificá 2 permisos diarios que ' + dog + ' desee mucho (abrir puerta, soltar juguete, acercarse a oler).',
+            'Esperá una pausa breve de calma antes de habilitar el permiso, hablando una sola vez en tono suave.',
+            'Si sentís impaciencia, frená 1 minuto para regular tu propio estado emocional.'
+          ],
+          dogIcon: '🚪',
+          dogTitle: 'Puerta Amable y Permiso de Salida',
+          dogTags: ['Principio de Premack', 'Autocontrol', 'Máx. 15 min/día'],
+          dogMediaTitle: 'Esperar tranquilo antes de cruzar el umbral',
+          dogMediaBody: 'Convertimos cada salida en un ejercicio de autocontrol amable usando Castigo Negativo suave (cerrar la puerta despacio si se adelanta, sin retos).',
+          dogSteps: [
+            'Apoyá la mano en el picaporte; si ' + dog + ' se abalanza, soltá el picaporte en silencio.',
+            'Apenas te mire o apoye las 4 patas quietas, abrí la puerta y decí "¡Vamos!" como premio natural.',
+            'Repetí 3 veces cerrando la sesión antes de los 15 minutos activos.'
+          ],
+          adaptiveTip: 'Abrí la puerta solo 5 centímetros al principio y premiá con comida en el suelo antes de abrirla por completo.'
+        },
+        {
+          tutorIcon: '🧭',
+          tutorTitle: 'Liderazgo Amable y Gestión de la Dependencia',
+          tutorTags: ['Liderazgo Amable', 'Dependencia Segura', 'Previsibilidad'],
+          tutorMediaTitle: 'Ser guía confiable en un mundo humano impredecible',
+          tutorMediaBody: 'Tu perro depende de vos para interpretar estímulos urbanos. Ser buen líder no es dominar, sino proteger su espacio, anticipar tensiones y ofrecer salidas claras.',
+          tutorSteps: [
+            'Interponete suavemente con tu cuerpo si alguien intenta tocar a ' + dog + ' sin que él lo busque.',
+            'Mantené rutinas de descanso de calidad (14-16 hs diarias) lejos de zonas de paso.',
+            'Reforzá cada vez que te busque con la mirada ante una duda.'
+          ],
+          dogIcon: '🛡️',
+          dogTitle: 'Referencia Visual Voluntaria ("Check-in")',
+          dogTags: ['Vínculo', 'Capturing', 'Máx. 15 min/día'],
+          dogMediaTitle: 'Elegir mirarte antes de tomar decisiones',
+          dogMediaBody: 'Premiamos mediante Capturing cada mirada espontánea hacia vos en un entorno nuevo.',
+          dogSteps: [
+            'Quedate quieto/a en el patio o vereda tranquila con correa larga sin pedir nada.',
+            'Apenas ' + dog + ' gire la cabeza para mirarte por iniciativa propia, marcá "¡Bien!" y premiá.',
+            'Hacé 5 repeticiones cortas y cerrá con un paseo libre de olfato.'
+          ],
+          adaptiveTip: 'Hacé un leve sonido con la boca (besito suave) solo si lleva más de 30 segundos sin mirar.'
+        },
+        {
+          tutorIcon: '🌊',
+          tutorTitle: 'Señales de Calma en Movimiento y Curvas',
+          tutorTags: ['Turid Rugaas', 'Señales de Calma', 'Paseo sin Tensión'],
+          tutorMediaTitle: 'Caminar en arco para evitar confrontaciones',
+          tutorMediaBody: 'Los perros educados evitan acercarse de frente en línea recta. Aprender a caminar en curva reduce drásticamente el estrés al cruzarse con otros perros o personas.',
+          tutorSteps: [
+            'Al ver un perro o persona de frente en la vereda, abrite en curva suave ampliando la distancia.',
+            'Observá si ' + dog + ' parpadea, gira la cabeza o baja el ritmo: son señales de calma positivas.',
+            'Premiá la caminata fluida junto a vos sin tensar la correa.'
+          ],
+          dogIcon: '↪️',
+          dogTitle: 'Giro en U Alegre y Paseo en Arco',
+          dogTags: ['Correa Floja', 'Umbral Verde', 'Máx. 15 min/día'],
+          dogMediaTitle: 'Cambiar de dirección como un juego divertido',
+          dogMediaBody: 'Practicamos el giro en U amable para salir de situaciones intensas antes de que suba el estrés.',
+          dogSteps: [
+            'Caminá 4 pasos en línea recta, decí "¡Por acá!" con tono alegre y girá 180 grados.',
+            'Cuando ' + dog + ' te acompañe en el giro, entregá un premio de alto valor en movimiento.',
+            'Practicá 4 giros en calle tranquila antes de usarlo cerca de distracciones.'
+          ],
+          adaptiveTip: 'Empezá practicando el giro en U dentro del living o pasillo sin correa.'
+        },
+        {
+          tutorIcon: '✋',
+          tutorTitle: 'Retiro Progresivo del Cebo (Fading Luring)',
+          tutorTags: ['Luring Avanzado', 'Señales Limpias', 'Sin Soborno'],
+          tutorMediaTitle: 'Pasar de la comida en mano a señales gestuales claras',
+          tutorMediaBody: 'Si siempre tenés el premio visible antes de pedir algo, el perro aprende a obedecer solo cuando ve comida. Aprendemos a esconder los premios en el bolsillo.',
+          tutorSteps: [
+            'Guardá todos los premios en la riñonera o bolsillo antes de iniciar la micro-sesión.',
+            'Hacé la señal gestual limpia con la mano vacía y esperá hasta 3 segundos sin repetir.',
+            'Recién cuando cumpla la conducta, llevá la mano al bolsillo y premiá.'
+          ],
+          dogIcon: '🎓',
+          dogTitle: 'Respuesta a Señal Limpia sin Premio Visible',
+          dogTags: ['Generalización', 'Fading Luring', 'Máx. 15 min/día'],
+          dogMediaTitle: 'Responder con entusiasmo con manos vacías',
+          dogMediaBody: 'Consolidamos "Sit" y "Mirame" sin tener comida en la mano durante la señal.',
+          dogSteps: [
+            'Con manos vacías, pedí "Mirame" y premiá desde el bolsillo al lograr contacto visual.',
+            'Pedí "Sit" con gesto limpio y premiá entregando la recompensa en el suelo para liberar.',
+            'Cerrá con 2 minutos de juego interactivo.'
+          ],
+          adaptiveTip: 'Intercalá 1 repetición con Luring sutil y 2 con mano vacía si duda.'
+        },
+        {
+          tutorIcon: '🧩',
+          tutorTitle: 'Enriquecimiento Cognitivo y Resolución de Problemas',
+          tutorTags: ['Cognición Canina', 'Autoconfianza', 'Bienestar'],
+          tutorMediaTitle: 'Fomentar la autonomía y tolerancia a la frustración',
+          tutorMediaBody: 'Resolver pequeños desafíos olfativos y motores aumenta la seguridad emocional de perros inseguros o hiperactivos sin desgaste físico excesivo.',
+          tutorSteps: [
+            'Armá un circuito simple con cajas de cartón abiertas y vasos plásticos boca abajo con premios.',
+            'Dejá que ' + dog + ' explore y vuelque los objetos sin ayudarlo ni darle indicaciones.',
+            'Observá su lenguaje corporal para detectar cuándo ya tuvo suficiente estimulación.'
+          ],
+          dogIcon: '📦',
+          dogTitle: 'Búsqueda en Cajas y Obstáculos Amables',
+          dogTags: ['Olfato Avanzado', 'Confianza', 'Máx. 15 min/día'],
+          dogMediaTitle: 'Explorar texturas y objetos nuevos con premio',
+          dogMediaBody: 'Estimulamos los 5 canales sensoriales (olfato, texturas, sonido suave) en una sesión de 10 minutos.',
+          dogSteps: [
+            'Colocá 3 cajas bajas en el piso con premios escondidos entre papeles arrugados.',
+            'Invitá a ' + dog + ' con "Buscá" y dejalo investigar a su ritmo.',
+            'Retirá las cajas al terminar para mantener el valor del juego.'
+          ],
+          adaptiveTip: 'Dejá los premios bien visibles sobre el borde de las cajas si le dan desconfianza los objetos nuevos.'
+        }
+      ];
+
+      // Escalado progresivo de dificultad según el número de etapa
+      const DIFFICULTY_TIERS = [
+        { level: 'Nivel 2 · Entorno con distracciones leves', extraConstraint: 'Realizá este ejercicio en el patio, balcón o vereda tranquila sumando 3 segundos extra de duración antes de premiar.' },
+        { level: 'Nivel 3 · Generalización en parque tranquilo', extraConstraint: 'Llevá esta dinámica a un espacio abierto con olores y personas a más de 10 metros, manteniendo premio variable.' },
+        { level: 'Nivel 4 · Distracciones medias y fluidez', extraConstraint: 'Practicá con estímulos en movimiento a distancia segura, intercalando pausas de olfato para regular activación.' },
+        { level: 'Nivel 5 · Maestría y autonomía en entornos reales', extraConstraint: 'Combiná dos conductas seguidas (ej. "Mirame" + "Sit" o "Giro en U") antes de entregar la recompensa final.' }
+      ];
+
+      const baseIndex = (stageNum - 2) % UNIQUE_CURRICULUM.length;
+      const cycleNumber = Math.floor((stageNum - 2) / UNIQUE_CURRICULUM.length);
+      const item = UNIQUE_CURRICULUM[baseIndex];
+      const tier = DIFFICULTY_TIERS[Math.min(cycleNumber, DIFFICULTY_TIERS.length - 1)];
+
+      const tId = `t_s${stageNum}_1`;
+      const difficultySuffix = cycleNumber > 0 ? ` (${tier.level})` : '';
+
+      state.roadmaps.tutor.push({
+        id: tId,
+        route: 'tutor',
+        title: `Etapa ${stageNum}: ${item.tutorTitle}${difficultySuffix}`,
+        duration: '10 min',
+        icon: item.tutorIcon,
+        status: prevTutorDone ? 'available' : 'locked',
+        tags: [...item.tutorTags, tier.level],
+        mediaType: 'reading',
+        mediaTitle: item.tutorMediaTitle,
+        mediaBody: item.tutorMediaBody,
+        videos: [{ title: 'Canal aprobado: @dos_adiestramiento', url: 'https://www.youtube.com/@dos_adiestramiento' }],
+        steps: [...item.tutorSteps, tier.extraConstraint],
+        adaptiveTip: item.adaptiveTip
+      });
+
+      state.roadmaps.dog.push({
+        id: `d_s${stageNum}_1`,
+        route: 'dog',
+        title: `Etapa ${stageNum}: ${item.dogTitle}${difficultySuffix}`,
+        duration: '10 min activos (Tope 15m)',
+        icon: item.dogIcon,
+        status: prevDogDone ? 'available' : 'locked',
+        requiresTutorIds: [tId],
+        tags: [...item.dogTags, tier.level],
+        mediaType: 'video',
+        mediaTitle: item.dogMediaTitle,
+        mediaBody: item.dogMediaBody,
+        videos: [{ title: 'Canal aprobado: @dos_adiestramiento', url: 'https://www.youtube.com/@dos_adiestramiento' }],
+        steps: [...item.dogSteps, tier.extraConstraint],
+        adaptiveTip: item.adaptiveTip
+      });
+    }
+
+    // --- FUNCIONALIDAD: SUMAR COMPORTAMIENTO DESEADO ---
+    function renderPresetBehaviors() {
+      const grid = document.getElementById('preset-behaviors-grid');
+      grid.innerHTML = PRESET_BEHAVIORS.map(b => {
+        const isAlreadyAdded = state.addedBehaviors.some(ab => ab.id === b.id);
+        const isSelected = state.selectedPresetBehavior?.id === b.id;
+
+        return `
+          <button type="button" onclick="selectPresetBehavior('${b.id}')"
+            class="min-h-[54px] p-3 rounded-2xl border-2 text-left flex items-center justify-between gap-2.5 transition ${
+              isAlreadyAdded
+                ? 'border-stone-200 bg-stone-100 opacity-60'
+                : isSelected
+                  ? 'border-teal-500 bg-teal-50 shadow-sm'
+                  : 'border-stone-200 bg-white hover:border-teal-300'
+            }">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-10 h-10 rounded-xl bg-teal-100/70 flex items-center justify-center text-xl shrink-0">${b.icon}</span>
+              <div class="min-w-0">
+                <div class="font-display font-extrabold text-sm text-stone-900 truncate">${b.label}</div>
+                <div class="text-[11px] text-stone-500 truncate">${b.desc}</div>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 ${
+              isAlreadyAdded
+                ? 'bg-emerald-100 text-emerald-800'
+                : isSelected
+                  ? 'bg-teal-600 text-white'
+                  : 'bg-stone-100 text-stone-500'
+            }">
+              ${isAlreadyAdded ? 'Agregado' : isSelected ? 'Elegido' : '+'}
+            </span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openBehaviorModal() {
+      state.selectedPresetBehavior = null;
+      state.customBehaviorText = '';
+      document.getElementById('custom-behavior-input').value = '';
+      renderPresetBehaviors();
+      document.getElementById('behavior-modal').classList.remove('hidden');
+    }
+
+    function closeBehaviorModal() {
+      document.getElementById('behavior-modal').classList.add('hidden');
+    }
+
+    function selectPresetBehavior(id) {
+      const found = PRESET_BEHAVIORS.find(b => b.id === id);
+      if (!found) return;
+      if (state.addedBehaviors.some(ab => ab.id === id)) {
+        showToast('Ese objetivo ya está agregado en tu plan.', 'ℹ️');
+        return;
+      }
+      state.selectedPresetBehavior = found;
+      state.customBehaviorText = '';
+      document.getElementById('custom-behavior-input').value = '';
+      renderPresetBehaviors();
+    }
+
+    function handleCustomBehaviorInput(val) {
+      state.customBehaviorText = val.trim();
+      if (state.customBehaviorText.length > 0) {
+        state.selectedPresetBehavior = null;
+        renderPresetBehaviors();
+      }
+    }
+
+    function addDesiredBehaviorToPlan() {
+      const dog = state.profile.dogName || 'tu perro';
+      let item = null;
+
+      if (state.selectedPresetBehavior) {
+        item = { ...state.selectedPresetBehavior };
+      } else if (state.customBehaviorText.length >= 3) {
+        const cleanTitle = state.customBehaviorText.charAt(0).toUpperCase() + state.customBehaviorText.slice(1);
+        item = {
+          id: 'custom_' + Date.now(),
+          label: cleanTitle,
+          icon: '🎯',
+          tutorTitle: `Guía Amable: ${cleanTitle}`,
+          tutorBody: `Descomponemos "${cleanTitle}" en micro-pasos progresivos usando luring y captura de calma, sin frustración ni castigos.`,
+          tutorSteps: [
+            `Dividí "${cleanTitle}" en 3 aproximaciones pequeñas dentro de casa sin distracciones.`,
+            'Premiá cada pequeño avance con comida de alto valor o juego corto.',
+            'Retirá la guía gestual (luring) apenas entienda la intención.'
+          ],
+          dogTitle: `Práctica Progresiva: ${cleanTitle}`,
+          dogBody: `Micro-sesión de 5 minutos para construir "${cleanTitle}" con refuerzo positivo.`,
+          dogSteps: [
+            `Invitá a ${dog} con tono alegre y premiá el primer acercamiento o intento.`,
+            'Repetí 4 veces con pausas de descanso de 15 segundos entre intentos.',
+            'Cerrá la sesión siempre con un éxito fácil (máx. 15 min/día).'
+          ],
+          adaptiveTip: 'Volvé al paso anterior donde lo lograba sin dudar y premiá más seguido.',
+          videos: [
+            { title: 'Canal aprobado: @dos_adiestramiento', url: 'https://www.youtube.com/@dos_adiestramiento' }
+          ]
+        };
+      } else {
+        showToast('Elegí un objetivo de la lista o escribí uno (mín. 3 letras).', '⚠️');
+        return;
+      }
+
+      const tutorNodeId = `t_goal_${item.id}`;
+      const dogNodeId = `d_goal_${item.id}`;
+
+      const prevTutorCompleted = state.roadmaps.tutor[state.roadmaps.tutor.length - 1]?.status === 'completed';
+      const prevDogCompleted = state.roadmaps.dog[state.roadmaps.dog.length - 1]?.status === 'completed';
+
+      state.roadmaps.tutor.push({
+        id: tutorNodeId,
+        route: 'tutor',
+        title: item.tutorTitle,
+        duration: '8 min',
+        icon: item.icon,
+        status: prevTutorCompleted ? 'available' : 'locked',
+        tags: ['Objetivo Extra', 'Refuerzo Positivo', 'Luring'],
+        mediaType: 'reading',
+        mediaTitle: item.label,
+        mediaBody: item.tutorBody,
+        videos: item.videos || [],
+        steps: item.tutorSteps.map(s => s.replaceAll('{dog}', dog)),
+        adaptiveTip: item.adaptiveTip
+      });
+
+      state.roadmaps.dog.push({
+        id: dogNodeId,
+        route: 'dog',
+        title: item.dogTitle,
+        duration: '5 min activos (Tope 15m)',
+        icon: item.icon,
+        status: prevDogCompleted ? 'available' : 'locked',
+        requiresTutorIds: [tutorNodeId],
+        tags: ['Objetivo Extra', 'Máx. 15 min/día', 'Bienestar'],
+        mediaType: 'video',
+        mediaTitle: item.label,
+        mediaBody: item.dogBody,
+        videos: item.videos || [],
+        steps: item.dogSteps.map(s => s.replaceAll('{dog}', dog)),
+        adaptiveTip: item.adaptiveTip
+      });
+
+      state.addedBehaviors.push({ id: item.id, label: item.label, icon: item.icon });
+
+      closeBehaviorModal();
+      renderAddedBehaviorsBar();
+      updateProgressBadges();
+      renderNodesList();
+      showToast(`¡Agregado "${item.label}" a ambas rutas!`, '🎯');
+    }
+
+    function renderAddedBehaviorsBar() {
+      const bar = document.getElementById('added-behaviors-bar');
+      const countBadge = document.getElementById('active-behaviors-count');
+
+      if (state.addedBehaviors.length === 0) {
+        bar.classList.add('hidden');
+        countBadge.textContent = 'Personalizar';
+        return;
+      }
+
+      countBadge.textContent = `${state.addedBehaviors.length} extra`;
+      bar.classList.remove('hidden');
+      bar.innerHTML = state.addedBehaviors.map(b => `
+        <span class="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold bg-teal-50 text-teal-900 border border-teal-200 px-2.5 py-1 rounded-full">
+          <span>${b.icon}</span>
+          <span>${b.label}</span>
+        </span>
+      `).join('');
+    }
+
+    // --- MOTOR DE GENERACIÓN LOCAL (RESPALDO OFFLINE / DEMO INSTANTÁNEO) ---
+    function buildRoadmapsFromProfile() {
+      const p = state.profile;
+      const dog = p.dogName || 'tu perro';
+      const isSeniorOrSensitive = p.dogAge === 'Senior' || p.physicalState === 'Sensible / Articular';
+      const wantsReading = p.wantsReading === 'Sí';
+
+      state.roadmaps.tutor = [
+        {
+          id: 't1',
+          route: 'tutor',
+          title: 'Estructura, Previsibilidad y Cuadrante de Skinner',
+          duration: '8 min',
+          icon: '🧭',
+          status: 'available',
+          tags: ['Cuadrante de Skinner', 'Refuerzo Positivo', 'Liderazgo Amable'],
+          mediaType: wantsReading ? 'reading' : 'video',
+          mediaTitle: 'Cómo aprende tu perro (Cuadrante de Skinner)',
+          mediaBody: 'En DogoLingo operamos exclusivamente con Refuerzo Positivo (sumar algo agradable para que una conducta se repita) y Castigo Negativo suave (retirar brevemente atención o acceso sin enojo). Evitamos castigos físicos o gritos porque generan miedo y bloquean el aprendizaje.',
+          videos: [
+            { title: 'Estructura, previsibilidad y refuerzo positivo', url: 'https://www.youtube.com/watch?v=rYRhnF4-NUg' }
+          ],
+          steps: [
+            'Definí horarios estables de comida, descanso y paseos para bajar la incertidumbre de ' + dog + '.',
+            'Prepará una riñonera o bolsillo con premios blandos pequeños (tamaño lenteja) para premiar en menos de 1 segundo.',
+            'Cuidá tu tono de voz: suave, claro y sereno. Si te frustrás, pausá la sesión 1 minuto.'
+          ],
+          adaptiveTip: 'Empezá practicando el timing vos solo/a: tirá un premio sobre la mesa diciendo "¡Bien!" para coordinar voz y entrega.'
+        },
+        {
+          id: 't2',
+          route: 'tutor',
+          title: 'Señales de Calma (Turid Rugaas) y Capturing',
+          duration: '10 min',
+          icon: '👀',
+          status: 'locked',
+          tags: ['Señales de Calma', 'Capturing', 'Lectura Corporal'],
+          mediaType: 'video',
+          mediaTitle: 'Señales de calma antes de que llegue el estrés',
+          mediaBody: 'Turid Rugaas describió las señales de calma (bostezos, lamerse el hocico, girar la cabeza, parpadear, caminar en curva) que tu perro usa para comunicarse y evitar conflictos. Además aprenderás Capturing: premiar conductas tranquilas que ofrece por iniciativa propia.',
+          videos: [
+            { title: 'Lectura corporal y señales de calma (Turid Rugaas)', url: 'https://www.youtube.com/watch?v=RppFTzWkFOw' },
+            { title: 'Cómo aplicar Capturing en casa', url: 'https://www.youtube.com/watch?v=WP-wtPet_uI' }
+          ],
+          steps: [
+            'Observá a ' + dog + ' 3 minutos hoy en silencio y anotá mentalmente si bosteza, se lame la nariz o gira la mirada.',
+            'Aplicá Capturing: cada vez que se eche tranquilo por sí solo en su manta, acercate despacio y dejá un premio entre sus patas sin excitarlo.',
+            'No lo obligues a saludar personas u otros perros si muestra señales de incomodidad.'
+          ],
+          adaptiveTip: 'Si al acercarte a premiar su calma se levanta excitado, bajá el valor del premio (usá su alimento balanceado habitual).'
+        },
+        {
+          id: 't3',
+          route: 'tutor',
+          title: 'Enriquecimiento Sensorial y Descompresión en Casa',
+          duration: '10 min',
+          icon: '👃',
+          status: 'locked',
+          tags: ['Olfato', 'Gestión Ambiental', 'Bienestar'],
+          mediaType: wantsReading ? 'reading' : 'video',
+          mediaTitle: 'Por qué el olfato cansa más y mejor que correr',
+          mediaBody: 'Detectamos canales sensoriales bajos en casa. 10 minutos de trabajo olfativo equivalen a una caminata larga en desgaste mental sano y reducen drásticamente la ansiedad y los tirones en la calle.',
+          videos: [
+            { title: 'Enriquecimiento sensorial: alfombras olfativas y licky mats', url: 'https://www.youtube.com/watch?v=NAth4ZBEAnE' }
+          ],
+          steps: [
+            'Armá una alfombra olfativa casera enrollando premios dentro de una toalla vieja.',
+            'Ofrecé un licky mat o juguete rellenable antes de momentos del día donde suele estar más inquieto.',
+            'Asegurá un rincón de descanso tranquilo donde nadie lo moleste mientras duerme.'
+          ],
+          adaptiveTip: 'Empezá con la toalla apenas doblada para que encuentre los premios rápido y no se frustre.'
+        },
+        {
+          id: 't4',
+          route: 'tutor',
+          title: 'Luring vs. Capturing sin Frustración',
+          duration: '10 min',
+          icon: '🎯',
+          status: 'locked',
+          tags: ['Luring', 'Capturing', 'Técnica Positiva'],
+          mediaType: 'video',
+          mediaTitle: 'Cómo guiar con premio y retirar la comida a tiempo',
+          mediaBody: 'El Luring consiste en guiar el movimiento del perro usando un premio como imán frente a su nariz. La clave profesional es retirar el premio de la mano tras 3-4 repeticiones para que responda a tu señal visual y no al soborno.',
+          videos: [
+            { title: 'Luring vs. Capturing sin frustración', url: 'https://www.youtube.com/watch?v=kRN9KxcrCes' }
+          ],
+          steps: [
+            'Probá el Luring llevando el premio desde su nariz hacia arriba para invitar un "Sit" natural.',
+            'Al cuarto intento, hacé el mismo gesto con la mano vacía y premiá con la otra mano apenas se siente.',
+            'Mantené cada micro-práctica por debajo de los 3 minutos.'
+          ],
+          adaptiveTip: 'Si no sigue tu mano, acercá el premio un poco más a su nariz y movelo más lento.'
+        },
+        {
+          id: 't5',
+          route: 'tutor',
+          title: 'Gestión de Atención en Entornos de Estrés',
+          duration: '12 min',
+          icon: '🛡️',
+          status: 'locked',
+          tags: ['Umbral Verde', 'Foco', 'Paseo Amable'],
+          mediaType: 'video',
+          mediaTitle: 'Distancia de seguridad y giro en U amable',
+          mediaBody: 'Cuando un perro entra en zona roja (ladra o tira desesperado), su corteza prefrontal se bloquea y no puede aprender. Tu rol como líder amable es darle distancia para mantenerlo en zona verde.',
+          videos: [
+            { title: 'Manejo en entornos de estrés y calma', url: 'https://www.youtube.com/watch?v=ZHE8TGj_2BU' },
+            { title: 'Gestión de atención y foco con distracciones', url: 'https://www.youtube.com/watch?v=2kCQ6aXg9cI' }
+          ],
+          steps: [
+            'Identificá a cuántos metros ' + dog + ' mira un estímulo sin tensar la correa (su umbral verde).',
+            'Practicá el "Giro en U" alegre en casa antes de usarlo en la calle para esquivar estímulos intensos.',
+            'Premiá cada vez que mire una distracción y vuelva a mirarte voluntariamente.'
+          ],
+          adaptiveTip: 'Practicá primero en horarios de muy poco movimiento en la vereda o en el pasillo.'
+        }
+      ];
+
+      state.roadmaps.dog = [
+        {
+          id: 'd1',
+          route: 'dog',
+          title: 'El Plato como Punto de Inflexión',
+          duration: '5 min activos (Tope 15m)',
+          icon: '🥣',
+          status: 'available',
+          requiresTutorIds: [],
+          tags: ['Alimentación', 'Autocontrol', 'Principio de Premack'],
+          mediaType: 'video',
+          mediaTitle: 'Calma antes de liberar la comida',
+          mediaBody: 'Usamos el momento de la comida (Principio de Premack) para construir autocontrol natural sin decir "No".',
+          videos: [
+            { title: 'El plato como punto de inflexión: autocontrol amable', url: 'https://www.youtube.com/watch?v=je3t9HAwOFs' }
+          ],
+          steps: [
+            'Prepará el plato de ' + dog + ' y bajalo despacio hacia el piso.',
+            'Si salta o se abalanza, subí el plato en silencio (Castigo Negativo suave) hasta que apoye las 4 patas quietas.',
+            'Apenas se quede quieto 2 segundos o te mire, bajá el plato y decí "¡Comé!" con tono amable.'
+          ],
+          adaptiveTip: 'Empezá pidiendo solo 1 segundo con las 4 patas en el piso antes de liberar el plato.'
+        },
+        {
+          id: 'd2',
+          route: 'dog',
+          title: 'Descompresión y Olfato Base en Casa',
+          duration: '10 min pasivos (Tope 15m)',
+          icon: '🌿',
+          status: 'locked',
+          requiresTutorIds: ['t2'],
+          tags: ['Olfato', 'Descompresión', 'Bienestar'],
+          mediaType: 'video',
+          mediaTitle: 'Búsqueda olfativa para bajar revoluciones',
+          mediaBody: isSeniorOrSensitive
+            ? 'Actividad de nulo impacto articular ideal para estimular su mente de forma segura.'
+            : 'Canalizamos su energía mental mediante rastreo olfativo tranquilo.',
+          videos: [
+            { title: 'Descompresión y juego de olfato base', url: 'https://www.youtube.com/watch?v=e1bEILT1h2E' }
+          ],
+          steps: [
+            'Esparcí 10-12 trocitos de premio o su ración en un espacio de 2x2 metros en el piso o alfombra.',
+            'Decí "Buscá" con tono suave y dejá que ' + dog + ' use su nariz a su propio ritmo.',
+            'No intervengas ni le señales dónde están: dejalo resolver.'
+          ],
+          adaptiveTip: 'Usá premios con aroma más intenso (pollo hervido o salchicha) y dejalos más visibles al principio.'
+        },
+        {
+          id: 'd3',
+          route: 'dog',
+          title: 'Capturing de Calma Espontánea',
+          duration: '5 min (Tope 15m)',
+          icon: '💤',
+          status: 'locked',
+          requiresTutorIds: ['t2'],
+          tags: ['Capturing', 'Calma', 'Refuerzo Positivo'],
+          mediaType: 'video',
+          mediaTitle: 'Premiar el descanso voluntario',
+          mediaBody: 'Enseñamos a ' + dog + ' que estar relajado en casa tiene recompensa.',
+          videos: [
+            { title: 'Capturing de calma espontánea en casa', url: 'https://www.youtube.com/watch?v=ZHE8TGj_2BU' }
+          ],
+          steps: [
+            'Cuando ' + dog + ' se acueste por iniciativa propia, acercate en calma sin hablarle fuerte.',
+            'Colocá un premio en el piso justo entre sus patas delanteras.',
+            'Repetí 3 o 4 veces a lo largo del día.'
+          ],
+          adaptiveTip: 'Si te sigue apenas te movés, dejá caer el premio al pasar sin detenerte a mirarlo.'
+        },
+        {
+          id: 'd4',
+          route: 'dog',
+          title: 'Luring Básico: "Mirame", "Sit" y Juego',
+          duration: '8 min activos (Tope 15m)',
+          icon: '🎾',
+          status: 'locked',
+          requiresTutorIds: ['t4'],
+          tags: ['Luring', 'Juego como Premio', 'Máx. 15 min/día'],
+          mediaType: 'video',
+          mediaTitle: 'Micro-sesión de conexión y juego estructurado',
+          mediaBody: isSeniorOrSensitive
+            ? 'Pedimos contacto visual y sentado suave sin saltos bruscos, cerrando con mimos o búsqueda.'
+            : 'Combinamos Luring para "Mirame" y "Sit" con 2 minutos de juego de tira y afloja o búsqueda como recompensa.',
+          videos: [
+            { title: 'Luring básico: Mirame, Sit y juego como recompensa', url: 'https://www.youtube.com/shorts/eKS3mjN0f3U' }
+          ],
+          steps: [
+            'Llevá un premio desde su nariz hacia el entrecejo: apenas te mire a los ojos, decí "¡Bien!" y premiá.',
+            'Guiá 3 repeticiones de "Sit" con Luring y luego 2 con mano vacía.',
+            'Cerrá la sesión con un juego amable y guardá el juguete al terminar (nunca superar 15 min activos).'
+          ],
+          adaptiveTip: 'Hacé 2 bloques de 4 minutos separados en el día en lugar de 8 minutos seguidos.'
+        },
+        {
+          id: 'd5',
+          route: 'dog',
+          title: 'Congelados y Premios de Alto Valor',
+          duration: '10 min pasivos (Tope 15m)',
+          icon: '🧊',
+          status: 'locked',
+          requiresTutorIds: ['t3'],
+          tags: ['Gustativa', 'Lamido', 'Relajación'],
+          mediaType: 'video',
+          mediaTitle: 'Enriquecimiento gustativo seguro',
+          mediaBody: 'El lamido libera endorfinas naturales que ayudan a regular el sistema nervioso de tu perro.',
+          videos: [
+            { title: 'Cómo preparar premios de alto valor saludables', url: 'https://www.youtube.com/watch?v=XS4MsXDbGQI' },
+            { title: 'Recetas de congelados y juguetes rellenables seguros', url: 'https://www.youtube.com/watch?v=h7VqP6OuSjw' }
+          ],
+          steps: [
+            'Prepará un juguete rellenable o molde con alimento húmedo, calabaza cocida o yogur natural sin azúcar.',
+            'Dáselo primero sin congelar (o apenas frío) para que entienda cómo sacar el contenido.',
+            'Una vez que lo domine, ofrecelo congelado para prolongar la relajación.'
+          ],
+          adaptiveTip: 'Si abandona el juguete congelado rápido, dejalo descongelar 10 minutos afuera antes de dárselo.'
+        },
+        {
+          id: 'd6',
+          route: 'dog',
+          title: 'Foco con Distracciones Bajas en Exterior',
+          duration: '10 min activos (Tope 15m)',
+          icon: '🐕‍🦺',
+          status: 'locked',
+          requiresTutorIds: ['t4', 't5'],
+          tags: ['Generalización', 'Correa Larga', 'Umbral Verde'],
+          mediaType: 'video',
+          mediaTitle: 'Llevar el contacto visual a un entorno real tranquilo',
+          mediaBody: 'Generalizamos lo aprendido en casa a un exterior tranquilo, respetando siempre su distancia de confort.',
+          videos: [
+            { title: 'Foco con distracciones bajas en exteriores', url: 'https://www.youtube.com/watch?v=pC1aZf15pOE' }
+          ],
+          steps: [
+            'Elegí un horario tranquilo y usá correa cómoda (mínimo 2 metros) sin tensión.',
+            'Pedí 3 "Mirame" premiando con comida de alto valor en tu mano.',
+            'Intercalá pausas para que olfatee libremente el entorno (Principio de Premack).'
+          ],
+          adaptiveTip: 'Si está muy distraído, alejate 5 metros de los estímulos y premiá solo por girar la oreja hacia vos.'
+        }
+      ];
+    }
+
+    // --- PANTALLA 4: RENDERIZADO DEL DOBLE ROADMAP ---
+    function renderRoadmapsScreen() {
+      const p = state.profile;
+      document.getElementById('header-dog-name').textContent = p.dogName;
+      document.getElementById('header-dog-tag').textContent = p.dogAge;
+      document.getElementById('header-daily-time').textContent = `${p.dailyMinutes} min/día`;
+
+      renderAddedBehaviorsBar();
+      updateProgressBadges();
+      updateNextStageButtonUI();
+      switchRouteTab(state.activeRoute);
+    }
+
+    function updateProgressBadges() {
+      const tDone = state.roadmaps.tutor.filter(n => n.status === 'completed').length;
+      const tTotal = state.roadmaps.tutor.length;
+      const dDone = state.roadmaps.dog.filter(n => n.status === 'completed').length;
+      const dTotal = state.roadmaps.dog.length;
+
+      document.getElementById('tutor-progress-badge').textContent = `${tDone}/${tTotal}`;
+      document.getElementById('dog-progress-badge').textContent = `${dDone}/${dTotal}`;
+    }
+
+    function switchRouteTab(route) {
+      state.activeRoute = route;
+      const tabTutor = document.getElementById('tab-route-tutor');
+      const tabDog = document.getElementById('tab-route-dog');
+      const ctxIcon = document.getElementById('route-context-icon');
+      const ctxText = document.getElementById('route-context-text');
+
+      if (route === 'tutor') {
+        tabTutor.className = 'min-h-[48px] rounded-2xl border-2 border-emerald-500 bg-emerald-50 px-3 py-2 flex items-center justify-between transition';
+        tabDog.className = 'min-h-[48px] rounded-2xl border-2 border-stone-200 bg-stone-50 px-3 py-2 flex items-center justify-between transition';
+        ctxIcon.textContent = '🎓';
+        ctxText.textContent = 'Tu capacitación directa: cada lección que completás habilita ejercicios más avanzados para ' + state.profile.dogName + '.';
+      } else {
+        tabDog.className = 'min-h-[48px] rounded-2xl border-2 border-amber-500 bg-amber-50 px-3 py-2 flex items-center justify-between transition';
+        tabTutor.className = 'min-h-[48px] rounded-2xl border-2 border-stone-200 bg-stone-50 px-3 py-2 flex items-center justify-between transition';
+        ctxIcon.textContent = '🐾';
+        ctxText.textContent = 'Práctica y entorno de ' + state.profile.dogName + ': máximo 15 min activos por día. Algunos nodos requieren capacitación previa tuya.';
+      }
+
+      renderNodesList();
+    }
+
+    function checkCrossDependency(node) {
+      if (!node.requiresTutorIds || node.requiresTutorIds.length === 0) return { blocked: false, missingTitles: [] };
+      const missing = node.requiresTutorIds
+        .map(tid => state.roadmaps.tutor.find(t => t.id === tid))
+        .filter(t => t && t.status !== 'completed')
+        .map(t => t.title);
+      return {
+        blocked: missing.length > 0,
+        missingTitles: missing
+      };
+    }
+
+    function renderNodesList() {
+      const container = document.getElementById('nodes-container');
+      const nodes = state.roadmaps[state.activeRoute];
+      const isTutor = state.activeRoute === 'tutor';
+
+      container.innerHTML = nodes.map((node, index) => {
+        const zigzagClass = `zigzag-${index % 6}`;
+        const crossDep = isTutor ? { blocked: false, missingTitles: [] } : checkCrossDependency(node);
+        const isLockedBySequence = node.status === 'locked';
+        const isEffectivelyLocked = isLockedBySequence || crossDep.blocked;
+
+        let circleClasses = '';
+        let badgeHtml = '';
+
+        if (node.status === 'completed') {
+          circleClasses = isTutor
+            ? 'bg-emerald-500 text-white shadow-[0_6px_0_0_#15803d]'
+            : 'bg-amber-500 text-white shadow-[0_6px_0_0_#b45309]';
+          badgeHtml = `<span class="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-white text-emerald-600 font-black text-sm flex items-center justify-center shadow border border-stone-200">✓</span>`;
+        } else if (node.status === 'review') {
+          circleClasses = 'bg-amber-400 text-amber-950 shadow-[0_6px_0_0_#b45309] node-active-amber';
+          badgeHtml = `<span class="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-stone-900 text-amber-300 font-extrabold text-[10px] shadow">Repaso IA</span>`;
+        } else if (!isEffectivelyLocked) {
+          circleClasses = isTutor
+            ? 'bg-emerald-500 text-white node-active-green'
+            : 'bg-amber-500 text-white node-active-amber';
+          badgeHtml = `<span class="absolute -top-2.5 px-2.5 py-0.5 rounded-full bg-stone-900 text-white font-extrabold text-[10px] uppercase tracking-wider shadow">Empezar</span>`;
+        } else {
+          circleClasses = 'bg-stone-200 text-stone-400 shadow-[0_6px_0_0_#d6d3d1]';
+          badgeHtml = `<span class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-stone-700 text-white text-xs flex items-center justify-center shadow">🔒</span>`;
+        }
+
+        const connector = index < nodes.length - 1
+          ? `<div class="w-1.5 h-6 rounded-full ${node.status === 'completed' ? (isTutor ? 'bg-emerald-400' : 'bg-amber-400') : 'bg-stone-200'} mt-2"></div>`
+          : '';
+
+        return `
+          <div class="flex flex-col items-center ${zigzagClass} transition-transform">
+            <button type="button" onclick="handleNodeClick('${node.id}')"
+              class="relative w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold active:translate-y-1 transition ${circleClasses}">
+              <span>${node.icon}</span>
+              ${badgeHtml}
+            </button>
+
+            <div class="mt-2.5 text-center max-w-[230px]">
+              <div class="font-display font-extrabold text-xs sm:text-sm leading-tight ${isEffectivelyLocked ? 'text-stone-400' : 'text-stone-800'}">
+                ${node.title}
+              </div>
+              <div class="text-[11px] font-semibold mt-0.5 ${isEffectivelyLocked ? 'text-stone-400' : 'text-stone-500'}">
+                ${node.duration}
+              </div>
+              ${crossDep.blocked && !isLockedBySequence ? `
+                <div class="mt-1 inline-block text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-lg border border-amber-300">
+                  Requiere en Ruta Tutor: "${crossDep.missingTitles[0]}"
+                </div>
+              ` : ''}
+            </div>
+            ${connector}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleNodeClick(nodeId) {
+      const node = state.roadmaps[state.activeRoute].find(n => n.id === nodeId);
+      if (!node) return;
+
+      const crossDep = state.activeRoute === 'dog' ? checkCrossDependency(node) : { blocked: false, missingTitles: [] };
+
+      if (node.status === 'locked') {
+        showToast('Completá primero el nodo anterior de esta ruta para desbloquearlo.', '🔒');
+        return;
+      }
+
+      if (crossDep.blocked) {
+        showToast(`Primero completá "${crossDep.missingTitles[0]}" en la Ruta del Tutor.`, '🧠');
+        return;
+      }
+
+      openLessonModal(node);
+    }
+
+    // --- MODAL DE LECCIÓN & FEEDBACK ADAPTATIVO ---
+    function openLessonModal(node) {
+      state.activeNodeId = node.id;
+      const isTutor = node.route === 'tutor';
+
+      const pill = document.getElementById('modal-route-pill');
+      pill.textContent = isTutor ? 'Ruta del Tutor' : 'Ruta del Can';
+      pill.className = isTutor
+        ? 'text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800'
+        : 'text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-100 text-amber-900';
+
+      document.getElementById('modal-duration-pill').textContent = `⏱️ ${node.duration}`;
+      document.getElementById('modal-title').textContent = node.title;
+
+      document.getElementById('modal-tags').innerHTML = (node.tags || []).map(t => `
+        <span class="text-[10px] font-bold bg-stone-100 text-stone-700 px-2 py-0.5 rounded-md border border-stone-200">${t}</span>
+      `).join('');
+
+      const adaptiveAlert = document.getElementById('modal-adaptive-alert');
+      if (node.status === 'review' || node.isAdaptiveMode) {
+        adaptiveAlert.classList.remove('hidden');
+        document.getElementById('modal-adaptive-text').textContent = node.adaptiveTip || 'Bajamos el criterio de dificultad y reducimos distracciones.';
+      } else {
+        adaptiveAlert.classList.add('hidden');
+      }
+
+      // Bloque Multimedia / Lectura
+      const mediaBox = document.getElementById('modal-media-box');
+      if (node.mediaType === 'video') {
+        mediaBox.className = 'rounded-2xl overflow-hidden border-2 border-stone-800 bg-stone-900 text-white p-4 space-y-2.5';
+        mediaBox.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider bg-red-600 text-white px-2 py-0.5 rounded">▶ Guía Práctica</span>
+            <span class="text-[11px] text-stone-400">Enfoque amable</span>
+          </div>
+          <div class="font-display font-bold text-sm text-white">${node.mediaTitle}</div>
+          <p class="text-xs text-stone-300 leading-relaxed">${node.mediaBody}</p>
+        `;
+      } else {
+        mediaBox.className = 'rounded-2xl overflow-hidden border-2 border-emerald-200 bg-emerald-50/70 text-stone-900 p-4 space-y-2';
+        mediaBox.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">📖 Micro-Lectura</span>
+            <span class="text-[11px] text-emerald-800 font-semibold">Lectura rápida (2 min)</span>
+          </div>
+          <div class="font-display font-extrabold text-sm text-emerald-950">${node.mediaTitle}</div>
+          <p class="text-xs text-stone-700 leading-relaxed">${node.mediaBody}</p>
+        `;
+      }
+
+      // Videos Curados / Recomendados por IA
+      const resourcesBox = document.getElementById('modal-ai-resources');
+      const videos = node.videos && node.videos.length > 0
+        ? node.videos
+        : [{ title: 'Canal aprobado: @dos_adiestramiento', url: 'https://www.youtube.com/@dos_adiestramiento' }];
+
+      resourcesBox.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
+            <span>🎬</span>
+            <span>Videos recomendados</span>
+          </span>
+          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Revisado por humanos</span>
+        </div>
+        <div class="space-y-2">
+          ${videos.map(v => `
+            <a href="${v.url}" target="_blank" rel="noopener noreferrer"
+              class="min-h-[48px] w-full bg-white hover:bg-stone-100 border-2 border-stone-200 rounded-xl px-3 py-2 flex items-center justify-between gap-2.5 transition active:scale-[0.99]">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-black text-xs shrink-0">▶</span>
+                <span class="text-xs font-bold text-stone-800 leading-snug line-clamp-2">${v.title}</span>
+              </div>
+              <span class="text-xs font-extrabold text-red-600 shrink-0">Ver ↗</span>
+            </a>
+          `).join('')}
+        </div>
+      `;
+
+      document.getElementById('modal-steps').innerHTML = (node.steps || []).map((step, i) => `
+        <li class="flex items-start gap-3 bg-stone-50 p-3 rounded-2xl border border-stone-200">
+          <span class="w-6 h-6 rounded-full ${isTutor ? 'bg-emerald-500' : 'bg-amber-500'} text-white font-display font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+            ${i + 1}
+          </span>
+          <span class="text-xs sm:text-sm leading-relaxed text-stone-800">${step}</span>
+        </li>
+      `).join('');
+
+      document.getElementById('lesson-modal').classList.remove('hidden');
+    }
+
+    function closeLessonModal() {
+      document.getElementById('lesson-modal').classList.add('hidden');
+      state.activeNodeId = null;
+    }
+
+    async function submitLessonFeedback(result) {
+      const list = state.roadmaps[state.activeRoute];
+      const idx = list.findIndex(n => n.id === state.activeNodeId);
+      if (idx === -1) return;
+
+      const node = list[idx];
+
+      if (result === 'success') {
+        node.status = 'completed';
+        node.isAdaptiveMode = false;
+        if (idx + 1 < list.length && list[idx + 1].status === 'locked') {
+          list[idx + 1].status = 'available';
+        }
+        closeLessonModal();
+        updateProgressBadges();
+        renderNodesList();
+        showToast('¡Excelente! Lección completada y siguiente paso desbloqueado.', '🎉');
+      } else if (result === 'difficulty') {
+        node.status = 'review';
+        node.isAdaptiveMode = true;
+        closeLessonModal();
+        renderNodesList();
+        showToast('IA calculando una regresión suave para este paso...', '⚡');
+
+        try {
+          const adapted = await callGeminiPlanner({
+            action: 'ADAPT_DIFFICULTY',
+            stageNumber: state.currentStage,
+            profile: state.profile,
+            failedNode: { title: node.title, route: node.route, steps: node.steps }
+          });
+          const adaptedList = adapted?.[node.route];
+          if (Array.isArray(adaptedList) && adaptedList[0]) {
+            node.adaptiveTip = adaptedList[0].adaptiveTip || adaptedList[0].mediaBody || node.adaptiveTip;
+            if (Array.isArray(adaptedList[0].steps) && adaptedList[0].steps.length > 0) {
+              node.steps = adaptedList[0].steps;
+            }
+          }
+          showToast('¡Listo! Tocá el nodo en repaso para ver el ajuste adaptado por IA.', '✨');
+        } catch (err) {
+          showToast('Modo repaso activado con criterio reducido. Tocá el nodo para verlo.', '⚡');
+        }
+      } else {
+        node.status = 'review';
+        node.isAdaptiveMode = true;
+        closeLessonModal();
+        renderNodesList();
+        showToast('Sin apuro: marcamos el paso para repetir con un enfoque más suave.', '🔄');
+      }
+    }
+  </script>
+</body>
+</html>
