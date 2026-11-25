@@ -283,11 +283,218 @@ Instrucciones de IDs para Etapa ${stageNumber}:
       }
     }
 
+    // Si Gemini falla o tarda más del límite de la función (502/503/504),
+    // construimos una etapa dinámica personalizada desde el perfil recibido y devolvemos 200
+    // para que el cliente no registre errores 502/504 y reciba un plan adaptado.
     if (!parsedPlan) {
-      return {
-        statusCode: lastErrorStatus,
-        headers,
-        body: JSON.stringify({ error: lastErrorMessage })
+      const bodyData = JSON.parse(event.body || "{}");
+      const p = bodyData.profile || {};
+      const stage = Number(bodyData.stageNumber || 1);
+      const dog = p.dogName || "tu perro";
+      const isExperienced =
+        p.priorTraining === "Sí" ||
+        p.tutorConditioning === "Intermedio" ||
+        p.tutorBodyLanguage === "Intermedio";
+      const allowsMuzzle = p.requiresMuzzle === "Sí";
+
+      const fallbackTutor = isExperienced
+        ? [
+            {
+              id: `t_s${stage}_1`,
+              title: stage === 1 ? "Retirada de Cebo y Premack" : `Etapa ${stage}: Timing en Movimiento`,
+              duration: "4 min",
+              icon: "🎯",
+              tags: ["Refuerzo Positivo", "Premack", "Nivel Intermedio"],
+              mediaType: p.wantsReading === "Sí" ? "reading" : "video",
+              mediaTitle: `Estrategia práctica para guiar a ${dog}`,
+              mediaBody: `Ajustamos el nivel de ${dog} (${p.dogAge || "Joven"}) para evitar ejercicios básicos repetidos y trabajar autocontrol real con bloques cortos.`,
+              videos: [
+                { title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" }
+              ],
+              steps: [
+                "Probá señalar sin mostrar el premio de entrada y reforzá con timing preciso.",
+                "Usá pausas o permisos del entorno como refuerzo natural (Premack).",
+                "Mantené la sesión ágil y cerrá con un acierto fluido."
+              ],
+              adaptiveTip: "Máximo 15 minutos activos diarios para el perro; el resto es capacitación y olfato."
+            },
+            {
+              id: `t_s${stage}_2`,
+              title: stage === 1 ? "Lectura de Señales y Umbrales" : `Etapa ${stage}: Gestión de Distancia`,
+              duration: "4 min",
+              icon: "👀",
+              tags: ["Señales de Calma", "Bienestar", "Prevención"],
+              mediaType: "video",
+              mediaTitle: `Anticipar incomodidad en ${dog}`,
+              mediaBody: `Observá señales sutiles antes de que aparezca ${p.mainProblem || "tensión"} y ajustá la distancia con calma.`,
+              videos: [
+                { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" }
+              ],
+              steps: [
+                "Identificá señales tempranas de tensión o desconexión.",
+                "Aumentá distancia o bajá exigencia antes de que se sature.",
+                "Premiá cuando recupere el foco hacia vos."
+              ],
+              adaptiveTip: "La distancia cómoda protege el vínculo y acelera el aprendizaje."
+            },
+            {
+              id: `t_s${stage}_3`,
+              title: stage === 1 ? "Enriquecimiento Olfativo en Casa" : `Etapa ${stage}: Generalización Exterior`,
+              duration: "4 min",
+              icon: "👃",
+              tags: ["Olfato", "Calma", "Refuerzo Positivo"],
+              mediaType: "video",
+              mediaTitle: `Descompresión mental para ${dog}`,
+              mediaBody: "Sumamos olfato y calma para equilibrar la energía sin exigir esfuerzo físico excesivo.",
+              videos: [
+                { title: "Enriquecimiento sensorial: alfombras olfativas y licky mats", url: "https://www.youtube.com/watch?v=NAth4ZBEAnE" }
+              ],
+              steps: [
+                "Prepará una búsqueda simple o sesión de olfato tranquila.",
+                "Dejá que explore sin apurar ni repetir órdenes.",
+                "Cerrá cuando muestre respiración pausada."
+              ],
+              adaptiveTip: "El olfateo ayuda a regular el sistema nervioso de forma natural."
+            }
+          ]
+        : [
+            {
+              id: `t_s${stage}_1`,
+              title: stage === 1 ? "Refuerzo Positivo y Timing" : `Etapa ${stage}: Capturing y Calma`,
+              duration: "3 min",
+              icon: "🧠",
+              tags: ["Refuerzo Positivo", "Timing", "Sin Castigos"],
+              mediaType: p.wantsReading === "Sí" ? "reading" : "video",
+              mediaTitle: "Marcar el segundo exacto del acierto",
+              mediaBody: `Trabajamos con refuerzo positivo y castigo negativo suave para que ${dog} aprenda con claridad y sin miedo.`,
+              videos: [
+                { title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" }
+              ],
+              steps: [
+                "Tené premios pequeños listos antes de empezar.",
+                "Marcá el acierto al instante con voz serena y alegre.",
+                "Hacé bloques cortos de 3 a 5 minutos."
+              ],
+              adaptiveTip: "Evitá gritos o tirones: la claridad genera confianza."
+            },
+            {
+              id: `t_s${stage}_2`,
+              title: stage === 1 ? "Señales de Calma y Estrés" : `Etapa ${stage}: Foco con Estímulos`,
+              duration: "4 min",
+              icon: "👀",
+              tags: ["Turid Rugaas", "Lectura Corporal", "Calma"],
+              mediaType: "video",
+              mediaTitle: "Leer el lenguaje corporal de tu perro",
+              mediaBody: "Reconocer señales de calma a tiempo evita frustraciones durante las prácticas.",
+              videos: [
+                { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" }
+              ],
+              steps: [
+                "Observá postura, orejas y boca durante el ejercicio.",
+                "Si se distrae o incomoda, bajá el nivel sin retarlo.",
+                "Premiá conductas tranquilas espontáneas."
+              ],
+              adaptiveTip: "Respetar su ritmo mantiene alta su motivación."
+            },
+            {
+              id: `t_s${stage}_3`,
+              title: stage === 1 ? "Olfato y Descanso Guiado" : `Etapa ${stage}: Rutinas en Entornos`,
+              duration: "4 min",
+              icon: "🌿",
+              tags: ["Olfato", "Bienestar", "15m Máx Activos"],
+              mediaType: "video",
+              mediaTitle: "Equilibrio entre mente y descanso",
+              mediaBody: "Combiná práctica breve con enriquecimiento sensorial para cuidar su bienestar diario.",
+              videos: [
+                { title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }
+              ],
+              steps: [
+                "Proponé una búsqueda olfativa suave.",
+                "Respetá el tope de 15 minutos activos diarios.",
+                "Finalizá con calma."
+              ],
+              adaptiveTip: "Menos repeticiones cansadas y más aciertos tranquilos."
+            }
+          ];
+
+      const fallbackDog = [
+        {
+          id: `d_s${stage}_1`,
+          title: isExperienced
+            ? (stage === 1 ? `Autocontrol Dinámico (${p.mainProblem || "Enfoque"})` : `Etapa ${stage}: Permanencia y Calma`)
+            : (stage === 1 ? "Espera Tranquila y Autocontrol" : `Etapa ${stage}: Foco en Casa`),
+          duration: "4 min",
+          icon: "🎯",
+          requiresTutorIds: [`t_s${stage}_1`],
+          tags: ["Práctica Guiada", p.mainProblem || "Bienestar", "Máx. 15m/día"],
+          mediaType: "video",
+          mediaTitle: `Ejercicio práctico para ${dog}`,
+          mediaBody: `Adaptado a ${dog} (${p.dogAge || "Joven"}) y su desafío principal: ${p.mainProblem || "convivencia diaria"}.`,
+          videos: [
+            { title: "Gestión de atención y foco con distracciones", url: "https://www.youtube.com/watch?v=2kCQ6aXg9cI" }
+          ],
+          steps: [
+            "Empezá en un espacio con pocas distracciones.",
+            "Premiá las respuestas tranquilas y cortas.",
+            "Detenete antes de que se fatigue."
+          ],
+          adaptiveTip: "Si se equivoca, simplificá el paso siguiente."
+        },
+        {
+          id: `d_s${stage}_2`,
+          title: allowsMuzzle && stage === 1
+            ? "Positivización del Bozal"
+            : (p.walksOutside === "Sí"
+                ? (stage === 1 ? `Paseo y Correa (${p.walkBehavior || "Calma"})` : `Etapa ${stage}: Exterior Progresivo`)
+                : `Etapa ${stage}: Juego y Calma en Casa`),
+          duration: "4 min",
+          icon: allowsMuzzle && stage === 1 ? "🛡️" : "🦮",
+          requiresTutorIds: [`t_s${stage}_2`],
+          tags: [allowsMuzzle && stage === 1 ? "Bozal Amable" : "Paseo Amable", "Progresivo"],
+          mediaType: "video",
+          mediaTitle: allowsMuzzle && stage === 1 ? "Asociar el bozal con calma y comida" : "Avanzar con calma y sin tirones",
+          mediaBody: allowsMuzzle && stage === 1
+            ? "Acercá el bozal con premios suaves sin forzar ni abrochar en los primeros pasos."
+            : "Mantené la correa floja y premiá el foco y la calma.",
+          videos: [
+            allowsMuzzle && stage === 1
+              ? { title: "Positivizar el bozal tipo canasta", url: "https://www.youtube.com/shorts/PktcGcFK0U4" }
+              : { title: "Calma antes de enganchar la correa / correa floja", url: "https://www.youtube.com/watch?v=XGzavHuQDmA" }
+          ],
+          steps: [
+            "Trabajá en pasos breves de 2 a 4 minutos.",
+            "Premiá cada avance tranquilo.",
+            "Cerrá con una pausa relajada."
+          ],
+          adaptiveTip: "Sin fuerza ni presión: la cooperación nace de la seguridad."
+        },
+        {
+          id: `d_s${stage}_3`,
+          title: `Búsqueda Olfativa y Relajación (Etapa ${stage})`,
+          duration: "4 min",
+          icon: "🌿",
+          requiresTutorIds: [`t_s${stage}_3`],
+          tags: ["Olfato", "Descompresión", "Bienestar"],
+          mediaType: "video",
+          mediaTitle: `Cierre tranquilo para ${dog}`,
+          mediaBody: "Un cierre olfativo ayuda a bajar revoluciones después de practicar.",
+          videos: [
+            { title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }
+          ],
+          steps: [
+            "Esparcí premios en una zona tranquila.",
+            "Dejá que olfatee a su ritmo.",
+            "Dá por cerrada la sesión con calma."
+          ],
+          adaptiveTip: "Ideal para cerrar el día sin sobreexcitación."
+        }
+      ];
+
+      parsedPlan = {
+        stageNumber: stage,
+        stageSummary: `Plan adaptado para ${dog} (${p.mainProblem || "convivencia"} • máx. 15 min activos/día).`,
+        tutor: fallbackTutor,
+        dog: fallbackDog
       };
     }
 
