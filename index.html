@@ -6,6 +6,8 @@
   <title>DogoLingo — Educación Amable</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS SDK v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Google Fonts: Nunito & Inter para legibilidad cálida estilo app educativa -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -751,9 +753,25 @@
   <script>
     const AI_ENDPOINT = '/.netlify/functions/gemini-plan';
 
+    // =========================================================
+    // CONFIGURACIÓN DE SUPABASE (Pegá acá tus 2 credenciales)
+    // =========================================================
+    const SUPABASE_URL = 'PEGA_AQUI_TU_PROJECT_URL';
+    const SUPABASE_ANON_KEY = 'PEGA_AQUI_TU_ANON_PUBLIC_KEY';
+
+    const hasValidSupabaseConfig =
+      SUPABASE_URL.startsWith('https://') &&
+      !SUPABASE_URL.includes('PEGA_AQUI') &&
+      SUPABASE_ANON_KEY.length > 20;
+
+    const supabaseClient = hasValidSupabaseConfig
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
     // Estado global de la aplicación
     const state = {
       isDemo: false,
+      user: null,
       authMode: 'login',
       currentStep: 1,
       currentStage: 1,
@@ -947,73 +965,208 @@
     ];
 
     // --- INICIALIZACIÓN ---
-    window.onload = function () {
+    window.onload = async function () {
       renderSensoryInputs();
       setupChipListeners();
       renderPresetBehaviors();
+
+      // Si hay una sesión real activa en Supabase, restaurar el plan guardado
+      if (supabaseClient) {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            state.user = session.user;
+            state.isDemo = false;
+            updateDemoBanner();
+            const loaded = await loadPlanFromSupabase(session.user.id);
+            if (loaded) {
+              renderRoadmapsScreen();
+              showScreen('screen-roadmaps');
+              showToast(`¡Bienvenido de nuevo! Plan de ${state.profile.dogName} cargado.`, '☁️');
+            } else {
+              state.currentStep = 1;
+              updateOnboardingUI();
+              showScreen('screen-onboarding');
+            }
+          }
+        } catch (err) {
+          console.warn('Error verificando sesión Supabase:', err.message);
+        }
+      }
     };
 
-    // --- UTILIDADES UI ---
-    function showScreen(screenId) {
-      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(screenId).classList.remove('hidden');
+    // --- PERSISTENCIA EN SUPABASE (SOLO CUENTA REAL) ---
+    async function savePlanToSupabase() {
+      if (state.isDemo || !supabaseClient || !state.user) return;
+      try {
+        const { error } = await supabaseClient
+          .from('user_plans')
+          .upsert({
+            user_id: state.user.id,
+            profile: state.profile,
+            roadmaps: state.roadmaps,
+            added_behaviors: state.addedBehaviors,
+            current_stage: state.currentStage,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id' });
+
+        if (error) {
+          console.error('Error guardando en Supabase:', error.message);
+        }
+      } catch (err) {
+        console.error('Excepción guardando en Supabase:', err.message);
+      }
     }
 
-    let toastTimeout;
-    function showToast(text, icon = '💡') {
+    async function loadPlanFromSupabase(userId) {
+      if (!supabaseClient || !userId) return false;
+      try {
+        const { data, error } = await supabaseClient
+          .from('user_plans')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (error || !data || !data.roadmaps || !Array.isArray(data.roadmaps.tutor) || data.roadmaps.tutor.length === 0) {
+          return false;
+        }
+
+        state.profile = { ...state.profile, ...(data.profile || {}) };
+        state.roadmaps = data.roadmaps;
+        state.addedBehaviors = Array.isArray(data.added_behaviors) ? data.added_behaviors : [];
+        state.currentStage = data.current_stage || 1;
+        return true;
+      } catch (err) {
+        console.error('Error leyendo plan de Supabase:', err.message);
+        return false;
+      }
+    }
+
+    // --- UTILIDADES UI ---
+    let toastTimer = null;
+    function showToast(message, icon = '💡') {
       const box = document.getElementById('toast-box');
-      document.getElementById('toast-text').textContent = text;
-      document.getElementById('toast-icon').textContent = icon;
+      const textEl = document.getElementById('toast-text');
+      const iconEl = document.getElementById('toast-icon');
+      if (!box || !textEl || !iconEl) return;
+
+      textEl.textContent = message;
+      iconEl.textContent = icon;
       box.classList.remove('opacity-0', '-translate-y-4');
       box.classList.add('opacity-100', 'translate-y-0');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        box.classList.add('opacity-0', '-translate-y-4');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
         box.classList.remove('opacity-100', 'translate-y-0');
+        box.classList.add('opacity-0', '-translate-y-4');
       }, 3600);
+    }
+
+    function showScreen(screenId) {
+      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== screenId);
+      });
     }
 
     function updateDemoBanner() {
       const banner = document.getElementById('demo-banner');
-      if (state.isDemo) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-      }
+      if (banner) banner.classList.toggle('hidden', !state.isDemo);
     }
 
-    // --- PANTALLA 1: AUTH & MODO DEMO ---
     function setAuthTab(mode) {
       state.authMode = mode;
       const tabLogin = document.getElementById('tab-login');
-      const tabReg = document.getElementById('tab-register');
-      const btn = document.getElementById('auth-submit-btn');
+      const tabRegister = document.getElementById('tab-register');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      if (!tabLogin || !tabRegister || !submitBtn) return;
 
       if (mode === 'login') {
         tabLogin.className = 'min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition';
-        tabReg.className = 'min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition';
-        btn.textContent = 'Entrar y guardar mi plan';
+        tabRegister.className = 'min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition';
+        submitBtn.textContent = 'Entrar y guardar mi plan';
       } else {
-        tabReg.className = 'min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition';
+        tabRegister.className = 'min-h-[44px] rounded-xl font-bold text-sm bg-white text-stone-900 shadow-sm transition';
         tabLogin.className = 'min-h-[44px] rounded-xl font-bold text-sm text-stone-500 hover:text-stone-800 transition';
-        btn.textContent = 'Crear cuenta y empezar';
+        submitBtn.textContent = 'Crear cuenta y guardar mi plan';
       }
     }
 
-    function handleAuthSubmit(e) {
+    async function handleAuthSubmit(e) {
       e.preventDefault();
-      state.isDemo = false;
-      updateDemoBanner();
-      state.currentStep = 1;
-      updateOnboardingUI();
-      showScreen('screen-onboarding');
-      showToast('Sesión iniciada. Armemos el perfil de tu perro.', '✅');
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-pass').value;
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const originalBtnText = submitBtn.textContent;
+
+      if (!supabaseClient) {
+        state.isDemo = false;
+        updateDemoBanner();
+        state.currentStep = 1;
+        updateOnboardingUI();
+        showScreen('screen-onboarding');
+        showToast('Falta pegar SUPABASE_URL y ANON_KEY en index.html (modo sesión temporal).', '⚠️');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = state.authMode === 'login' ? 'Iniciando sesión...' : 'Creando cuenta...';
+
+      try {
+        if (state.authMode === 'register') {
+          const { data, error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+
+          state.user = data.user;
+          state.isDemo = false;
+          updateDemoBanner();
+
+          // Si venía probando en demo con un plan ya armado, guardarlo directo en su nueva cuenta
+          if (state.roadmaps.tutor.length > 0 && state.profile.dogName) {
+            await savePlanToSupabase();
+            renderRoadmapsScreen();
+            showScreen('screen-roadmaps');
+            showToast(`¡Cuenta creada! Guardamos el plan de ${state.profile.dogName} en la nube.`, '☁️');
+          } else {
+            state.currentStep = 1;
+            updateOnboardingUI();
+            showScreen('screen-onboarding');
+            showToast('¡Cuenta creada! Armemos el perfil de tu perro.', '✅');
+          }
+        } else {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          state.user = data.user;
+          state.isDemo = false;
+          updateDemoBanner();
+
+          const hasSavedPlan = await loadPlanFromSupabase(data.user.id);
+          if (hasSavedPlan) {
+            renderRoadmapsScreen();
+            showScreen('screen-roadmaps');
+            showToast(`¡Hola de nuevo! Recuperamos el plan de ${state.profile.dogName}.`, '☁️');
+          } else {
+            state.currentStep = 1;
+            updateOnboardingUI();
+            showScreen('screen-onboarding');
+            showToast('Sesión iniciada. Completá el diagnóstico inicial.', '✅');
+          }
+        }
+      } catch (err) {
+        const msg = err.message === 'Invalid login credentials'
+          ? 'Email o contraseña incorrectos (o todavía no creaste la cuenta).'
+          : err.message;
+        showToast(msg, '❌');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
     }
 
     function startDemoFromScratch() {
       state.isDemo = true;
+      state.user = null;
       updateDemoBanner();
       state.profile.dogName = '';
       document.getElementById('dog-name').value = '';
@@ -1025,6 +1178,7 @@
 
     function startDemoPreloaded() {
       state.isDemo = true;
+      state.user = null;
       updateDemoBanner();
       state.currentStage = 1;
       state.profile = {
@@ -1062,11 +1216,15 @@
       updateDemoBanner();
       setAuthTab('register');
       showScreen('screen-auth');
-      showToast('Creá tu cuenta para guardar tu progreso en la nube.', '☁️');
+      showToast('Creá tu cuenta gratuita para guardar este progreso en la nube.', '☁️');
     }
 
-    function resetToHome() {
+    async function resetToHome() {
+      if (supabaseClient && state.user && !state.isDemo) {
+        await supabaseClient.auth.signOut();
+      }
       state.isDemo = false;
+      state.user = null;
       updateDemoBanner();
       showScreen('screen-auth');
     }
@@ -1279,6 +1437,7 @@
           const normalized = normalizeStageNodes(aiPlan, true);
           state.roadmaps.tutor = normalized.tutor;
           state.roadmaps.dog = normalized.dog;
+          await savePlanToSupabase();
           renderRoadmapsScreen();
           showScreen('screen-roadmaps');
           showToast(`¡Plan personalizado con IA para ${state.profile.dogName} listo!`, '🤖');
@@ -1288,6 +1447,7 @@
       } catch (err) {
         // Respaldo local automático si se abre el HTML directo sin servidor Netlify
         buildRoadmapsFromProfile();
+        await savePlanToSupabase();
         renderRoadmapsScreen();
         showScreen('screen-roadmaps');
         showToast(`Modo local (${err.message}). Revisá función o API Key.`, '🎉');
@@ -1364,6 +1524,7 @@
           state.roadmaps.dog.push(...newDog);
           state.currentStage = nextStage;
 
+          await savePlanToSupabase();
           updateProgressBadges();
           renderNodesList();
           updateNextStageButtonUI();
@@ -1374,6 +1535,7 @@
       } catch (err) {
         appendLocalFallbackStage(nextStage);
         state.currentStage = nextStage;
+        await savePlanToSupabase();
         updateProgressBadges();
         renderNodesList();
         updateNextStageButtonUI();
@@ -1640,7 +1802,7 @@
       }
     }
 
-    function addDesiredBehaviorToPlan() {
+    async function addDesiredBehaviorToPlan() {
       const dog = state.profile.dogName || 'tu perro';
       let item = null;
 
@@ -1717,6 +1879,7 @@
 
       state.addedBehaviors.push({ id: item.id, label: item.label, icon: item.icon });
 
+      await savePlanToSupabase();
       closeBehaviorModal();
       renderAddedBehaviorsBar();
       updateProgressBadges();
@@ -2249,6 +2412,7 @@
         if (idx + 1 < list.length && list[idx + 1].status === 'locked') {
           list[idx + 1].status = 'available';
         }
+        await savePlanToSupabase();
         closeLessonModal();
         updateProgressBadges();
         renderNodesList();
@@ -2274,13 +2438,16 @@
               node.steps = adaptedList[0].steps;
             }
           }
+          await savePlanToSupabase();
           showToast('¡Listo! Tocá el nodo en repaso para ver el ajuste adaptado por IA.', '✨');
         } catch (err) {
+          await savePlanToSupabase();
           showToast('Modo repaso activado con criterio reducido. Tocá el nodo para verlo.', '⚡');
         }
       } else {
         node.status = 'review';
         node.isAdaptiveMode = true;
+        await savePlanToSupabase();
         closeLessonModal();
         renderNodesList();
         showToast('Sin apuro: marcamos el paso para repetir con un enfoque más suave.', '🔄');
