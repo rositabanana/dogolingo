@@ -632,6 +632,7 @@
             tutor: (data.roadmaps.tutor || []).map(n => ({ ...n, icon: sanitizeNodeIcon(n.icon) })),
             dog: (data.roadmaps.dog || []).map(n => ({ ...n, icon: sanitizeNodeIcon(n.icon) }))
           };
+          normalizeRouteStatuses();
           state.addedBehaviors = data.added_behaviors || [];
           state.currentStage = data.current_stage || 1;
           return true;
@@ -1877,6 +1878,7 @@
         state.roadmaps.tutor.push(...newTutor);
         state.roadmaps.dog.push(...newDog);
         ensureReviewEveryEight();
+        normalizeRouteStatuses();
         await savePlanToSupabase();
         renderRoadmapsScreen();
         showToast(`¡Etapa ${nextStage} agregada a tus rutas!`, '🚀');
@@ -1887,7 +1889,7 @@
           title: `Etapa ${nextStage}: Distracciones Medias`,
           duration: '5 min',
           icon: '🧭',
-          status: 'active',
+          status: 'locked',
           tags: [`Etapa ${nextStage}`, 'Generalización'],
           mediaType: 'video',
           mediaTitle: 'Subir criterio en exteriores sin perder calma',
@@ -1901,7 +1903,7 @@
           title: `Etapa ${nextStage}: Paseo Fluido en Parque`,
           duration: '5 min',
           icon: '🦮',
-          status: 'active',
+          status: 'locked',
           requiresTutorIds: [`t_s${nextStage}_1`],
           tags: [`Etapa ${nextStage}`, 'Correa Floja'],
           mediaType: 'video',
@@ -1912,12 +1914,29 @@
           adaptiveTip: 'Recordá terminar siempre con un éxito fácil.'
         });
         ensureReviewEveryEight();
+        normalizeRouteStatuses();
         await savePlanToSupabase();
         renderRoadmapsScreen();
         showToast(`Etapa ${nextStage} generada en modo local`, '✨');
       } finally {
         btn.disabled = false;
       }
+    }
+
+    function normalizeRouteStatuses() {
+      ['tutor', 'dog'].forEach(route => {
+        const list = state.roadmaps[route] || [];
+        let foundNext = false;
+        list.forEach(node => {
+          if (node.status === 'completed') return;
+          if (!foundNext) {
+            node.status = 'active';
+            foundNext = true;
+          } else {
+            node.status = 'locked';
+          }
+        });
+      });
     }
 
     // =========================================================
