@@ -1834,6 +1834,7 @@
         }
 
         const safeIcon = sanitizeNodeIcon(node.icon, node.title);
+        const cleanTitle = (node.title || '').replace(/(\s*\(Paso simplificado\))+/gi, '').trim();
 
         return `
           <div class="flex flex-col items-center ${offsetClass} transition-transform">
@@ -1845,8 +1846,8 @@
               </button>
             </div>
             <div class="mt-2 text-center max-w-[175px]">
-              <p class="font-display font-extrabold text-xs ${isLocked ? 'text-stone-500' : 'text-stone-900'} leading-tight">${node.title}</p>
-              <span class="text-[10px] font-semibold text-stone-400">${node.duration}</span>
+              <p class="font-display font-extrabold text-xs ${isLocked ? 'text-stone-500' : 'text-stone-900'} leading-tight">${cleanTitle}</p>
+              <span class="text-[10px] font-semibold text-stone-400">${node.duration}${node.simplifiedLevel ? ` • Paso simplificado ${node.simplifiedLevel > 1 ? `v${node.simplifiedLevel}` : ''}` : ''}</span>
             </div>
             ${idx < nodes.length - 1 ? `<div class="w-1.5 h-5 rounded-full ${isCompleted ? 'bg-amber-300' : 'bg-stone-200'} mt-2"></div>` : ''}
           </div>
@@ -1978,9 +1979,11 @@
       const { route, index } = state.selectedModalNode;
       const node = state.roadmaps[route][index];
 
-      // Regresión pedagógica inmediata: simplificamos criterio y bajamos distracciones
-      node.title = node.title.includes('(Paso simplificado)') ? node.title : `${node.title} (Paso simplificado)`;
-      node.adaptiveTip = 'Ajustamos el criterio: practicá en el lugar más tranquilo de casa, aumentá el valor del premio y hacé solo 2 repeticiones exitosas.';
+      // Regresión pedagógica inmediata: limpiamos repeticiones previas y llevamos un contador limpio de nivel adaptado
+      const baseTitle = (node.title || '').replace(/(\s*\(Paso simplificado\))+/gi, '').trim();
+      node.simplifiedLevel = (node.simplifiedLevel || 0) + 1;
+      node.title = `${baseTitle} (Paso simplificado)`;
+      node.adaptiveTip = `Nivel adaptado (${node.simplifiedLevel}): practicá en el lugar más tranquilo de casa, aumentá el valor del premio y hacé solo 2 repeticiones exitosas.`;
       node.steps = [
         'Reducí la distancia y eliminá distracciones visuales o sonoras.',
         'Premiá incluso la intención mínima correcta durante 3 intentos.',
