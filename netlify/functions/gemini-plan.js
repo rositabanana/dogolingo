@@ -229,14 +229,14 @@ Instrucciones de IDs para Etapa ${stageNumber}:
       if (remainingMs < 1500) break;
     const candidateModels = ["gemini-3.8-flash", "gemini-3.5-flash-lite"];
     const startTime = Date.now();
-    const maxTotalMs = 20000;
+    const maxTotalMs = 9000;
     let parsedPlan = null;
 
     for (const modelName of candidateModels) {
       const remainingMs = maxTotalMs - (Date.now() - startTime);
-      if (remainingMs < 2500) break;
+      if (remainingMs < 1500) break;
 
-      const perRequestTimeout = Math.min(12000, remainingMs - 500);
+      const perRequestTimeout = Math.min(4200, remainingMs - 400);
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       const modelController = new AbortController();
       const modelTimer = setTimeout(() => modelController.abort(), perRequestTimeout);
