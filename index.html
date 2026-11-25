@@ -507,7 +507,7 @@
             <span class="w-7 h-7 rounded-xl bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 text-sm">👃</span>
             <div class="text-xs text-stone-700 leading-snug">
               <strong id="summary-sensory" class="text-stone-900 text-sm block">Prioridad: Enriquecimiento Olfativo</strong>
-              Detectamos canales bajos en casa y los atacamos desde el inicio.
+              <span id="summary-sensory-desc">Detectamos canales bajos en casa y los atacamos desde el inicio.</span>
             </div>
           </div>
         </div>
@@ -679,17 +679,17 @@
           <button onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
             <span>✅ Salió bien (Completar y avanzar)</span>
           </button>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="submitLessonFeedback('difficulty')" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1">
-              <span>⚡ Con dificultad</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openResetPlanModal()" title="Resetear plan y volver al cuestionario" class="min-h-[44px] rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-900 text-xs font-bold px-2.5 active:scale-95 transition">
+              Resetear
             </button>
-            <button onclick="submitLessonFeedback('retry')" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1">
-              <span>🔄 No salió / Repasar</span>
+            <button onclick="resetToHome()" title="Volver al inicio" class="min-h-[44px] rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600 text-xs font-bold px-2.5 active:scale-95 transition">
+              Salir
             </button>
           </div>
         </div>
-      </div>
-    </div>
+
+        <!-- Botón Prominente Mobile-First: + Sumar comportamiento deseado -->
 
     <!-- ========================================================= -->
     <!-- MODAL / BOTTOM SHEET: SUMAR COMPORTAMIENTO DESEADO        -->
@@ -730,16 +730,46 @@
           </div>
 
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2">
-            <span class="text-base leading-none">🛡️</span>
-            <p class="text-[11px] text-amber-950 leading-snug">
-              <strong>Criterio de diseño:</strong> Elementos como bozal, pretal o correa se trabajan mediante <em>desensibilización positiva y manejo cooperativo</em>, nunca por imposición.
-            </p>
+          <button onclick="submitLessonFeedback('success')" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
+            <span>✅ Salió bien (Completar y avanzar)</span>
+          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="submitLessonFeedback('difficulty')" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
+              <span>⚡ Tuve dificultad</span>
+            </button>
+            <button onclick="submitLessonFeedback('repeat')" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-xs px-2 flex items-center justify-center gap-1.5">
+              <span>🔄 Repetir ejercicio</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL DE CONFIRMACIÓN: RESETEAR PLAN A CERO               -->
+    <!-- ========================================================= -->
+    <div id="reset-plan-modal" class="hidden fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
+      <div class="w-full max-w-[410px] bg-white rounded-t-[32px] sm:rounded-[32px] p-5 space-y-4 shadow-2xl animate-slide-up">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl shrink-0">
+            🔄
+          </div>
+          <div>
+            <h3 class="font-display font-black text-lg text-stone-900 leading-tight">¿Resetear plan a cero?</h3>
+            <p class="text-xs text-stone-500 mt-0.5">Volverás al paso 1 para armar un diagnóstico nuevo.</p>
           </div>
         </div>
 
-        <div class="p-4 bg-white border-t border-stone-200 shrink-0">
-          <button id="confirm-behavior-btn" onclick="addDesiredBehaviorToPlan()" class="w-full btn-duo btn-primary rounded-2xl font-display font-extrabold text-sm flex items-center justify-center gap-2">
-            <span>Agregar al plan de entrenamiento</span>
+        <p class="text-xs text-stone-600 leading-relaxed bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+          Se borrarán las rutas actuales y el progreso de <strong id="reset-dog-name">tu perro</strong> para que puedas volver a completar el onboarding y generar un plan nuevo con IA.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <button type="button" onclick="closeResetPlanModal()" class="btn-duo btn-secondary rounded-2xl font-display font-extrabold text-sm">
+            Cancelar
+          </button>
+          <button type="button" id="confirm-reset-btn" onclick="confirmResetPlan()" class="btn-duo btn-amber rounded-2xl font-display font-extrabold text-sm">
+            Sí, resetear
           </button>
         </div>
       </div>
@@ -1229,6 +1259,52 @@
       showScreen('screen-auth');
     }
 
+    function openResetPlanModal() {
+      const nameEl = document.getElementById('reset-dog-name');
+      if (nameEl) nameEl.textContent = state.profile.dogName || 'tu perro';
+      document.getElementById('reset-plan-modal').classList.remove('hidden');
+    }
+
+    function closeResetPlanModal() {
+      document.getElementById('reset-plan-modal').classList.add('hidden');
+    }
+
+    async function confirmResetPlan() {
+      const btn = document.getElementById('confirm-reset-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Reseteando...';
+      }
+
+      state.currentStage = 1;
+      state.activeRoute = 'tutor';
+      state.activeNodeId = null;
+      state.addedBehaviors = [];
+      state.roadmaps = { tutor: [], dog: [] };
+
+      if (!state.isDemo && supabaseClient && state.user) {
+        try {
+          await supabaseClient
+            .from('user_plans')
+            .delete()
+            .eq('user_id', state.user.id);
+        } catch (err) {
+          console.warn('No se pudo limpiar registro previo en Supabase:', err.message);
+        }
+      }
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Sí, resetear';
+      }
+
+      closeResetPlanModal();
+      state.currentStep = 1;
+      updateOnboardingUI();
+      showScreen('screen-onboarding');
+      showToast('Plan reseteado. Completá el diagnóstico desde cero.', '🔄');
+    }
+
     // --- PANTALLA 2: ONBOARDING WIZARD ---
     function renderSensoryInputs() {
       const container = document.getElementById('sensory-list');
@@ -1339,10 +1415,17 @@
         .map(([key]) => key);
 
       const summarySensory = document.getElementById('summary-sensory');
+      const summarySensoryDesc = document.getElementById('summary-sensory-desc');
       if (lowChannels.length > 0) {
         summarySensory.textContent = `Prioridad sensorial: ${lowChannels.join(' y ')}`;
+        if (summarySensoryDesc) {
+          summarySensoryDesc.textContent = 'Detectamos canales bajos en casa y los reforzamos desde el inicio.';
+        }
       } else {
         summarySensory.textContent = 'Enriquecimiento sensorial equilibrado';
+        if (summarySensoryDesc) {
+          summarySensoryDesc.textContent = 'Buena base de estimulación en casa; enfocamos el plan en foco y autocontrol.';
+        }
       }
 
       document.getElementById('generate-plan-btn').classList.remove('hidden');
@@ -1352,7 +1435,7 @@
     // --- CONEXIÓN CON NETLIFY FUNCTION (GEMINI IA) ---
     async function callGeminiPlanner(payload) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(new Error('Tiempo de espera agotado')), 25000);
+      const timeoutId = setTimeout(() => controller.abort(new Error('Tiempo de espera agotado')), 35000);
       try {
         const res = await fetch(AI_ENDPOINT, {
           method: 'POST',
@@ -1911,9 +1994,19 @@
     function buildRoadmapsFromProfile() {
       const p = state.profile;
       const dog = p.dogName || 'tu perro';
-      const isSeniorOrSensitive = p.dogAge === 'Senior' || p.physicalState === 'Sensible / Articular';
       const wantsReading = p.wantsReading === 'Sí';
-      const isExperienced = p.priorTraining === 'Sí' || p.tutorConditioning === 'Intermedio' || p.tutorBodyLanguage === 'Intermedio';
+      const isSeniorOrSensitive = p.dogAge === 'Senior' || p.physicalState === 'Sensible / Articular';
+      const isExperienced =
+        p.priorTraining === 'Sí' ||
+        p.tutorConditioning === 'Intermedio' ||
+        p.tutorBodyLanguage === 'Intermedio';
+
+      const lowChannels = Object.entries(p.sensory || {})
+        .filter(([, val]) => val === 'Bajo')
+        .map(([key]) => key);
+      const sensoryIntroBody = lowChannels.length > 0
+        ? `Detectamos canales sensoriales bajos en casa (${lowChannels.join(', ')}). 10 minutos de trabajo olfativo y sensorial equivalen a una caminata larga en desgaste mental sano y reducen drásticamente la ansiedad.`
+        : `¡Excelente base! Como ${dog} ya tiene buena estimulación sensorial en casa, usamos desafíos cognitivos y olfativos de nivel progresivo para canalizar su energía con calma.`;
 
       // Rama 1: Binomio con experiencia previa o tutor intermedio (omite ejercicios nivel cero como el plato)
       if (isExperienced) {
@@ -2195,7 +2288,7 @@
           tags: ['Olfato', 'Gestión Ambiental', 'Bienestar'],
           mediaType: wantsReading ? 'reading' : 'video',
           mediaTitle: 'Por qué el olfato cansa más y mejor que correr',
-          mediaBody: 'Detectamos canales sensoriales bajos en casa. 10 minutos de trabajo olfativo equivalen a una caminata larga en desgaste mental sano y reducen drásticamente la ansiedad y los tirones en la calle.',
+          mediaBody: sensoryIntroBody,
           videos: [
             { title: 'Enriquecimiento sensorial: alfombras olfativas y licky mats', url: 'https://www.youtube.com/watch?v=NAth4ZBEAnE' }
           ],
