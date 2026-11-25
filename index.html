@@ -1913,7 +1913,234 @@
       const dog = p.dogName || 'tu perro';
       const isSeniorOrSensitive = p.dogAge === 'Senior' || p.physicalState === 'Sensible / Articular';
       const wantsReading = p.wantsReading === 'Sí';
+      const isExperienced = p.priorTraining === 'Sí' || p.tutorConditioning === 'Intermedio' || p.tutorBodyLanguage === 'Intermedio';
 
+      // Rama 1: Binomio con experiencia previa o tutor intermedio (omite ejercicios nivel cero como el plato)
+      if (isExperienced) {
+        const problemFocusMap = {
+          'Tironeo de correa': {
+            tTitle: 'Mecánica de Correa Larga, Giros en U y Paseo en Arco',
+            tTag: 'Correa Floja',
+            tBody: 'Como ' + dog + ' ya tiene bases, trabajamos comunicación sutil con correa de 2-3 metros, evitando tensión constante y usando giros en curva antes de que cruce su umbral.',
+            tVideo: { title: 'Manejo amable de correa sin tirones', url: 'https://www.youtube.com/watch?v=XGzavHuQDmA' },
+            dTitle: 'Caminata Paralela y Giro en U con Distracciones',
+            dBody: 'Practicamos fluidez junto a vos en vereda tranquila premiando cada vez que ' + dog + ' elige mantener la correa en "J" (floja).'
+          },
+          'Impulsividad / Saltos': {
+            tTitle: 'Principio de Premack en Puertas, Visitas y Estímulos Altos',
+            tTag: 'Autocontrol Avanzado',
+            tBody: 'Usamos el acceso al entorno y al saludo como recompensa natural (Premack) exigiendo regulación emocional previa sin repetir comandos.',
+            tVideo: { title: 'Frenar saltos e impulsividad con protocolo amable', url: 'https://www.youtube.com/watch?v=3Lx2VMRC1D4' },
+            dTitle: 'Permanencia Activa en Puerta y Saludo con 4 Patas Abajo',
+            dBody: 'Elevamos el criterio de autocontrol ante apertura de puerta y llegada de personas manteniendo foco en vos.'
+          },
+          'Falta de atención': {
+            tTitle: 'Retiro de Cebo (Fading Luring) y Refuerzo Diferencial',
+            tTag: 'Foco con Estímulos',
+            tBody: 'Pasamos de premiar cualquier respuesta a premiar velocidad y conexión visual voluntaria ("check-in") en entornos con olores y movimiento.',
+            tVideo: { title: 'Gestión de atención y foco con distracciones', url: 'https://www.youtube.com/watch?v=2kCQ6aXg9cI' },
+            dTitle: 'Check-in Espontáneo y Llamado en Entorno Abierto',
+            dBody: 'Entrenamos que ' + dog + ' te busque con la mirada por iniciativa propia incluso cuando hay estímulos alrededor.'
+          },
+          'Ansiedad / Inquietud': {
+            tTitle: 'Regulación del Sistema Nervioso y Descompresión Cognitiva',
+            tTag: 'Calma Profunda',
+            tBody: 'Diseñamos transiciones de alta a baja activación usando olfato complejo y señales de calma de Turid Rugaas sin sobreexigir comandos.',
+            tVideo: { title: 'Manejo en entornos de estrés y calma', url: 'https://www.youtube.com/watch?v=ZHE8TGj_2BU' },
+            dTitle: 'Descompresión Olfativa Avanzada y Estación de Calma',
+            dBody: 'Consolidamos una manta de relajación real que ' + dog + ' pueda sostener incluso ante ruidos cotidianos.'
+          },
+          'Mordisqueo': {
+            tTitle: 'Canalización Oral y Gestión de Sobreestimulación',
+            tTag: 'Redirección Inteligente',
+            tBody: 'Detectamos los micro-signos previos al mordisqueo (tensión facial, aceleración) para redirigir antes de que descargue con la boca.',
+            tVideo: { title: 'Cómo redirigir mordiscones sin retos', url: 'https://www.youtube.com/watch?v=nkFNMYbJhy8' },
+            dTitle: 'Juego de Suelta ("Soltá") e Intercambio Cooperativo',
+            dBody: 'Practicamos soltar juguetes por elección propia usando intercambios de alto valor en sesiones dinámicas de 8 minutos.'
+          }
+        };
+
+        const focus = problemFocusMap[p.mainProblem] || problemFocusMap['Tironeo de correa'];
+
+        state.roadmaps.tutor = [
+          {
+            id: 't1',
+            route: 'tutor',
+            title: focus.tTitle,
+            duration: '10 min',
+            icon: '🧭',
+            status: 'available',
+            tags: [focus.tTag, 'Nivel Intermedio', 'Liderazgo Amable'],
+            mediaType: wantsReading ? 'reading' : 'video',
+            mediaTitle: 'Ajuste específico para ' + dog + ' (' + p.mainProblem + ')',
+            mediaBody: focus.tBody,
+            videos: [focus.tVideo],
+            steps: [
+              'Prepará premios de alto valor en bolsillo (sin mostrarlos en la mano antes de la señal).',
+              'Observá las señales sutiles de ' + dog + ' antes de que llegue al pico de activación.',
+              'Aplicá Castigo Negativo suave (pausar avance o acceso) y premiá el primer micro-ajuste de calma.'
+            ],
+            adaptiveTip: 'Bajá un 30% la cercanía al estímulo si notás que deja de tomar premios.'
+          },
+          {
+            id: 't2',
+            route: 'tutor',
+            title: 'Fading Luring: Señales Limpias sin Depender del Premio Visible',
+            duration: '10 min',
+            icon: '✋',
+            status: 'locked',
+            tags: ['Fading Luring', 'Timing Fino', 'Refuerzo Variable'],
+            mediaType: 'video',
+            mediaTitle: 'Cómo pasar del guiado a la señal gestual/verbal pura',
+            mediaBody: 'Cuando un perro ya conoce ejercicios básicos, el error más común es seguir mostrando la comida antes de pedir. Aprendemos a esconder el premio y reforzar de forma intermitente.',
+            videos: [
+              { title: 'Luring vs. Capturing sin frustración', url: 'https://www.youtube.com/watch?v=kRN9KxcrCes' }
+            ],
+            steps: [
+              'Hacé la señal con la mano completamente vacía y esperá hasta 3 segundos sin repetir la palabra.',
+              'Marcá con "¡Bien!" en el instante exacto y recién ahí llevá la mano al bolsillo.',
+              'Intercalá premios de comida con juego interactivo o permisos del entorno (Premack).'
+            ],
+            adaptiveTip: 'Si duda con la mano vacía, hacé un gesto apenas más amplio pero sin comida en los dedos.'
+          },
+          {
+            id: 't3',
+            route: 'tutor',
+            title: 'Lectura Avanzada de Umbrales y Señales de Calma',
+            duration: '10 min',
+            icon: '🌊',
+            status: 'locked',
+            tags: ['Turid Rugaas', 'Umbral Verde', 'Paseo Inteligente'],
+            mediaType: 'video',
+            mediaTitle: 'Anticipar la reactividad o tensión 5 segundos antes',
+            mediaBody: 'Reconocer rigidez corporal, cierre de boca o fijación visual permite intervenir en zona verde con curvas amplias o búsqueda olfativa antes de que se bloquee.',
+            videos: [
+              { title: 'Lectura corporal y señales de calma (Turid Rugaas)', url: 'https://www.youtube.com/watch?v=RppFTzWkFOw' }
+            ],
+            steps: [
+              'En el paseo de hoy, detectá el instante exacto en que ' + dog + ' fija la mirada en un estímulo.',
+              'Abrite en arco suave o invitá a un "Buscá" en el césped antes de que tense la correa.',
+              'Regulá tu tono de voz: sereno, bajo y sin repeticiones.'
+            ],
+            adaptiveTip: 'Aumentá 4-5 metros la distancia respecto a otros perros o bicicletas durante esta semana.'
+          },
+          {
+            id: 't4',
+            route: 'tutor',
+            title: 'Generalización en Entornos Reales (Regla de las 3D)',
+            duration: '12 min',
+            icon: '🎯',
+            status: 'locked',
+            tags: ['Distancia', 'Duración', 'Distracción'],
+            mediaType: wantsReading ? 'reading' : 'video',
+            mediaTitle: 'Por qué en casa sale perfecto y en la plaza cuesta',
+            mediaBody: 'Los perros no generalizan automáticamente. Al cambiar de entorno subimos la Distracción, por lo que debemos bajar temporalmente la Duración y aumentar la Distancia a los estímulos.',
+            videos: [
+              { title: 'Foco con distracciones en exteriores', url: 'https://www.youtube.com/watch?v=pC1aZf15pOE' }
+            ],
+            steps: [
+              'Elegí un lugar nuevo tranquilo y pedí conductas que ' + dog + ' ya domine al 100% en casa.',
+              'Subí la calidad del premio (pollo, queso, carne cocida) para competir con los olores de la calle.',
+              'Mantené las sesiones activas por debajo de los 12-15 minutos diarios.'
+            ],
+            adaptiveTip: 'Dejalo olfatear libremente los primeros 5 minutos del paseo antes de pedirle foco.'
+          }
+        ];
+
+        state.roadmaps.dog = [
+          {
+            id: 'd1',
+            route: 'dog',
+            title: focus.dTitle,
+            duration: '10 min activos (Tope 15m)',
+            icon: '🦮',
+            status: 'available',
+            requiresTutorIds: [],
+            tags: [focus.tTag, 'Nivel Intermedio', 'Máx. 15 min/día'],
+            mediaType: 'video',
+            mediaTitle: 'Práctica directa sobre ' + p.mainProblem,
+            mediaBody: focus.dBody,
+            videos: [focus.tVideo],
+            steps: [
+              'Iniciá con 2 minutos de olfato libre para bajar ansiedad inicial de ' + dog + '.',
+              'Practicá 5 repeticiones cortas enfocadas en ' + p.mainProblem.toLowerCase() + ' premiando cada acierto.',
+              'Terminá la sesión en un punto alto de éxito antes de los 15 minutos activos.'
+            ],
+            adaptiveTip: 'Si el entorno tiene demasiado movimiento, trasladá la práctica a un horario más tranquilo.'
+          },
+          {
+            id: 'd2',
+            route: 'dog',
+            title: 'Secuencia Fluida sin Cebo: "Mirame" + "Junto" + "Quieto"',
+            duration: '8 min activos (Tope 15m)',
+            icon: '🎓',
+            status: 'locked',
+            requiresTutorIds: ['t2'],
+            tags: ['Fading Luring', 'Fluidez', 'Máx. 15 min/día'],
+            mediaType: 'video',
+            mediaTitle: 'Encadenar conductas conocidas con manos vacías',
+            mediaBody: 'Como ' + dog + ' ya conoce señales básicas, las combinamos en movimiento sin mostrar premios hasta completar la secuencia.',
+            videos: [
+              { title: 'Luring básico y retiro de premio', url: 'https://www.youtube.com/shorts/eKS3mjN0f3U' }
+            ],
+            steps: [
+              'Pedí "Mirame" con mano vacía, caminá 3 pasos fluidos y pedí "Sit" o "Quieto" 3 segundos.',
+              'Marcá "¡Bien!" y premiá desde el bolsillo o liberá a jugar.',
+              'Hacé solo 4 repeticiones de alta calidad.'
+            ],
+            adaptiveTip: 'Premiá cada conducta por separado durante 2 días antes de volver a encadenarlas.'
+          },
+          {
+            id: 'd3',
+            route: 'dog',
+            title: 'Descompresión Cognitiva y Rastreo Profundo',
+            duration: '12 min pasivos (Tope 15m)',
+            icon: '🌿',
+            status: 'locked',
+            requiresTutorIds: ['t3'],
+            tags: ['Olfato Complejo', 'Autonomía', 'Bienestar'],
+            mediaType: 'video',
+            mediaTitle: 'Búsqueda en altura y obstáculos suaves',
+            mediaBody: isSeniorOrSensitive
+              ? 'Búsqueda olfativa a nivel cómodo sin saltos para estimular su mente sin exigencia articular.'
+              : 'Elevamos la dificultad del olfato escondiendo premios en cajas, telas enrolladas o corteza de árboles.',
+            videos: [
+              { title: 'Enriquecimiento sensorial y alfombras', url: 'https://www.youtube.com/watch?v=NAth4ZBEAnE' }
+            ],
+            steps: [
+              'Prepará 3 estaciones de búsqueda con distintos niveles de dificultad.',
+              'Invitá a ' + dog + ' con "Buscá" y dejalo resolver de forma autónoma sin señalarle.',
+              'Observá cómo baja su ritmo respiratorio tras completar el rastreo.'
+            ],
+            adaptiveTip: 'Hacé el primer escondite bien fácil para encender su motivación olfativa.'
+          },
+          {
+            id: 'd4',
+            route: 'dog',
+            title: 'Autocontrol con Distracciones en Parque Tranquilo',
+            duration: '10 min activos (Tope 15m)',
+            icon: '🐕‍🦺',
+            status: 'locked',
+            requiresTutorIds: ['t3', 't4'],
+            tags: ['Generalización', 'Umbral Verde', 'Máx. 15 min/día'],
+            mediaType: 'video',
+            mediaTitle: 'Mantener calma y foco a distancia de estímulos reales',
+            mediaBody: 'Consolidamos la capacidad de ' + dog + ' de elegirte a vos frente a olores, aves o perros a distancia segura.',
+            videos: [
+              { title: 'Foco con distracciones en exteriores', url: 'https://www.youtube.com/watch?v=pC1aZf15pOE' }
+            ],
+            steps: [
+              'Ubicate a 10-15 metros de una distracción suave en un parque o plaza tranquila.',
+              'Premiá cada mirada voluntaria hacia vos después de observar el entorno.',
+              'Cerrá con un paseo en arco relajado sin exigir comandos.'
+            ],
+            adaptiveTip: 'Si se fija demasiado en el estímulo, usá el Giro en U alegre para recuperar distancia.'
+          }
+        ];
+        return;
+      }
+
+      // Rama 2: Binomio iniciante (sin educación previa o tutor principiante)
       state.roadmaps.tutor = [
         {
           id: 't1',
