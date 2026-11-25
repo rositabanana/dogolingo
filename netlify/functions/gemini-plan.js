@@ -151,8 +151,8 @@ exports.handler = async function (event) {
       userPrompt += `\nEl usuario reportó dificultad en esta lección: ${JSON.stringify(failedNode)}. Generá una versión adaptada más suave y progresiva.\n`;
     }
 
-    // Llamada oficial a Gemini con fallback de modelo si alguno devuelve 404
-    const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash"];
+    // Llamada oficial a Gemini usando los modelos vigentes de la familia Flash
+    const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-flash-latest"];
     let response = null;
     let data = null;
 
