@@ -227,8 +227,16 @@ Instrucciones de IDs para Etapa ${stageNumber}:
     for (const modelName of candidateModels) {
       const remainingMs = maxTotalMs - (Date.now() - startTime);
       if (remainingMs < 1500) break;
+    const candidateModels = ["gemini-3.8-flash", "gemini-3.5-flash-lite"];
+    const startTime = Date.now();
+    const maxTotalMs = 20000;
+    let parsedPlan = null;
 
-      const perRequestTimeout = remainingMs - 200;
+    for (const modelName of candidateModels) {
+      const remainingMs = maxTotalMs - (Date.now() - startTime);
+      if (remainingMs < 2500) break;
+
+      const perRequestTimeout = Math.min(12000, remainingMs - 500);
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       const modelController = new AbortController();
       const modelTimer = setTimeout(() => modelController.abort(), perRequestTimeout);
@@ -250,7 +258,7 @@ Instrucciones de IDs para Etapa ${stageNumber}:
             ],
             generationConfig: {
               temperature: 0.45,
-              maxOutputTokens: 1200,
+              maxOutputTokens: 1500,
               thinkingConfig: { thinkingBudget: 0 },
               responseMimeType: "application/json",
               responseSchema: RESPONSE_SCHEMA
@@ -262,34 +270,26 @@ Instrucciones de IDs para Etapa ${stageNumber}:
 
         if (response.ok) {
           const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!rawText) {
-            lastErrorStatus = 502;
-            lastErrorMessage = "Gemini devolvió una respuesta vacía.";
-            break;
+          if (rawText) {
+            try {
+              parsedPlan = JSON.parse(rawText);
+              break;
+            } catch (_) {
+              // Si el JSON vino con texto extra o incompleto, probamos el siguiente modelo o respaldo
+            }
           }
-          parsedPlan = JSON.parse(rawText);
-          break;
         }
-
-        lastErrorStatus = response.status;
-        lastErrorMessage = `Gemini (${response.status}): ${data?.error?.message || "Error al consultar Gemini"}`;
-      } catch (fetchErr) {
-        lastErrorStatus = 504;
-        lastErrorMessage = fetchErr.name === "AbortError"
-          ? `Timeout en ${modelName}; activando plan local.`
-          : `Error de red en ${modelName}: ${fetchErr.message}`;
+      } catch (_) {
+        // Ante timeout o fallo de red, continuamos al siguiente modelo o al respaldo dinámico
       } finally {
         clearTimeout(modelTimer);
       }
     }
 
-    // Si Gemini falla o tarda más del límite de la función (502/503/504),
-    // construimos una etapa dinámica personalizada desde el perfil recibido y devolvemos 200
-    // para que el cliente no registre errores 502/504 y reciba un plan adaptado.
+    // Si Gemini falla o tarda más de la cuenta, devolvemos 200 con un plan adaptado al perfil
     if (!parsedPlan) {
-      const bodyData = JSON.parse(event.body || "{}");
-      const p = bodyData.profile || {};
-      const stage = Number(bodyData.stageNumber || 1);
+      const p = profile || {};
+      const stage = Number(stageNumber || 1);
       const dog = p.dogName || "tu perro";
       const isExperienced =
         p.priorTraining === "Sí" ||
