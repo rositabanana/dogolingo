@@ -151,36 +151,43 @@ exports.handler = async function (event) {
       userPrompt += `\nEl usuario reportó dificultad en esta lección: ${JSON.stringify(failedNode)}. Generá una versión adaptada más suave y progresiva.\n`;
     }
 
-    // Llamada oficial a Gemini 2.5 Flash con salida JSON estructurada
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // Llamada oficial a Gemini con fallback de modelo si alguno devuelve 404
+    const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash"];
+    let response = null;
+    let data = null;
 
-    const response = await fetch(geminiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: SYSTEM_PROMPT }]
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: userPrompt }]
+    for (const modelName of modelsToTry) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      response = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: SYSTEM_PROMPT }]
+          },
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: userPrompt }]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.6,
+            responseMimeType: "application/json",
+            responseSchema: RESPONSE_SCHEMA
           }
-        ],
-        generationConfig: {
-          temperature: 0.6,
-          responseMimeType: "application/json",
-          responseSchema: RESPONSE_SCHEMA
-        }
-      })
-    });
+        })
+      });
 
-    const data = await response.json();
+      data = await response.json();
+      if (response.status !== 404) break;
+    }
 
     if (!response.ok) {
+      const apiMsg = data?.error?.message || "Error desconocido de Gemini";
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: "Error desde Gemini API", details: data })
+        body: JSON.stringify({ error: `Gemini (${response.status}): ${apiMsg}`, details: data })
       };
     }
 
