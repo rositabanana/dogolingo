@@ -28,7 +28,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
    - Los nodos avanzados de la ruta del perro deben exigir en "requiresTutorIds" el ID del nodo teórico correspondiente de la ruta del tutor.
 
 7. GENERACIÓN POR ETAPAS (SCROLL INFINITO SIN REPETICIONES):
-   - Generá bloques ágiles y concisos de exactamente 4 nodos por ruta por etapa (4 en tutor y 4 en dog, textos breves y accionables para responder en menos de 4 segundos).
+   - Generá bloques ágiles y concisos de exactamente 3 nodos por ruta por etapa (3 en tutor y 3 en dog, textos breves y accionables para responder en menos de 3 segundos).
    - ESTÁ PROHIBIDO repetir títulos, ejercicios o dinámicas de etapas anteriores: cada nueva etapa debe escalar progresivamente la dificultad (aumentando duración de permanencia, retirando el cebo/luring, sumando distancia a distracciones y pasando de casa -> patio/vereda tranquila -> parque con estímulos medios).
 
 8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO:
@@ -199,49 +199,49 @@ Instrucciones de IDs para Etapa ${stageNumber}:
 - Asegurate de que los nodos avanzados del can referencien en "requiresTutorIds" a los IDs de esta misma etapa (o queden vacíos en los primeros nodos).`;
     }
 
-    // Llamada oficial a Gemini priorizando el modelo estable de producción y rotando rápido si demora > 8.5s o hay alta demanda
-    const modelsToTry = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-3-flash-preview"];
+    // Llamada única y directa a gemini-2.5-flash (evita encadenar intentos que superen el límite de 10s de Netlify)
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const modelController = new AbortController();
+    const modelTimer = setTimeout(() => modelController.abort(), 8800);
     let response = null;
     let data = null;
 
-    for (const modelName of modelsToTry) {
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-      const modelController = new AbortController();
-      const modelTimer = setTimeout(() => modelController.abort(), 8500);
-      try {
-        response = await fetch(geminiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: modelController.signal,
-          body: JSON.stringify({
-            systemInstruction: {
-              parts: [{ text: SYSTEM_PROMPT }]
-            },
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: userPrompt }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.6,
-              maxOutputTokens: 2800,
-              thinkingConfig: { thinkingBudget: 0 },
-              responseMimeType: "application/json",
-              responseSchema: RESPONSE_SCHEMA
+    try {
+      response = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: modelController.signal,
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: SYSTEM_PROMPT }]
+          },
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: userPrompt }]
             }
-          })
-        });
+          ],
+          generationConfig: {
+            temperature: 0.55,
+            maxOutputTokens: 1900,
+            thinkingConfig: { thinkingBudget: 0 },
+            responseMimeType: "application/json",
+            responseSchema: RESPONSE_SCHEMA
+          }
+        })
+      });
 
-        data = await response.json();
-        if (response.ok) break;
-        if (![404, 429, 500, 503].includes(response.status)) break;
-      } catch (fetchErr) {
-        response = { ok: false, status: 504 };
-        data = { error: { message: `Timeout en ${modelName}, intentando respaldo...` } };
-      } finally {
-        clearTimeout(modelTimer);
-      }
+      data = await response.json();
+    } catch (fetchErr) {
+      return {
+        statusCode: 504,
+        headers,
+        body: JSON.stringify({
+          error: "Gemini demoró más de 8.8s en responder; activando plan local."
+        })
+      };
+    } finally {
+      clearTimeout(modelTimer);
     }
 
     if (!response || !response.ok) {
