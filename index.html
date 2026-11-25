@@ -1177,35 +1177,34 @@
       document.getElementById('summary-time').textContent = `${state.profile.dailyMinutes} minutos diarios totales`;
 
       const lowChannels = Object.entries(state.profile.sensory)
-        .filter(([, lvl]) => lvl === 'Bajo')
-        .map(([ch]) => ch);
-
-      const sensoryText = lowChannels.length > 0
-        ? `Prioridad: Estimulación ${lowChannels.slice(0, 2).join(' y ')}`
-        : 'Prioridad: Mantenimiento sensorial y foco';
-      document.getElementById('summary-sensory').textContent = sensoryText;
-
-      document.getElementById('generate-plan-btn').classList.remove('hidden');
-      document.getElementById('ai-loading-box').classList.add('hidden');
-    }
-
-    // Helper para llamar a la función de Gemini en Netlify con respaldo local seguro
-    async function callGeminiPlanner(payload) {
-      const response = await fetch(AI_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data?.error || `HTTP ${response.status}`);
+    function sanitizeNodeIcon(rawIcon, isTutor = true, index = 0) {
+      const str = (rawIcon || '').trim();
+      // Si ya es un emoji (no contiene letras ASCII ni guiones bajos), devolverlo tal cual
+      if (str && !/[a-zA-Z0-9_]/.test(str)) {
+        return str;
       }
-      return data;
+      const lower = str.toLowerCase();
+      if (lower.includes('walk') || lower.includes('leash') || lower.includes('pets')) return '🦮';
+      if (lower.includes('seat') || lower.includes('sleep') || lower.includes('calm') || lower.includes('bed')) return '💤';
+      if (lower.includes('food') || lower.includes('bowl') || lower.includes('restaurant')) return '🥣';
+      if (lower.includes('eye') || lower.includes('visib') || lower.includes('look')) return '👀';
+      if (lower.includes('brain') || lower.includes('psych') || lower.includes('school')) return '🧠';
+      if (lower.includes('target') || lower.includes('track') || lower.includes('gps')) return '🎯';
+      if (lower.includes('park') || lower.includes('nature') || lower.includes('eco')) return '🌿';
+      if (lower.includes('shield') || lower.includes('security')) return '🛡️';
+      if (lower.includes('play') || lower.includes('sport') || lower.includes('ball')) return '🎾';
+
+      const tutorFallbacks = ['🧭', '👀', '👃', '🎯', '🛡️', '🧠', '🎙️'];
+      const dogFallbacks = ['🐾', '🥣', '🌿', '💤', '🎾', '🦮', '🐕‍🦺'];
+      return isTutor
+        ? tutorFallbacks[index % tutorFallbacks.length]
+        : dogFallbacks[index % dogFallbacks.length];
     }
 
     function normalizeStageNodes(aiPlan, startAvailable) {
       const tutorNodes = (aiPlan.tutor || []).map((n, idx) => ({
         ...n,
+        icon: sanitizeNodeIcon(n.icon, true, idx),
         route: 'tutor',
         status: startAvailable && idx === 0 ? 'available' : 'locked',
         videos: n.videos || [],
@@ -1214,6 +1213,7 @@
 
       const dogNodes = (aiPlan.dog || []).map((n, idx) => ({
         ...n,
+        icon: sanitizeNodeIcon(n.icon, false, idx),
         route: 'dog',
         status: startAvailable && idx === 0 ? 'available' : 'locked',
         requiresTutorIds: n.requiresTutorIds || [],
@@ -1299,6 +1299,7 @@
             return {
               ...n,
               id: `${n.id || 't'}_s${nextStage}_${i}`,
+              icon: sanitizeNodeIcon(n.icon, true, i),
               title: safeTitle,
               route: 'tutor',
               status: prevTutorDone && i === 0 ? 'available' : 'locked',
@@ -1314,6 +1315,7 @@
             return {
               ...n,
               id: `${n.id || 'd'}_s${nextStage}_${i}`,
+              icon: sanitizeNodeIcon(n.icon, false, i),
               title: safeTitle,
               route: 'dog',
               status: prevDogDone && i === 0 ? 'available' : 'locked',
@@ -2062,7 +2064,7 @@
           <div class="flex flex-col items-center ${zigzagClass} transition-transform">
             <button type="button" onclick="handleNodeClick('${node.id}')"
               class="relative w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold active:translate-y-1 transition ${circleClasses}">
-              <span>${node.icon}</span>
+              <span>${sanitizeNodeIcon(node.icon, isTutor, index)}</span>
               ${badgeHtml}
             </button>
 
