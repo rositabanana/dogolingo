@@ -1177,6 +1177,41 @@
       document.getElementById('summary-time').textContent = `${state.profile.dailyMinutes} minutos diarios totales`;
 
       const lowChannels = Object.entries(state.profile.sensory)
+        .filter(([, val]) => val === 'Bajo')
+        .map(([key]) => key);
+
+      const summarySensory = document.getElementById('summary-sensory');
+      if (lowChannels.length > 0) {
+        summarySensory.textContent = `Prioridad sensorial: ${lowChannels.join(' y ')}`;
+      } else {
+        summarySensory.textContent = 'Enriquecimiento sensorial equilibrado';
+      }
+
+      document.getElementById('generate-plan-btn').classList.remove('hidden');
+      document.getElementById('ai-loading-box').classList.add('hidden');
+    }
+
+    // --- CONEXIÓN CON NETLIFY FUNCTION (GEMINI IA) ---
+    async function callGeminiPlanner(payload) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 14000);
+      try {
+        const res = await fetch(AI_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+        return data;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
     function sanitizeNodeIcon(rawIcon, isTutor = true, index = 0) {
       const str = (rawIcon || '').trim();
       // Si ya es un emoji (no contiene letras ASCII ni guiones bajos), devolverlo tal cual
