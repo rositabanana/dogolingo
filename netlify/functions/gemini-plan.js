@@ -201,7 +201,7 @@ Instrucciones de IDs para Etapa ${stageNumber}:
 
     const candidateModels = ["gemini-3.8-flash", "gemini-flash-latest"];
     const startTime = Date.now();
-    const maxTotalMs = 8800;
+    const maxTotalMs = 9500;
     let lastErrorStatus = 502;
     let lastErrorMessage = "Error al consultar Gemini";
     let parsedPlan = null;
@@ -209,12 +209,14 @@ Instrucciones de IDs para Etapa ${stageNumber}:
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     for (const modelName of candidateModels) {
-      // Intentamos hasta 2 veces por modelo si responde 503/429 (alta demanda)
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        const remainingMs = maxTotalMs - (Date.now() - startTime);
-        if (remainingMs < 1800) break;
+      const maxAttemptsForModel = modelName === "gemini-3.8-flash" ? 2 : 1;
 
-        const perRequestTimeout = Math.min(4300, remainingMs - 200);
+      // Intentamos reintentar solo en el modelo principal si responde 503/429
+      for (let attempt = 1; attempt <= maxAttemptsForModel; attempt++) {
+        const remainingMs = maxTotalMs - (Date.now() - startTime);
+        if (remainingMs < 1500) break;
+
+        const perRequestTimeout = Math.min(4400, remainingMs - 150);
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
         const modelController = new AbortController();
         const modelTimer = setTimeout(() => modelController.abort(), perRequestTimeout);
@@ -236,7 +238,7 @@ Instrucciones de IDs para Etapa ${stageNumber}:
               ],
               generationConfig: {
                 temperature: 0.55,
-                maxOutputTokens: 1900,
+                maxOutputTokens: 1700,
                 thinkingConfig: { thinkingBudget: 0 },
                 responseMimeType: "application/json",
                 responseSchema: RESPONSE_SCHEMA
@@ -261,9 +263,9 @@ Instrucciones de IDs para Etapa ${stageNumber}:
           lastErrorMessage = `Gemini (${response.status}): ${data?.error?.message || "Error al consultar Gemini"}`;
 
           // Si es 503 o 429 (pico de demanda), esperamos brevemente y reintentamos antes de rotar
-          if ((response.status === 503 || response.status === 429) && attempt < 2) {
-            const waitMs = Math.min(650, maxTotalMs - (Date.now() - startTime) - 1500);
-            if (waitMs > 100) await sleep(waitMs);
+          if ((response.status === 503 || response.status === 429) && attempt < maxAttemptsForModel) {
+            const waitMs = Math.min(350, maxTotalMs - (Date.now() - startTime) - 1600);
+            if (waitMs > 80) await sleep(waitMs);
             continue;
           }
           break;
