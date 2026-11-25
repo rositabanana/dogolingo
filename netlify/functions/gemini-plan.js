@@ -199,8 +199,8 @@ Instrucciones de IDs para Etapa ${stageNumber}:
 - Asegurate de que los nodos avanzados del can referencien en "requiresTutorIds" a los IDs de esta misma etapa (o queden vacíos en los primeros nodos).`;
     }
 
-    // Llamada única y directa a gemini-2.5-flash (evita encadenar intentos que superen el límite de 10s de Netlify)
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // Llamada única y directa a gemini-3.8-flash (modelo vigente indicado por Google AI Studio)
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
     const modelController = new AbortController();
     const modelTimer = setTimeout(() => modelController.abort(), 8800);
     let response = null;
