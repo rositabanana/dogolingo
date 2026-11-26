@@ -4,6 +4,8 @@ Aplicación web mobile-first de entrenamiento canino basado en refuerzo positivo
 
 Proyecto autónomo y sin fines de lucro: creado para explorar aplicaciones prácticas de Inteligencia Artificial en aprendizaje guiado, estructurado y respetuoso.
 
+Aviso legal (Disclaimer): DogoLingo es un proyecto independiente, autónomo y sin fines de lucro. No está afiliado, asociado, autorizado ni respaldado de ninguna manera por Duolingo, Inc. ni por ninguna de sus subsidiarias o filiales. El nombre y la estética de progreso por niveles son únicamente una referencia conceptual inspirada en el aprendizaje gamificado.
+
 ✨ Características principales
 
 Rutas duales estilo camino progresivo:
