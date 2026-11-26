@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>DogoLingo • Entrenamiento Canino 100% Amable</title>
-  <link rel="icon" href="./favicon/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="./favicon/site.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310b981'/%3E%3Cellipse cx='32' cy='40' rx='12' ry='10' fill='white'/%3E%3Ccircle cx='18' cy='25' r='5.5' fill='white'/%3E%3Ccircle cx='27' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='37' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='46' cy='25' r='5.5' fill='white'/%3E%3C/svg%3E" />
+  <link rel="alternate icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./android-chrome-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./android-chrome-512x512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1995,6 +1997,7 @@
       // Pasos
       document.getElementById('modal-steps-list').innerHTML = (node.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
       document.getElementById('modal-adaptive-note').innerHTML = `💡 <strong>Tip de bienestar:</strong> ${escapeHtml(node.adaptiveTip)}`;
+      const lockBanner = document.getElementById('modal-lock-banner');
       const footer = document.getElementById('modal-actions-footer');
 
       if (crossLocked) {
