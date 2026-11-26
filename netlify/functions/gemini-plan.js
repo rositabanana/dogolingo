@@ -23,7 +23,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 5. CALIBRACIÓN POR EXPERIENCIA PREVIA (OBLIGATORIO):
    - Si "priorTraining" es "Sí" (el perro ya tiene educación previa) o "tutorConditioning" / "tutorBodyLanguage" es "Intermedio" o "Conozco lo básico", OMITÍ por completo ejercicios nivel cero (como "El plato como punto de inflexión", "Mirame básico en living" o "Cómo usar premios"). Arrancá directamente en nivel intermedio/avanzado: retirada de cebo (fading luring), autocontrol en movimiento, gestión de distancia/umbral en exteriores y resolución directa de su "mainProblem" y "walkBehavior".
    - Integrá de forma progresiva y orgánica comandos funcionales y juegos cognitivos amables: Mirame (contacto visual), Sit (sentado), Acostado (down), Quieto (permanencia 3D: distancia, duración y distracción), Dar la pata / Choca esos cinco, Soltar (intercambio justo sin forcejeos) y juegos mentales como "¿En qué mano está?" (olfato y elección).
-   - Adaptá las lecciones específicamente al "mainProblem" elegido (ej. si es "Tironeo de correa", priorizá correa floja, giros en U y paseo en arco; si es "Impulsividad / Saltos", protocolo de puertas, visitas y permanencias con distracciones; si es "Ansiedad / Inquietud", descompresión olfativa profunda y calma en entornos nuevos).
+   - Adaptá las lecciones específicamente a TODOS los desafíos elegidos en "mainProblems" (o "mainProblem" como prioritario), cubriendo tanto el desafío principal como los complementarios sin exceder los 15 minutos activos diarios ni saturar al perro.
    - USO DE BOZAL: Si "requiresMuzzle" es "No" (o no está especificado), ESTÁ PROHIBIDO incluir nodos o menciones sobre bozal en el plan. Solo incluí positivización de bozal si "requiresMuzzle" es "Sí".
 
 6. DEPENDENCIA CRUZADA TUTOR -> CAN:
@@ -136,6 +136,11 @@ const RESPONSE_SCHEMA = {
 function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
   const stage = Number(stageNumber || 1);
   const dog = profile.dogName || "tu perro";
+  const problemsList = Array.isArray(profile.mainProblems) && profile.mainProblems.length > 0
+    ? profile.mainProblems
+    : [profile.mainProblem || "Tironeo de correa"];
+  const primaryProblem = problemsList[0];
+  const problemsSummary = problemsList.join(", ");
   const isExperienced =
     profile.priorTraining === "Sí" ||
     profile.tutorConditioning === "Intermedio" ||
@@ -407,7 +412,7 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
           tags: ["Señales de Calma", "Bienestar", "Prevención"],
           mediaType: "video",
           mediaTitle: `Anticipar incomodidad en ${dog}`,
-          mediaBody: `Observá señales sutiles antes de que aparezca ${profile.mainProblem || "tensión"} y ajustá la distancia con calma.`,
+          mediaBody: `Observá señales sutiles antes de que aparezca ${problemsSummary} y ajustá la distancia con calma.`,
           videos: [
             { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" }
           ],
@@ -503,15 +508,15 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
     {
       id: `d_s${stage}_1`,
       title: isExperienced
-        ? (stage === 1 ? `Autocontrol Dinámico (${profile.mainProblem || "Enfoque"})` : `Etapa ${stage}: Permanencia y Calma`)
+        ? (stage === 1 ? `Autocontrol Dinámico (${primaryProblem})` : `Etapa ${stage}: Permanencia y Calma`)
         : (stage === 1 ? "Espera Tranquila y Autocontrol" : `Etapa ${stage}: Foco en Casa`),
       duration: "4 min",
       icon: "🎯",
       requiresTutorIds: [`t_s${stage}_1`],
-      tags: ["Práctica Guiada", profile.mainProblem || "Bienestar", "Máx. 15m/día"],
+      tags: ["Práctica Guiada", primaryProblem, "Máx. 15m/día"],
       mediaType: "video",
       mediaTitle: `Ejercicio práctico para ${dog}`,
-      mediaBody: `Adaptado a ${dog} (${profile.dogAge || "Joven"}) y su desafío principal: ${profile.mainProblem || "convivencia diaria"}.`,
+      mediaBody: `Adaptado a ${dog} (${profile.dogAge || "Joven"}) y sus desafíos seleccionados: ${problemsSummary}.`,
       videos: [
         { title: "Gestión de atención y foco con distracciones", url: "https://www.youtube.com/watch?v=2kCQ6aXg9cI" }
       ],
@@ -574,7 +579,7 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
 
   return {
     stageNumber: stage,
-    stageSummary: `Plan adaptado para ${dog} (${profile.mainProblem || "convivencia"} • máx. 15 min activos/día).`,
+    stageSummary: `Plan adaptado para ${dog} (${problemsSummary} • máx. 15 min activos/día).`,
     tutor,
     dog: dogList
   };
@@ -634,6 +639,9 @@ exports.handler = async function (event) {
 Perfil del perro: ${JSON.stringify(profile)}.
 Generá una regresión pedagógica amable (bajando criterio, distancia y distracciones) devolviendo 1 nodo ajustado en la ruta correspondiente con pasos más simples y un "adaptiveTip" empático.`;
   } else {
+    const problemsList = Array.isArray(profile.mainProblems) && profile.mainProblems.length > 0
+      ? profile.mainProblems
+      : [profile.mainProblem || "Tironeo de correa"];
     userPrompt = `Generá la Etapa ${stageNumber} del plan de entrenamiento DogoLingo para este binomio:
 - Nombre del perro: ${profile.dogName || "Toby"}
 - Edad/Etapa: ${profile.dogAge || "Joven"}
@@ -641,7 +649,7 @@ Generá una regresión pedagógica amable (bajando criterio, distancia y distrac
 - Sale a pasear: ${profile.walksOutside || "Sí"} | Comportamiento en paseo: ${profile.walkBehavior || "Tira de la correa"}
 - Requiere uso de bozal: ${profile.requiresMuzzle || "No"}
 - Educación previa: ${profile.priorTraining || "No"}
-- Mayor desafío: ${profile.mainProblem || "Tironeo de correa"}
+- Desafíos seleccionados (en orden de prioridad): ${problemsList.join(" | ")}
 - Perfil sensorial en casa: ${JSON.stringify(profile.sensory || {})}
 - Nivel del tutor (condicionamiento): ${profile.tutorConditioning || "Principiante"}
 - Nivel del tutor (lenguaje corporal): ${profile.tutorBodyLanguage || "Principiante"}
