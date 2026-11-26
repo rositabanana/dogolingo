@@ -12,29 +12,8 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 
 2. REGLA INQUEBRANTABLE DE BIENESTAR CANINO:
    - La práctica activa de comandos del perro NUNCA debe superar los 15 minutos diarios totales para evitar fatiga mental y estrés.
-   - Si el usuario reporta 30, 45 o 60 minutos disponibles al día, el excedente sobre los 15 minutos activos del perro se asigna a capacitación del tutor y enriquecimiento pasivo (olfato, licky mat, descanso).
-
-3. PERFIL SENSORIAL EN CASA:
-   - Analizá los 5 canales (Olfativa, Sonora, Gustativa, Visual, Texturas). Priorizá dinámicas de enriquecimiento en los canales marcados como "Bajo". Si todos están en "Medio" o "Alto", felicitá esa base y proponé desafíos cognitivos/olfativos progresivos sin afirmar que están bajos.
-
-4. ADAPTABILIDAD FÍSICA Y ETARIA:
-   - Si el perro es "Senior" o tiene estado físico "Sensible / Articular" o "Cuidado especial", evitá saltos, giros bruscos o exigencia física y priorizá cognición, olfato y calma.
-
-5. CALIBRACIÓN POR EXPERIENCIA PREVIA (OBLIGATORIO):
-   - Si "priorTraining" es "Sí" (el perro ya tiene educación previa) o "tutorConditioning" / "tutorBodyLanguage" es "Intermedio" o "Conozco lo básico", OMITÍ por completo ejercicios nivel cero (como "El plato como punto de inflexión", "Mirame básico en living" o "Cómo usar premios"). Arrancá directamente en nivel intermedio/avanzado: retirada de cebo (fading luring), autocontrol en movimiento, gestión de distancia/umbral en exteriores y resolución directa de su "mainProblem" y "walkBehavior".
-   - Integrá de forma progresiva y orgánica comandos funcionales y juegos cognitivos amables: Mirame (contacto visual), Sit (sentado), Acostado (down), Quieto (permanencia 3D: distancia, duración y distracción), Dar la pata / Choca esos cinco, Soltar (intercambio justo sin forcejeos) y juegos mentales como "¿En qué mano está?" (olfato y elección).
-   - Adaptá las lecciones específicamente a TODOS los desafíos elegidos en "mainProblems" (o "mainProblem" como prioritario), cubriendo tanto el desafío principal como los complementarios sin exceder los 15 minutos activos diarios ni saturar al perro.
-   - USO DE BOZAL: Si "requiresMuzzle" es "No" (o no está especificado), ESTÁ PROHIBIDO incluir nodos o menciones sobre bozal en el plan. Solo incluí positivización de bozal si "requiresMuzzle" es "Sí".
-
-6. DEPENDENCIA CRUZADA TUTOR -> CAN:
-   - Los nodos avanzados de la ruta del perro deben exigir en "requiresTutorIds" el ID del nodo teórico correspondiente de la ruta del tutor.
-
-7. GENERACIÓN POR ETAPAS (SCROLL INFINITO SIN REPETICIONES):
-   - Generá bloques ágiles y concisos de exactamente 3 nodos por ruta por etapa (3 en tutor y 3 en dog, textos breves y accionables).
-   - ESTÁ PROHIBIDO repetir títulos, ejercicios o dinámicas de etapas anteriores: cada nueva etapa debe escalar progresivamente la dificultad (aumentando duración de permanencia, retirando el cebo/luring, sumando distancia a distracciones y pasando de casa -> patio/vereda tranquila -> parque con estímulos medios).
-
-8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO:
-   - Para el array "videos" de cada nodo, seleccioná 1 o 2 videos relevantes ÚNICAMENTE de esta lista curada verificada o del canal aprobado:
+8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO (REPARTIR POR NIVEL Y TEMA):
+   - Para el array "videos" de cada nodo, seleccioná 1 o 2 videos relevantes ÚNICAMENTE de esta lista curada verificada, respetando el nivel y el problema específico:
      * https://www.youtube.com/watch?v=9b7F1QY9iWc (Cómo ser un buen guía y referente seguro para tu perro)
      * https://www.youtube.com/watch?v=rYRhnF4-NUg (Estructura, previsibilidad y refuerzo positivo)
      * https://www.youtube.com/watch?v=RppFTzWkFOw (Lectura corporal y señales de calma - Turid Rugaas)
@@ -55,6 +34,27 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
      * https://www.youtube.com/watch?v=ZlxllSurxM0 (Gestión ambiental para bajar ladridos)
      * https://www.youtube.com/watch?v=nkFNMYbJhy8 (Redirigir mordiscones al caminar)
      * https://www.youtube.com/watch?v=3Lx2VMRC1D4 (Frenar el salto al recibir visitas)
+     * https://www.youtube.com/watch?v=ny8sshxsoHo (Ansiedad por separación: señales y bases - Nivel 1)
+     * https://www.youtube.com/watch?v=PvEXf5gY-OM (Quedarse solo en casa: salidas graduales - Nivel 2)
+     * https://www.youtube.com/watch?v=wPjLYCiu4xk (Miedo profundo en la calle: distancia segura y respeto)
+     * https://www.youtube.com/watch?v=P7R3vpgz6mA (Inseguridad en la calle: construir confianza paso a paso)
+     * https://www.youtube.com/watch?v=r09mb_nfTZo (Miedo a tormentas y pirotecnia: fobia sonora y refugio)
+     * https://www.youtube.com/watch?v=AftyX0Kt7-s (Protección de recursos: plato, hueso, juguete o sillón)
+     * https://www.youtube.com/watch?v=hQrx64U2ZEc (Reactividad hacia otros perros en paseo: guía general)
+     * https://www.youtube.com/watch?v=2dt0kVwF6j4 (Causas de reactividad hacia otros perros - Nivel 2)
+     * https://www.youtube.com/watch?v=dUz4mbJFU3M (Causas de reactividad: alternativa y manejo preventivo)
+     * https://www.youtube.com/watch?v=egbkNwNUxog (Reactividad hacia personas, niños, bicis o motos)
+     * https://www.youtube.com/watch?v=7coCAFVkewA (Hábitos higiénicos: enseñar pis y caca afuera sin retos)
+     * https://www.youtube.com/watch?v=oPDjqgxUcZM (Cuidados cooperativos: baño, cepillado y corte de uñas)
+     * https://www.youtube.com/watch?v=V-JIAM4RWPw (Miedo al veterinario, gotas o pipeta sin forcejeos)
+     * https://www.youtube.com/watch?v=zqTM2uDIOj8 (Miedo o mareo al viajar en auto)
+     * https://www.youtube.com/watch?v=nLm-gg11IrQ (Convivencia entre perros y gatos en casa)
+     * https://www.youtube.com/watch?v=k24VeWDxCaM (Convivencia segura entre perros y bebés/niños)
+     * https://www.youtube.com/watch?v=Z_CDerzy1e4 (Perro hiperactivo que no sabe desconectar / modo turbina)
+     * https://www.youtube.com/watch?v=v4ZV8d6XwBc (Cómo hablarle al perro: tono y actitud - Comunicación Nivel 1)
+     * https://www.youtube.com/watch?v=QDdqPw-MDfo (Comunicación canina: coherencia y energía - Nivel 2)
+     * https://www.youtube.com/watch?v=wJvndQ-7qwk (Comunicación canina avanzada: lectura sutil - Nivel 3)
+     * https://www.youtube.com/watch?v=-hOqlYRl5Pk (Alternativa: cómo hablarle y comunicarnos con el perro)
      * https://www.youtube.com/@dos_adiestramiento/search?query=adiestramiento+positivo (Búsqueda en canal aprobado de referencia)
 
 9. FORMATO DE ÍCONOS ESTRICTO (MUY IMPORTANTE):
@@ -187,108 +187,17 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
           },
           {
             id: `t_s${stage}_3`,
-            title: "Juegos Cognitivos y Olfato en Casa",
+            title: "Comunicación Canina Avanzada (Nivel 3) y Exterior",
             duration: "4 min",
-            icon: "🧠",
-            tags: ["Cognición", "Olfato", "Calma"],
+            icon: "🎙️",
+            tags: ["Comunicación Nivel 3", "Exterior", "Alto Valor"],
             mediaType: "video",
-            mediaTitle: `Estimulación mental sin impacto físico para ${dog}`,
-            mediaBody: "Los juegos de elección y olfato canalizan energía mental y fortalecen la concentración.",
-            videos: [{ title: "Enriquecimiento sensorial: alfombras olfativas y licky mats", url: "https://www.youtube.com/watch?v=NAth4ZBEAnE" }],
-            steps: [
-              "Prepará 3 repeticiones de búsqueda en puños cerrados o vasos.",
-              "Dejá que use su nariz sin darle pistas con la voz.",
-              "Cerrá la sesión cuando resuelva con calma."
+            mediaTitle: "Lectura sutil y coherencia emocional en espacios abiertos",
+            mediaBody: "Afinamos nuestra actitud corporal y voz en plazas o veredas, bajando la exigencia y subiendo el valor del premio.",
+            videos: [
+              { title: "Comunicación canina avanzada (Nivel 3: lectura sutil)", url: "https://www.youtube.com/watch?v=wJvndQ-7qwk" },
+              { title: "Foco con distracciones en exteriores", url: "https://www.youtube.com/watch?v=pC1aZf15pOE" }
             ],
-            adaptiveTip: "Ideal para días de lluvia o para complementar el tope de 15 min activos."
-          }
-        ],
-        dog: [
-          {
-            id: `d_s${stage}_1`,
-            title: "Sit, Acostado y Quieto con 2 Pasos de Distancia",
-            duration: "4 min",
-            icon: "🪑",
-            requiresTutorIds: [`t_s${stage}_1`],
-            tags: ["Sit", "Acostado", "Quieto"],
-            mediaType: "video",
-            mediaTitle: `Posturas de calma y permanencia para ${dog}`,
-            mediaBody: "Encadenamos Sit y Acostado con retirada de cebo y sumamos 2 pasos de Quieto tranquilo.",
-            videos: [{ title: "Luring básico: Mirame, Sit y juego", url: "https://www.youtube.com/shorts/eKS3mjN0f3U" }],
-            steps: [
-              "Pedí Sit y luego Acostado usando gesto manual limpio.",
-              "Mostrá palma abierta ('Quieto'), dá 2 pasos atrás, volvé, premiá y liberá.",
-              "Mantené la práctica por debajo de los 4 minutos."
-            ],
-            adaptiveTip: "Premiá en el suelo cuando esté acostado para reforzar la calma."
-          },
-          {
-            id: `d_s${stage}_2`,
-            title: "Dar la Pata y Soltar con Intercambio",
-            duration: "4 min",
-            icon: "🐾",
-            requiresTutorIds: [`t_s${stage}_2`],
-            tags: ["Dar la Pata", "Soltar", "Vínculo"],
-            mediaType: "video",
-            mediaTitle: `Trucos cooperativos y control bucal para ${dog}`,
-            mediaBody: "Construimos el gesto de Dar la Pata por iniciativa propia y el Soltar amable con mordedor.",
-            videos: [{ title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" }],
-            steps: [
-              "Cerrá un premio en tu mano baja; cuando toque con la pata, marcá '¡Bien!' y premiá.",
-              "Jugá suave con un mordedor, pedí 'Soltá' ofreciendo premio y retomá el juego.",
-              "Hacé 3 repeticiones divertidas y cortas."
-            ],
-            adaptiveTip: "Celebrá cada pequeño avance con voz serena y alegre."
-          },
-          {
-            id: `d_s${stage}_3`,
-            title: "Juego Mental: ¿En qué mano está?",
-            duration: "4 min",
-            icon: "✊",
-            requiresTutorIds: [`t_s${stage}_3`],
-            tags: ["¿En qué mano está?", "Olfato", "Autocontrol"],
-            mediaType: "video",
-            mediaTitle: `Desafío olfativo de elección para ${dog}`,
-            mediaBody: "Tu perro usa su olfato para identificar en qué puño está el premio sin mordisquear.",
-            videos: [{ title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }],
-            steps: [
-              "Escondé un premio en una mano y presentá ambos puños cerrados.",
-              "Cuando apoye el hocico o la pata suavemente en la mano correcta, abrí y premiá.",
-              "Alterná de mano durante 4 rondas tranquilas."
-            ],
-            adaptiveTip: "Si rasca fuerte, esperá 1 segundo de pausa antes de abrir la mano."
-          }
-        ]
-      },
-      {
-        tutor: [
-          {
-            id: `t_s${stage}_1`,
-            title: "Estación de Calma en Manta (Place) y Visitas",
-            duration: "4 min",
-            icon: "🏕️",
-            tags: ["Place / Manta", "Autocontrol", "Premack"],
-            mediaType: "video",
-            mediaTitle: "Crear un punto seguro de descanso portátil",
-            mediaBody: "Asociar una manta con calma profunda permite gestionar timbres, comidas y salidas sin estrés.",
-            videos: [{ title: "Cómo aplicar Capturing en casa", url: "https://www.youtube.com/watch?v=WP-wtPet_uI" }],
-            steps: [
-              "Premiá cada vez que pise o se eche sobre su manta.",
-              "Entregá los premios despacio entre sus patas para bajar revoluciones.",
-              "Usá una palabra clara de liberación cuando termine el ejercicio."
-            ],
-            adaptiveTip: "La manta nunca se usa como castigo, siempre como refugio positivo."
-          },
-          {
-            id: `t_s${stage}_2`,
-            title: "Generalización en Plazas con Estímulos Medios",
-            duration: "4 min",
-            icon: "🌳",
-            tags: ["Exterior", "Foco", "Alto Valor"],
-            mediaType: "video",
-            mediaTitle: `Sostener la atención de ${dog} fuera de casa`,
-            mediaBody: "En espacios abiertos subimos el valor del premio y acortamos las repeticiones.",
-            videos: [{ title: "Foco con distracciones en exteriores", url: "https://www.youtube.com/watch?v=pC1aZf15pOE" }],
             steps: [
               "Dejá olfatear el entorno 3 minutos antes de pedir ejercicios.",
               "Premiá cada mirada voluntaria hacia vos a distancia cómoda.",
@@ -394,68 +303,8 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
           mediaTitle: `Cómo percibe el mundo ${dog} a través de tu guía`,
           mediaBody: `Los perros leen nuestro estado emocional y coherencia para decidir si un entorno es seguro. Ser un buen guía no es imponer, sino ofrecer calma, previsibilidad y ejemplos claros.`,
           videos: [
-            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
-            { title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" }
-          ],
-          steps: [
-            "Antes de pedir una conducta, regulá tu postura y respiración para transmitir calma.",
-            "Sé coherente con tus señales: premiá con timing preciso y evitá repetir órdenes.",
-            "Usá permisos del entorno como recompensa natural (Principio de Premack)."
-          ],
-          adaptiveTip: "Tu serenidad es el ancla emocional desde la cual tu perro interpreta el entorno."
-        },
-        {
-          id: `t_s${stage}_2`,
-          title: stage === 1 ? "Lectura de Señales y Umbrales" : `Etapa ${stage}: Gestión de Distancia`,
-          duration: "4 min",
-          icon: "👀",
-          tags: ["Señales de Calma", "Bienestar", "Prevención"],
-          mediaType: "video",
-          mediaTitle: `Anticipar incomodidad en ${dog}`,
-          mediaBody: `Observá señales sutiles antes de que aparezca ${problemsSummary} y ajustá la distancia con calma.`,
-          videos: [
-            { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" }
-          ],
-          steps: [
-            "Identificá señales tempranas de tensión o desconexión.",
-            "Aumentá distancia o bajá exigencia antes de que se sature.",
-            "Premiá cuando recupere el foco hacia vos."
-          ],
-          adaptiveTip: "La distancia cómoda protege el vínculo y acelera el aprendizaje."
-        },
-        {
-          id: `t_s${stage}_3`,
-          title: stage === 1 ? "Enriquecimiento Olfativo en Casa" : `Etapa ${stage}: Generalización Exterior`,
-          duration: "4 min",
-          icon: "👃",
-          tags: ["Olfato", "Calma", "Refuerzo Positivo"],
-          mediaType: "video",
-          mediaTitle: `Descompresión mental para ${dog}`,
-          mediaBody: "Sumamos olfato y calma para equilibrar la energía sin exigir esfuerzo físico excesivo.",
-          videos: [
-            { title: "Enriquecimiento sensorial: alfombras olfativas y licky mats", url: "https://www.youtube.com/watch?v=NAth4ZBEAnE" }
-          ],
-          steps: [
-            "Prepará una búsqueda simple o sesión de olfato tranquila.",
-            "Dejá que explore sin apurar ni repetir órdenes.",
-            "Cerrá cuando muestre respiración pausada."
-          ],
-          adaptiveTip: "El olfateo ayuda a regular el sistema nervioso de forma natural."
-        }
-      ]
-    : [
-        {
-          id: `t_s${stage}_1`,
-          title: stage === 1 ? "Ser un Buen Guía y Refuerzo Positivo" : `Etapa ${stage}: Capturing y Calma`,
-          duration: "4 min",
-          icon: "🧭",
-          tags: ["Guía Seguro", "Refuerzo Positivo", "Sin Castigos"],
-          mediaType: profile.wantsReading === "Sí" ? "reading" : "video",
-          mediaTitle: "Tu perro percibe el mundo a través de tu ejemplo",
-          mediaBody: `Para ${dog}, vos sos su puente con el entorno: cuando actuás con calma, previsibilidad y refuerzo positivo, aprende a confiar y a tomar mejores decisiones sin miedo.`,
-          videos: [
-            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
-            { title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" }
+            { title: "Cómo hablarle a tu perro (Nivel 1: tono y actitud)", url: "https://www.youtube.com/watch?v=v4ZV8d6XwBc" },
+            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" }
           ],
           steps: [
             "Modelá la calma con movimientos pausados y voz serena antes de interactuar.",
@@ -466,15 +315,16 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
         },
         {
           id: `t_s${stage}_2`,
-          title: stage === 1 ? "Señales de Calma y Estrés" : `Etapa ${stage}: Foco con Estímulos`,
+          title: stage === 1 ? "Señales de Calma y Comunicación Nivel 2" : `Etapa ${stage}: Foco con Estímulos`,
           duration: "4 min",
           icon: "👀",
-          tags: ["Turid Rugaas", "Lectura Corporal", "Calma"],
+          tags: ["Turid Rugaas", "Comunicación Nivel 2", "Calma"],
           mediaType: "video",
-          mediaTitle: "Leer el lenguaje corporal de tu perro",
+          mediaTitle: "Leer el lenguaje corporal y regular nuestra energía",
           mediaBody: "Reconocer señales de calma a tiempo evita frustraciones durante las prácticas.",
           videos: [
-            { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" }
+            { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" },
+            { title: "Comunicación canina (Nivel 2: coherencia y energía)", url: "https://www.youtube.com/watch?v=QDdqPw-MDfo" }
           ],
           steps: [
             "Observá postura, orejas y boca durante el ejercicio.",
