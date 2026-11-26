@@ -7,8 +7,8 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 
 1. MARCO TEÓRICO OBLIGATORIO (CERO CASTIGOS):
    - Operar EXCLUSIVAMENTE con Refuerzo Positivo (premiar conductas deseadas) y Castigo Negativo suave (retirar brevemente atención o acceso sin enojo, ej. subir el plato si salta).
-   - PROHIBIDO sugerir castigo positivo, refuerzo negativo, collares de ahorro/ahogo/púas/eléctricos, tirones de correa, gritos o "dominancia".
-   - Integrar explícitamente conceptos prácticos de: Cuadrante de Skinner aplicado con amabilidad, Principio de Premack (usar permisos cotidianos como recompensa), Luring (guiado con premio y retiro progresivo de la comida), Capturing (capturar conductas tranquilas espontáneas), Señales de Calma de Turid Rugaas y tono de voz sereno.
+   - PROHIBIDO sugerir castigo positivo, refuerzo negativo, collares de ahorro/ahogo/púas/eléctricos, tirones de correa, gritos o "dominancia" por imposición.
+   - Integrar explícitamente conceptos prácticos de: Liderazgo amable y rol de guía seguro (el perro percibe y regula el mundo a través de nuestra calma, coherencia y ejemplo), Cuadrante de Skinner aplicado con amabilidad, Principio de Premack (usar permisos cotidianos como recompensa), Luring (guiado con premio y retiro progresivo de la comida), Capturing (capturar conductas tranquilas espontáneas), Señales de Calma de Turid Rugaas y tono de voz sereno.
 
 2. REGLA INQUEBRANTABLE DE BIENESTAR CANINO:
    - La práctica activa de comandos del perro NUNCA debe superar los 15 minutos diarios totales para evitar fatiga mental y estrés.
@@ -34,6 +34,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 
 8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO:
    - Para el array "videos" de cada nodo, seleccioná 1 o 2 videos relevantes ÚNICAMENTE de esta lista curada verificada o del canal aprobado:
+     * https://www.youtube.com/watch?v=9b7F1QY9iWc (Cómo ser un buen guía y referente seguro para tu perro)
      * https://www.youtube.com/watch?v=rYRhnF4-NUg (Estructura, previsibilidad y refuerzo positivo)
      * https://www.youtube.com/watch?v=RppFTzWkFOw (Lectura corporal y señales de calma - Turid Rugaas)
      * https://www.youtube.com/watch?v=WP-wtPet_uI (Cómo aplicar Capturing en casa)
@@ -53,7 +54,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
      * https://www.youtube.com/watch?v=ZlxllSurxM0 (Gestión ambiental para bajar ladridos)
      * https://www.youtube.com/watch?v=nkFNMYbJhy8 (Redirigir mordiscones al caminar)
      * https://www.youtube.com/watch?v=3Lx2VMRC1D4 (Frenar el salto al recibir visitas)
-     * https://www.youtube.com/@dos_adiestramiento (Canal aprobado de referencia)
+     * https://www.youtube.com/@dos_adiestramiento/search?query=adiestramiento+positivo (Búsqueda en canal aprobado de referencia)
 
 9. FORMATO DE ÍCONOS ESTRICTO (MUY IMPORTANTE):
    - El campo "icon" de cada nodo DEBE ser ÚNICAMENTE un solo emoji Unicode real (ej: "🧭", "👀", "👃", "🎯", "🛡️", "🥣", "🌿", "💤", "🎾", "🐕‍🦺", "🦮", "🎙️").
@@ -144,22 +145,23 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
     ? [
         {
           id: `t_s${stage}_1`,
-          title: stage === 1 ? "Retirada de Cebo y Premack" : `Etapa ${stage}: Timing en Movimiento`,
+          title: stage === 1 ? "Ser un Buen Guía y Referente" : `Etapa ${stage}: Timing en Movimiento`,
           duration: "4 min",
-          icon: "🎯",
-          tags: ["Refuerzo Positivo", "Premack", "Nivel Intermedio"],
+          icon: "🧭",
+          tags: ["Liderazgo Amable", "Ejemplo y Calma", "Nivel Intermedio"],
           mediaType: profile.wantsReading === "Sí" ? "reading" : "video",
-          mediaTitle: `Estrategia práctica para guiar a ${dog}`,
-          mediaBody: `Ajustamos el nivel de ${dog} (${profile.dogAge || "Joven"}) para evitar ejercicios básicos repetidos y trabajar autocontrol real con bloques cortos.`,
+          mediaTitle: `Cómo percibe el mundo ${dog} a través de tu guía`,
+          mediaBody: `Los perros leen nuestro estado emocional y coherencia para decidir si un entorno es seguro. Ser un buen guía no es imponer, sino ofrecer calma, previsibilidad y ejemplos claros.`,
           videos: [
+            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
             { title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" }
           ],
           steps: [
-            "Probá señalar sin mostrar el premio de entrada y reforzá con timing preciso.",
-            "Usá pausas o permisos del entorno como refuerzo natural (Premack).",
-            "Mantené la sesión ágil y cerrá con un acierto fluido."
+            "Antes de pedir una conducta, regulá tu postura y respiración para transmitir calma.",
+            "Sé coherente con tus señales: premiá con timing preciso y evitá repetir órdenes.",
+            "Usá permisos del entorno como recompensa natural (Principio de Premack)."
           ],
-          adaptiveTip: "Máximo 15 minutos activos diarios para el perro; el resto es capacitación y olfato."
+          adaptiveTip: "Tu serenidad es el ancla emocional desde la cual tu perro interpreta el entorno."
         },
         {
           id: `t_s${stage}_2`,
@@ -203,22 +205,23 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
     : [
         {
           id: `t_s${stage}_1`,
-          title: stage === 1 ? "Refuerzo Positivo y Timing" : `Etapa ${stage}: Capturing y Calma`,
-          duration: "3 min",
-          icon: "🧠",
-          tags: ["Refuerzo Positivo", "Timing", "Sin Castigos"],
+          title: stage === 1 ? "Ser un Buen Guía y Refuerzo Positivo" : `Etapa ${stage}: Capturing y Calma`,
+          duration: "4 min",
+          icon: "🧭",
+          tags: ["Guía Seguro", "Refuerzo Positivo", "Sin Castigos"],
           mediaType: profile.wantsReading === "Sí" ? "reading" : "video",
-          mediaTitle: "Marcar el segundo exacto del acierto",
-          mediaBody: `Trabajamos con refuerzo positivo y castigo negativo suave para que ${dog} aprenda con claridad y sin miedo.`,
+          mediaTitle: "Tu perro percibe el mundo a través de tu ejemplo",
+          mediaBody: `Para ${dog}, vos sos su puente con el entorno: cuando actuás con calma, previsibilidad y refuerzo positivo, aprende a confiar y a tomar mejores decisiones sin miedo.`,
           videos: [
+            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
             { title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" }
           ],
           steps: [
-            "Tené premios pequeños listos antes de empezar.",
-            "Marcá el acierto al instante con voz serena y alegre.",
-            "Hacé bloques cortos de 3 a 5 minutos."
+            "Modelá la calma con movimientos pausados y voz serena antes de interactuar.",
+            "Marcá cada acierto al instante con una palabra corta y entregá un premio suave.",
+            "Hacé bloques cortos de 3 a 5 minutos cerrando siempre con éxito."
           ],
-          adaptiveTip: "Evitá gritos o tirones: la claridad genera confianza."
+          adaptiveTip: "Guiar con ejemplo y claridad reemplaza por completo cualquier grito o tirón."
         },
         {
           id: `t_s${stage}_2`,
