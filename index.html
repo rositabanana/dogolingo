@@ -802,6 +802,61 @@
       }, 3600);
     }
 
+    function getUserPlanBackupKey(userId) {
+      return userId ? `dogolingo_plan_backup_${userId}` : null;
+    }
+
+    function saveLocalPlanBackup(userId) {
+      try {
+        const key = getUserPlanBackupKey(userId);
+        if (!key || !state.roadmaps?.tutor?.length || !state.roadmaps?.dog?.length) return;
+        const payload = {
+          profile: state.profile,
+          roadmaps: state.roadmaps,
+          added_behaviors: state.addedBehaviors,
+          current_stage: state.currentStage,
+          updated_at: new Date().toISOString()
+        };
+        window.localStorage.setItem(key, JSON.stringify(payload));
+      } catch (_) {}
+    }
+
+    function loadLocalPlanBackup(userId) {
+      try {
+        const key = getUserPlanBackupKey(userId);
+        if (!key) return null;
+        const raw = window.localStorage.getItem(key);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.roadmaps?.tutor) && parsed.roadmaps.tutor.length > 0 && Array.isArray(parsed.roadmaps?.dog) && parsed.roadmaps.dog.length > 0) {
+          return parsed;
+        }
+      } catch (_) {}
+      return null;
+    }
+
+    function clearLocalPlanBackup(userId) {
+      try {
+        const key = getUserPlanBackupKey(userId);
+        if (key) window.localStorage.removeItem(key);
+      } catch (_) {}
+    }
+
+    function applyPlanSnapshot(snapshot) {
+      if (!snapshot || !snapshot.roadmaps) return false;
+      const tutorList = Array.isArray(snapshot.roadmaps.tutor) ? snapshot.roadmaps.tutor : [];
+      const dogList = Array.isArray(snapshot.roadmaps.dog) ? snapshot.roadmaps.dog : [];
+      if (tutorList.length === 0 || dogList.length === 0) return false;
+
+      state.profile = { ...state.profile, ...(snapshot.profile || {}) };
+      state.roadmaps = { tutor: tutorList, dog: dogList };
+      state.addedBehaviors = Array.isArray(snapshot.added_behaviors) ? snapshot.added_behaviors : [];
+      state.currentStage = Number(snapshot.current_stage || 1);
+      normalizeRouteStatuses('tutor');
+      normalizeRouteStatuses('dog');
+      return true;
+    }
+
     function showScreen(screenId) {
       ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
         const el = document.getElementById(id);
@@ -966,9 +1021,11 @@
     }
 
     async function saveUserProgressToCloud() {
-      if (state.mode !== 'account' || !state.user || !supabaseClient) return;
+      if (state.mode !== 'account' || !state.user) return;
+      saveLocalPlanBackup(state.user.id);
+      if (!supabaseClient) return;
       try {
-        await supabaseClient
+        const { error } = await supabaseClient
           .from('dogolingo_plans')
           .upsert({
             user_id: state.user.id,
@@ -978,31 +1035,42 @@
             current_stage: state.currentStage,
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id' });
+        if (error) {
+          console.warn('Error guardando plan en Supabase:', error.message);
+        }
       } catch (err) {
         console.warn('No se pudo sincronizar con Supabase:', err.message);
       }
     }
 
     async function loadUserProgressFromCloud() {
-      if (state.mode !== 'account' || !state.user || !supabaseClient) return false;
-      try {
-        const { data, error } = await supabaseClient
-          .from('dogolingo_plans')
-          .select('*')
-          .eq('user_id', state.user.id)
-          .maybeSingle();
+      if (state.mode !== 'account' || !state.user) return false;
+      const localBackup = loadLocalPlanBackup(state.user.id);
 
-        if (error || !data || !data.roadmaps) return false;
-        state.profile = { ...state.profile, ...(data.profile || {}) };
-        state.roadmaps = data.roadmaps;
-        state.addedBehaviors = Array.isArray(data.added_behaviors) ? data.added_behaviors : [];
-        state.currentStage = Number(data.current_stage || 1);
-        normalizeRouteStatuses('tutor');
-        normalizeRouteStatuses('dog');
-        return true;
-      } catch (_) {
-        return false;
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('dogolingo_plans')
+            .select('*')
+            .eq('user_id', state.user.id)
+            .maybeSingle();
+
+          if (!error && data && applyPlanSnapshot(data)) {
+            saveLocalPlanBackup(state.user.id);
+            return true;
+          }
+        } catch (err) {
+          console.warn('Error leyendo plan desde Supabase:', err.message);
+        }
       }
+
+      if (localBackup && applyPlanSnapshot(localBackup)) {
+        // Re-sincroniza silenciosamente con la nube si el plan estaba solo en respaldo local
+        saveUserProgressToCloud();
+        return true;
+      }
+
+      return false;
     }
 
     async function restoreActiveSessionOnBoot() {
@@ -1017,6 +1085,9 @@
           if (hasPlan) {
             renderRoadmapsScreen();
             showScreen('screen-roadmaps');
+          } else {
+            startOnboardingFlow(false);
+            showToast('Sesión iniciada. Completá el perfil para guardar tu plan.', '🐾');
           }
         }
       } catch (_) {}
@@ -1118,8 +1189,18 @@
       state.roadmaps = { tutor: [], dog: [] };
       state.addedBehaviors = [];
       state.currentStage = 1;
+      if (state.user?.id) {
+        clearLocalPlanBackup(state.user.id);
+        if (supabaseClient) {
+          try {
+            await supabaseClient
+              .from('dogolingo_plans')
+              .delete()
+              .eq('user_id', state.user.id);
+          } catch (_) {}
+        }
+      }
       resetProfileToDefaults();
-      await saveUserProgressToCloud();
       startOnboardingFlow(true);
       showToast('Plan reiniciado. Volvamos a configurar tu perfil.', '🔄');
     }
