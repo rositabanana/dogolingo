@@ -22,6 +22,7 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 
 5. CALIBRACIÓN POR EXPERIENCIA PREVIA (OBLIGATORIO):
    - Si "priorTraining" es "Sí" (el perro ya tiene educación previa) o "tutorConditioning" / "tutorBodyLanguage" es "Intermedio" o "Conozco lo básico", OMITÍ por completo ejercicios nivel cero (como "El plato como punto de inflexión", "Mirame básico en living" o "Cómo usar premios"). Arrancá directamente en nivel intermedio/avanzado: retirada de cebo (fading luring), autocontrol en movimiento, gestión de distancia/umbral en exteriores y resolución directa de su "mainProblem" y "walkBehavior".
+   - Integrá de forma progresiva y orgánica comandos funcionales y juegos cognitivos amables: Mirame (contacto visual), Sit (sentado), Acostado (down), Quieto (permanencia 3D: distancia, duración y distracción), Dar la pata / Choca esos cinco, Soltar (intercambio justo sin forcejeos) y juegos mentales como "¿En qué mano está?" (olfato y elección).
    - Adaptá las lecciones específicamente al "mainProblem" elegido (ej. si es "Tironeo de correa", priorizá correa floja, giros en U y paseo en arco; si es "Impulsividad / Saltos", protocolo de puertas, visitas y permanencias con distracciones; si es "Ansiedad / Inquietud", descompresión olfativa profunda y calma en entornos nuevos).
    - USO DE BOZAL: Si "requiresMuzzle" es "No" (o no está especificado), ESTÁ PROHIBIDO incluir nodos o menciones sobre bozal en el plan. Solo incluí positivización de bozal si "requiresMuzzle" es "Sí".
 
@@ -140,6 +141,241 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
     profile.tutorConditioning === "Intermedio" ||
     profile.tutorBodyLanguage === "Intermedio";
   const allowsMuzzle = profile.requiresMuzzle === "Sí";
+
+  if (stage >= 2) {
+    const stageBank = [
+      {
+        tutor: [
+          {
+            id: `t_s${stage}_1`,
+            title: "Regla de las 3D en el Quieto (Distancia, Duración, Distracción)",
+            duration: "4 min",
+            icon: "📐",
+            tags: ["Quieto", "Progresión 3D", "Sin Frustración"],
+            mediaType: "video",
+            mediaTitle: `Construir permanencia sólida con ${dog}`,
+            mediaBody: "Subí una sola variable por vez (segundos o pasos de distancia) y premiá siempre en la posición antes de liberar.",
+            videos: [{ title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" }],
+            steps: [
+              "Si sumás 2 pasos de distancia, bajá el tiempo de espera a 3 segundos.",
+              "Volvé hacia tu perro para premiar en el lugar antes de decir '¡Libre!'.",
+              "Evitá repetir la palabra 'quieto' varias veces seguidas."
+            ],
+            adaptiveTip: "Si se levanta antes, simplemente reducí la distancia en el intento siguiente."
+          },
+          {
+            id: `t_s${stage}_2`,
+            title: "Intercambio Justo para Enseñar Soltar",
+            duration: "4 min",
+            icon: "🤝",
+            tags: ["Soltar", "Confianza", "Prevención"],
+            mediaType: "video",
+            mediaTitle: "Cooperación voluntaria sin quitar objetos por la fuerza",
+            mediaBody: "Intercambiar un juguete por un premio rico y devolvérselo evita la protección de recursos.",
+            videos: [{ title: "Premios de alto valor saludables", url: "https://www.youtube.com/watch?v=XS4MsXDbGQI" }],
+            steps: [
+              "Acercá un premio blando a su nariz mientras sostiene un juguete.",
+              "Apenas abra la boca, decí 'Soltá', premiá y devolvele su juguete.",
+              "Practicá 3 repeticiones breves en un entorno tranquilo."
+            ],
+            adaptiveTip: "Nunca corras detrás de tu perro para sacarle algo de la boca."
+          },
+          {
+            id: `t_s${stage}_3`,
+            title: "Juegos Cognitivos y Olfato en Casa",
+            duration: "4 min",
+            icon: "🧠",
+            tags: ["Cognición", "Olfato", "Calma"],
+            mediaType: "video",
+            mediaTitle: `Estimulación mental sin impacto físico para ${dog}`,
+            mediaBody: "Los juegos de elección y olfato canalizan energía mental y fortalecen la concentración.",
+            videos: [{ title: "Enriquecimiento sensorial: alfombras olfativas y licky mats", url: "https://www.youtube.com/watch?v=NAth4ZBEAnE" }],
+            steps: [
+              "Prepará 3 repeticiones de búsqueda en puños cerrados o vasos.",
+              "Dejá que use su nariz sin darle pistas con la voz.",
+              "Cerrá la sesión cuando resuelva con calma."
+            ],
+            adaptiveTip: "Ideal para días de lluvia o para complementar el tope de 15 min activos."
+          }
+        ],
+        dog: [
+          {
+            id: `d_s${stage}_1`,
+            title: "Sit, Acostado y Quieto con 2 Pasos de Distancia",
+            duration: "4 min",
+            icon: "🪑",
+            requiresTutorIds: [`t_s${stage}_1`],
+            tags: ["Sit", "Acostado", "Quieto"],
+            mediaType: "video",
+            mediaTitle: `Posturas de calma y permanencia para ${dog}`,
+            mediaBody: "Encadenamos Sit y Acostado con retirada de cebo y sumamos 2 pasos de Quieto tranquilo.",
+            videos: [{ title: "Luring básico: Mirame, Sit y juego", url: "https://www.youtube.com/shorts/eKS3mjN0f3U" }],
+            steps: [
+              "Pedí Sit y luego Acostado usando gesto manual limpio.",
+              "Mostrá palma abierta ('Quieto'), dá 2 pasos atrás, volvé, premiá y liberá.",
+              "Mantené la práctica por debajo de los 4 minutos."
+            ],
+            adaptiveTip: "Premiá en el suelo cuando esté acostado para reforzar la calma."
+          },
+          {
+            id: `d_s${stage}_2`,
+            title: "Dar la Pata y Soltar con Intercambio",
+            duration: "4 min",
+            icon: "🐾",
+            requiresTutorIds: [`t_s${stage}_2`],
+            tags: ["Dar la Pata", "Soltar", "Vínculo"],
+            mediaType: "video",
+            mediaTitle: `Trucos cooperativos y control bucal para ${dog}`,
+            mediaBody: "Construimos el gesto de Dar la Pata por iniciativa propia y el Soltar amable con mordedor.",
+            videos: [{ title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" }],
+            steps: [
+              "Cerrá un premio en tu mano baja; cuando toque con la pata, marcá '¡Bien!' y premiá.",
+              "Jugá suave con un mordedor, pedí 'Soltá' ofreciendo premio y retomá el juego.",
+              "Hacé 3 repeticiones divertidas y cortas."
+            ],
+            adaptiveTip: "Celebrá cada pequeño avance con voz serena y alegre."
+          },
+          {
+            id: `d_s${stage}_3`,
+            title: "Juego Mental: ¿En qué mano está?",
+            duration: "4 min",
+            icon: "✊",
+            requiresTutorIds: [`t_s${stage}_3`],
+            tags: ["¿En qué mano está?", "Olfato", "Autocontrol"],
+            mediaType: "video",
+            mediaTitle: `Desafío olfativo de elección para ${dog}`,
+            mediaBody: "Tu perro usa su olfato para identificar en qué puño está el premio sin mordisquear.",
+            videos: [{ title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }],
+            steps: [
+              "Escondé un premio en una mano y presentá ambos puños cerrados.",
+              "Cuando apoye el hocico o la pata suavemente en la mano correcta, abrí y premiá.",
+              "Alterná de mano durante 4 rondas tranquilas."
+            ],
+            adaptiveTip: "Si rasca fuerte, esperá 1 segundo de pausa antes de abrir la mano."
+          }
+        ]
+      },
+      {
+        tutor: [
+          {
+            id: `t_s${stage}_1`,
+            title: "Estación de Calma en Manta (Place) y Visitas",
+            duration: "4 min",
+            icon: "🏕️",
+            tags: ["Place / Manta", "Autocontrol", "Premack"],
+            mediaType: "video",
+            mediaTitle: "Crear un punto seguro de descanso portátil",
+            mediaBody: "Asociar una manta con calma profunda permite gestionar timbres, comidas y salidas sin estrés.",
+            videos: [{ title: "Cómo aplicar Capturing en casa", url: "https://www.youtube.com/watch?v=WP-wtPet_uI" }],
+            steps: [
+              "Premiá cada vez que pise o se eche sobre su manta.",
+              "Entregá los premios despacio entre sus patas para bajar revoluciones.",
+              "Usá una palabra clara de liberación cuando termine el ejercicio."
+            ],
+            adaptiveTip: "La manta nunca se usa como castigo, siempre como refugio positivo."
+          },
+          {
+            id: `t_s${stage}_2`,
+            title: "Generalización en Plazas con Estímulos Medios",
+            duration: "4 min",
+            icon: "🌳",
+            tags: ["Exterior", "Foco", "Alto Valor"],
+            mediaType: "video",
+            mediaTitle: `Sostener la atención de ${dog} fuera de casa`,
+            mediaBody: "En espacios abiertos subimos el valor del premio y acortamos las repeticiones.",
+            videos: [{ title: "Foco con distracciones en exteriores", url: "https://www.youtube.com/watch?v=pC1aZf15pOE" }],
+            steps: [
+              "Dejá olfatear el entorno 3 minutos antes de pedir ejercicios.",
+              "Premiá cada mirada voluntaria hacia vos a distancia cómoda.",
+              "Cortá la sesión antes de que aparezca cansancio."
+            ],
+            adaptiveTip: "Si ignora premios ricos, aumentá unos metros la distancia al estímulo."
+          },
+          {
+            id: `t_s${stage}_3`,
+            title: "Encadenamiento Fluido y Descompresión",
+            duration: "4 min",
+            icon: "🎓",
+            tags: ["Fluidez", "Bienestar", "15m Máx Activos"],
+            mediaType: "video",
+            mediaTitle: "Combinar señales conocidas sin saturar",
+            mediaBody: "Alternar 2 ejercicios conocidos antes de premiar mantiene la mente ágil y entretenida.",
+            videos: [{ title: "Gestión de atención y foco con distracciones", url: "https://www.youtube.com/watch?v=2kCQ6aXg9cI" }],
+            steps: [
+              "Pedí Mirame y luego Sit en una secuencia fluida.",
+              "Premiá al completar ambos y dale una pausa de olfato.",
+              "Respetá siempre el tope de 15 minutos activos al día."
+            ],
+            adaptiveTip: "Menos repeticiones y mayor calidad emocional."
+          }
+        ],
+        dog: [
+          {
+            id: `d_s${stage}_1`,
+            title: "Ir a su Manta (Place) y Acostado Relajado",
+            duration: "4 min",
+            icon: "🏕️",
+            requiresTutorIds: [`t_s${stage}_1`],
+            tags: ["Place", "Acostado", "Calma"],
+            mediaType: "video",
+            mediaTitle: `Descanso guiado sobre su manta para ${dog}`,
+            mediaBody: "Practicamos ir a la manta, echarse tranquilo y esperar la señal de liberación.",
+            videos: [{ title: "Cómo aplicar Capturing en casa", url: "https://www.youtube.com/watch?v=WP-wtPet_uI" }],
+            steps: [
+              "Invitalo hacia su manta y premiá cuando apoye las 4 patas.",
+              "Guiá a Acostado y entregá 2 premios pausados en el lugar.",
+              "Liberá con '¡Libre!' tras 5 segundos de calma."
+            ],
+            adaptiveTip: "Podés llevar esa misma manta cuando vayan de visita."
+          },
+          {
+            id: `d_s${stage}_2`,
+            title: "Mirame y Sit con Distracciones en Plaza",
+            duration: "5 min",
+            icon: "👀",
+            requiresTutorIds: [`t_s${stage}_2`],
+            tags: ["Mirame", "Sit", "Exterior"],
+            mediaType: "video",
+            mediaTitle: `Atención voluntaria en exterior para ${dog}`,
+            mediaBody: "Consolidamos Mirame y Sit a distancia segura de personas o perros en movimiento.",
+            videos: [{ title: "Foco con distracciones en exteriores", url: "https://www.youtube.com/watch?v=pC1aZf15pOE" }],
+            steps: [
+              "Ubicáte a 10 metros de estímulos tranquilos en el parque.",
+              "Pedí Mirame, marcá el contacto visual y luego pedí Sit.",
+              "Premiá con entusiasmo calmo y cerrá con olfateo libre."
+            ],
+            adaptiveTip: "La distancia es la clave para que pueda pensar y elegir mirarte."
+          },
+          {
+            id: `d_s${stage}_3`,
+            title: "Circuito Cognitivo: Choca Esos Cinco y Rastreo",
+            duration: "4 min",
+            icon: "🌟",
+            requiresTutorIds: [`t_s${stage}_3`],
+            tags: ["Choca Esos Cinco", "Olfato", "Diversión"],
+            mediaType: "video",
+            mediaTitle: `Cierre lúdico y olfativo para ${dog}`,
+            mediaBody: "Evolucionamos Dar la Pata a Choca Esos Cinco y cerramos con rastreo de premios.",
+            videos: [{ title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }],
+            steps: [
+              "Elevá un poco la palma abierta para invitar a tocarla con su pata ('Choca esos cinco').",
+              "Premiá 3 aciertos fluidos y esparcí premios en una alfombra o pasto.",
+              "Dejá que olfatee tranquilo para bajar pulsaciones."
+            ],
+            adaptiveTip: "Cerrar con olfato evita que quede sobreexcitado después de jugar."
+          }
+        ]
+      }
+    ];
+
+    const selectedModule = stageBank[(stage - 2) % stageBank.length];
+    return {
+      stageNumber: stage,
+      stageSummary: `Etapa ${stage} adaptada para ${dog} (nuevas habilidades y progresión sin repeticiones).`,
+      tutor: selectedModule.tutor,
+      dog: selectedModule.dog
+    };
+  }
 
   const tutor = isExperienced
     ? [
