@@ -206,7 +206,7 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
             adaptiveTip: "Si ignora premios ricos, aumentá unos metros la distancia al estímulo."
           },
           {
-            id: `t_s${stage}_3`,
+            id: `t_s${stage}_4`,
             title: "Encadenamiento Fluido y Descompresión",
             duration: "4 min",
             icon: "🎓",
@@ -351,6 +351,68 @@ function buildDynamicFallbackPlan(profile = {}, stageNumber = 1) {
             "Finalizá con calma."
           ],
           adaptiveTip: "Menos repeticiones cansadas y más aciertos tranquilos."
+        }
+      ]
+    : [
+        {
+          id: `t_s${stage}_1`,
+          title: stage === 1 ? "Ser un Buen Guía y Timing Positivo" : `Etapa ${stage}: Timing y Claridad`,
+          duration: "4 min",
+          icon: "🧭",
+          tags: ["Liderazgo Amable", "Tono y Actitud", "Refuerzo Positivo"],
+          mediaType: profile.wantsReading === "Sí" ? "reading" : "video",
+          mediaTitle: `Tu perro percibe el mundo a través de tu guía`,
+          mediaBody: `Para ${dog}, sos su referente emocional: observa cómo reaccionás y cómo le hablás para decidir si debe relajarse o ponerse en alerta. Guiar con calma, coherencia y refuerzo positivo construye confianza real.`,
+          videos: [
+            { title: "Cómo ser un buen guía y referente para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
+            { title: "Cómo hablarle al perro: tono y actitud - Comunicación Nivel 1", url: "https://www.youtube.com/watch?v=v4ZV8d6XwBc" }
+          ],
+          steps: [
+            "Modelá la tranquilidad con voz serena y movimientos pausados.",
+            "Marcá el acierto en el instante justo y premiá con un trocito suave.",
+            "Mantené bloques cortos de 3 a 5 minutos."
+          ],
+          adaptiveTip: "Un guía predecible y calmo reduce la ansiedad desde el primer día."
+        },
+        {
+          id: `t_s${stage}_2`,
+          title: stage === 1 ? "Señales de Calma y Lenguaje Corporal" : `Etapa ${stage}: Lectura en Entornos`,
+          duration: "4 min",
+          icon: "👀",
+          tags: ["Turid Rugaas", "Lectura Corporal", "Bienestar"],
+          mediaType: "video",
+          mediaTitle: `Entender lo que ${dog} comunica antes de desbordarse`,
+          mediaBody: "Bostezar, lamerse el hocico o girar la cabeza indican incomodidad o saturación.",
+          videos: [
+            { title: "Lectura corporal y señales de calma - Turid Rugaas", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" },
+            { title: "Manejo en entornos de estrés y calma", url: "https://www.youtube.com/watch?v=ZHE8TGj_2BU" }
+          ],
+          steps: [
+            "Observá a tu perro 2 minutos en silencio hoy e identificá señales de calma.",
+            "Si ves saturación, bajá la exigencia o dale una pausa de olfato.",
+            "Evitá inclinarte sobre él cuando está inseguro."
+          ],
+          adaptiveTip: "Detectar estrés temprano evita bloqueos."
+        },
+        {
+          id: `t_s${stage}_3`,
+          title: stage === 1 ? "Luring, Capturing y Descompresión" : `Etapa ${stage}: Progresión Amable`,
+          duration: "4 min",
+          icon: "🎯",
+          tags: ["Luring", "Capturing", "15m Máx Activos"],
+          mediaType: "video",
+          mediaTitle: "Guiar sin frustración y premiar la calma",
+          mediaBody: "Retirá el cebo rápido y complementá con trabajo olfativo tranquilo en casa.",
+          videos: [
+            { title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" },
+            { title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" }
+          ],
+          steps: [
+            "Hacé 3 repeticiones con premio y en la 4ta usá la mano vacía.",
+            "Capturá momentos espontáneos de calma sobre su manta.",
+            "Respetá el tope de 15 minutos activos diarios."
+          ],
+          adaptiveTip: "Terminar con aciertos fáciles consolida la confianza."
         }
       ];
 
