@@ -851,6 +851,300 @@
 
   <script>
     // =========================================================================
+    // CONSTANTES DE DOMINIO, VIDEOS CURADOS Y ESTADO GLOBAL DE LA APLICACIÓN
+    // =========================================================================
+    const SENSORY_CHANNELS = [
+      { key: 'Olfativa', icon: '👃', desc: 'Alfombras olfativas, búsqueda de premios' },
+      { key: 'Sonora', icon: '👂', desc: 'Ruidos cotidianos, calma acústica' },
+      { key: 'Gustativa', icon: '👅', desc: 'Licky mats, mordedores rellenos' },
+      { key: 'Visual', icon: '👀', desc: 'Observación tranquila a distancia' },
+      { key: 'Texturas', icon: '🐾', desc: 'Superficies variadas y propiocepción' }
+    ];
+
+    const CURATED_VIDEOS = {
+      buenGuia: { title: 'Cómo ser un buen guía y referente seguro para tu perro', url: 'https://www.youtube.com/watch?v=9b7F1QY9iWc' },
+      estructura: { title: 'Estructura, previsibilidad y refuerzo positivo', url: 'https://www.youtube.com/watch?v=rYRhnF4-NUg' },
+      senalesCalma: { title: 'Lectura corporal y señales de calma (Turid Rugaas)', url: 'https://www.youtube.com/watch?v=RppFTzWkFOw' },
+      capturing: { title: 'Cómo aplicar Capturing en casa', url: 'https://www.youtube.com/watch?v=WP-wtPet_uI' },
+      sensorial: { title: 'Enriquecimiento sensorial: alfombras olfativas y licky mats', url: 'https://www.youtube.com/watch?v=NAth4ZBEAnE' },
+      luringVsCapturing: { title: 'Luring vs. Capturing sin frustración', url: 'https://www.youtube.com/watch?v=kRN9KxcrCes' },
+      manejoEstres: { title: 'Manejo en entornos de estrés y calma', url: 'https://www.youtube.com/watch?v=ZHE8TGj_2BU' },
+      gestionAtencion: { title: 'Gestión de atención y foco con distracciones', url: 'https://www.youtube.com/watch?v=2kCQ6aXg9cI' },
+      elPlato: { title: 'El plato como punto de inflexión: autocontrol amable', url: 'https://www.youtube.com/watch?v=je3t9HAwOFs' },
+      descompresionOlfato: { title: 'Descompresión y juego de olfato base', url: 'https://www.youtube.com/watch?v=e1bEILT1h2E' },
+      luringBasico: { title: 'Luring básico: Mirame, Sit y juego', url: 'https://www.youtube.com/shorts/eKS3mjN0f3U' },
+      premiosAltoValor: { title: 'Premios de alto valor saludables', url: 'https://www.youtube.com/watch?v=XS4MsXDbGQI' },
+      recetasCongelados: { title: 'Recetas de congelados y juguetes rellenables', url: 'https://www.youtube.com/watch?v=h7VqP6OuSjw' },
+      focoExteriores: { title: 'Foco con distracciones en exteriores', url: 'https://www.youtube.com/watch?v=pC1aZf15pOE' },
+      bozalCanasta: { title: 'Positivizar el bozal tipo canasta', url: 'https://www.youtube.com/shorts/PktcGcFK0U4' },
+      pretalSinMiedo: { title: 'Poner el pretal sin miedo', url: 'https://www.youtube.com/watch?v=0GNAXQaeJhA' },
+      calmaCorrea: { title: 'Calma antes de enganchar la correa / correa floja', url: 'https://www.youtube.com/watch?v=XGzavHuQDmA' },
+      ladridosAmbiente: { title: 'Gestión ambiental para bajar ladridos', url: 'https://www.youtube.com/watch?v=ZlxllSurxM0' },
+      mordiscones: { title: 'Redirigir mordiscones al caminar', url: 'https://www.youtube.com/watch?v=nkFNMYbJhy8' },
+      saltosVisitas: { title: 'Frenar el salto al recibir visitas', url: 'https://www.youtube.com/watch?v=3Lx2VMRC1D4' },
+      separacionBases: { title: 'Ansiedad por separación: señales y bases (Nivel 1)', url: 'https://www.youtube.com/watch?v=ny8sshxsoHo' },
+      separacionGradual: { title: 'Quedarse solo en casa: salidas graduales (Nivel 2)', url: 'https://www.youtube.com/watch?v=PvEXf5gY-OM' },
+      miedoCalle: { title: 'Miedo profundo en la calle: distancia segura y respeto', url: 'https://www.youtube.com/watch?v=wPjLYCiu4xk' },
+      inseguridadCalle: { title: 'Inseguridad en la calle: construir confianza paso a paso', url: 'https://www.youtube.com/watch?v=P7R3vpgz6mA' },
+      miedoTormentas: { title: 'Miedo a tormentas y pirotecnia: fobia sonora y refugio', url: 'https://www.youtube.com/watch?v=r09mb_nfTZo' },
+      proteccionRecursos: { title: 'Protección de recursos: plato, hueso, juguete o sillón', url: 'https://www.youtube.com/watch?v=AftyX0Kt7-s' },
+      reactividadPerros1: { title: 'Reactividad hacia otros perros en paseo: guía general', url: 'https://www.youtube.com/watch?v=hQrx64U2ZEc' },
+      reactividadPersonas: { title: 'Reactividad hacia personas, niños, bicis o motos', url: 'https://www.youtube.com/watch?v=egbkNwNUxog' },
+      habitosHigienicos: { title: 'Hábitos higiénicos: enseñar pis y caca afuera sin retos', url: 'https://www.youtube.com/watch?v=7coCAFVkewA' },
+      cuidadosCooperativos: { title: 'Cuidados cooperativos: baño, cepillado y corte de uñas', url: 'https://www.youtube.com/watch?v=oPDjqgxUcZM' },
+      miedoVeterinario: { title: 'Miedo al veterinario, gotas o pipeta sin forcejeos', url: 'https://www.youtube.com/watch?v=V-JIAM4RWPw' },
+      modoTurbina: { title: 'Perro hiperactivo que no sabe desconectar (modo turbina)', url: 'https://www.youtube.com/watch?v=Z_CDerzy1e4' },
+      comunicacion1: { title: 'Cómo hablarle al perro: tono y actitud (Nivel 1)', url: 'https://www.youtube.com/watch?v=v4ZV8d6XwBc' },
+      comunicacion2: { title: 'Comunicación canina: coherencia y energía (Nivel 2)', url: 'https://www.youtube.com/watch?v=QDdqPw-MDfo' },
+      comunicacion3: { title: 'Comunicación canina avanzada: lectura sutil (Nivel 3)', url: 'https://www.youtube.com/watch?v=wJvndQ-7qwk' },
+      canalRespaldo: { title: 'Videos de entrenamiento amable (DOS Adiestramiento)', url: 'https://www.youtube.com/@dos_adiestramiento/search?query=adiestramiento+positivo' }
+    };
+
+    const SUGGESTED_BEHAVIORS = [
+      {
+        title: 'No ladrar al timbre o ruidos del pasillo',
+        icon: '🔔',
+        desc: 'Desensibilizamos el sonido del timbre y redirigimos hacia su manta con premios.',
+        video: CURATED_VIDEOS.ladridosAmbiente
+      },
+      {
+        title: 'Esperar tranquilo antes de cruzar la calle',
+        icon: '🚦',
+        desc: 'Pausa voluntaria en el cordón de la vereda antes de recibir la señal de cruce.',
+        video: CURATED_VIDEOS.calmaCorrea
+      },
+      {
+        title: 'Soltar objetos o juguetes con intercambio justo',
+        icon: '🧸',
+        desc: 'Aprender a soltar por elección propia sin forcejeos ni protección de recursos.',
+        video: CURATED_VIDEOS.proteccionRecursos
+      },
+      {
+        title: 'Ir a su manta (Place) cuando llegan visitas',
+        icon: '🏕️',
+        desc: 'Estación de calma segura para recibir personas sin saltos ni ansiedad.',
+        video: CURATED_VIDEOS.saltosVisitas
+      },
+      {
+        title: 'Aceptar el bozal canasta con tranquilidad',
+        icon: '🛡️',
+        desc: 'Positivización gradual paso a paso para paseos o visitas veterinarias.',
+        video: CURATED_VIDEOS.bozalCanasta
+      },
+      {
+        title: 'Cuidados cooperativos: cepillado y patas',
+        icon: '🩺',
+        desc: 'Manipulación amable con consentimiento para baño, secado o revisión.',
+        video: CURATED_VIDEOS.cuidadosCooperativos
+      }
+    ];
+
+    function buildChannelSearchVideo(query = 'adiestramiento positivo') {
+      return {
+        title: `Guía práctica: ${query} (DOS Adiestramiento)`,
+        url: `https://www.youtube.com/@dos_adiestramiento/search?query=${encodeURIComponent(query)}`
+      };
+    }
+
+    const state = {
+      mode: 'demo',
+      authTab: 'register',
+      user: null,
+      onboardingStep: 1,
+      userTouchedProblems: false,
+      activeRouteTab: 'tutor',
+      currentStage: 1,
+      selectedModalNode: null,
+      addedBehaviors: [],
+      profile: {
+        dogName: 'Milo',
+        dogAge: 'Cachorro',
+        physicalState: 'Activo / Sin restricciones',
+        walksOutside: 'Sí',
+        walkBehavior: 'Tira de la correa con ansiedad',
+        requiresMuzzle: 'No',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
+        mainProblems: ['Tironeo de correa'],
+        sensory: {
+          Olfativa: 'Bajo',
+          Sonora: 'Medio',
+          Gustativa: 'Bajo',
+          Visual: 'Medio',
+          Texturas: 'Medio'
+        },
+        tutorConditioning: 'Principiante',
+        tutorBodyLanguage: 'Principiante',
+        dailyMinutes: 30,
+        wantsReading: 'Sí'
+      },
+      roadmaps: {
+        tutor: [],
+        dog: []
+      }
+    };
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function sanitizeNodeIcon(icon, fallbackTitle = '') {
+      const raw = String(icon || '').trim();
+      if (raw && !/^[a-z0-9_-]+$/i.test(raw) && raw.length <= 8) {
+        return raw;
+      }
+      const lower = String(fallbackTitle || '').toLowerCase();
+      if (lower.includes('paseo') || lower.includes('correa')) return '🦮';
+      if (lower.includes('olfato') || lower.includes('sensorial')) return '👃';
+      if (lower.includes('calma') || lower.includes('manta')) return '🌿';
+      if (lower.includes('bozal')) return '🛡️';
+      if (lower.includes('mirame') || lower.includes('atencion') || lower.includes('atención')) return '👀';
+      return '🐾';
+    }
+
+    function showScreen(screenId) {
+      const screens = ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== screenId);
+      });
+
+      const demoBanner = document.getElementById('demo-banner');
+      if (demoBanner) {
+        const showDemo = state.mode === 'demo' && screenId !== 'screen-auth';
+        demoBanner.classList.toggle('hidden', !showDemo);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function scrollToTopSmooth() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    let toastTimer = null;
+    function showToast(message, icon = '🎉') {
+      const box = document.getElementById('toast-box');
+      const iconEl = document.getElementById('toast-icon');
+      const textEl = document.getElementById('toast-text');
+      if (!box || !textEl) return;
+      if (iconEl) iconEl.textContent = icon;
+      textEl.textContent = message;
+      box.classList.remove('hidden');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 3400);
+    }
+
+    function normalizeRouteStatuses(routeKey) {
+      const list = state.roadmaps[routeKey];
+      if (!Array.isArray(list) || list.length === 0) return;
+      let foundActive = false;
+      list.forEach(node => {
+        if (node.status === 'completed') return;
+        if (!foundActive) {
+          node.status = 'active';
+          foundActive = true;
+        } else {
+          node.status = 'locked';
+        }
+      });
+    }
+
+    function containsHarmfulOrViolentBehavior(text = '') {
+      const normalized = String(text)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+
+      // Permitimos explícitamente frases orientadas a inhibir/dejar de morder objetos o ropa
+      if (/^(dejar de morder|no morder|que no muerda)\b/.test(normalized) && !/(intrus|ladron|person|gente|perr)/.test(normalized)) {
+        return false;
+      }
+
+      const forbiddenPatterns = [
+        /\bmorder\b/,
+        /\bmuerd[aeo]\b/,
+        /\batac(ar|a|o)\b/,
+        /\bagresi(vo|va|on|vidad)\b/,
+        /\bintrus[oa]s?\b/,
+        /\bladron(es|a|as)?\b/,
+        /\bguardia\b/,
+        /\bdefensa\b/,
+        /\bpelea(r)?\b/,
+        /\bcastig(o|ar)\b/,
+        /\bahog(o|ar)\b/,
+        /\belectric(o|a)\b/,
+        /\bpuas\b/,
+        /\bdomin(ar|ancia)\b/
+      ];
+
+      return forbiddenPatterns.some(rx => rx.test(normalized));
+    }
+
+    function getLocalPlanStorageKey(userId) {
+      return `dogolingo_plan_backup_${userId}`;
+    }
+
+    function saveLocalPlanBackup(userId) {
+      if (!userId) return;
+      try {
+        window.localStorage.setItem(
+          getLocalPlanStorageKey(userId),
+          JSON.stringify({
+            profile: state.profile,
+            roadmaps: state.roadmaps,
+            added_behaviors: state.addedBehaviors,
+            current_stage: state.currentStage,
+            updated_at: new Date().toISOString()
+          })
+        );
+      } catch (_) {}
+    }
+
+    function loadLocalPlanBackup(userId) {
+      if (!userId) return null;
+      try {
+        const raw = window.localStorage.getItem(getLocalPlanStorageKey(userId));
+        return raw ? JSON.parse(raw) : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function clearLocalPlanBackup(userId) {
+      if (!userId) return;
+      try {
+        window.localStorage.removeItem(getLocalPlanStorageKey(userId));
+      } catch (_) {}
+    }
+
+    function applyPlanSnapshot(snapshot) {
+      if (!snapshot || !Array.isArray(snapshot.roadmaps?.tutor) || snapshot.roadmaps.tutor.length === 0) {
+        return false;
+      }
+      if (snapshot.profile) {
+        state.profile = { ...state.profile, ...snapshot.profile };
+      }
+      state.roadmaps = {
+        tutor: snapshot.roadmaps.tutor,
+        dog: Array.isArray(snapshot.roadmaps.dog) ? snapshot.roadmaps.dog : []
+      };
+      state.addedBehaviors = Array.isArray(snapshot.added_behaviors) ? snapshot.added_behaviors : [];
+      state.currentStage = Number(snapshot.current_stage || 1);
+      normalizeRouteStatuses('tutor');
+      normalizeRouteStatuses('dog');
+      return true;
+    }
+
+    // =========================================================================
     // CONFIGURACIÓN DE SUPABASE (PERSISTENCIA REAL SOLO PARA CUENTAS ACTIVAS)
     // =========================================================================
     const SUPABASE_URL = 'https://vtalthmzhcydnahgfdri.supabase.co';
@@ -902,375 +1196,34 @@
     function clearAppCacheAndReload() {
       purgeCorruptSupabaseTokens();
       try {
+        // Limpiamos claves residuales de la app sin borrar backups si no es necesario, o limpiamos todo el auth
+        Object.keys(window.localStorage || {}).forEach(k => {
+          if (k.startsWith('sb-') || k.includes('supabase') || k.includes('gotrue')) {
+            window.localStorage.removeItem(k);
+          }
+        });
         window.sessionStorage.clear();
       } catch (_) {}
-      const cleanUrl = `${window.location.origin}${window.location.pathname}?v=${Date.now()}`;
-      window.location.replace(cleanUrl);
-    }
 
-    // =========================================================================
-    // REPOSITORIO ESTRICTO DE VIDEOS CURADOS Y CANAL APROBADO
-    // =========================================================================
-    const CURATED_VIDEOS = {
-      buenGuia: { title: "Cómo ser un buen guía y referente seguro para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
-      estructura: { title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" },
-      senalesCalma: { title: "Lectura corporal y señales de calma (Turid Rugaas)", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" },
-      capturing: { title: "Cómo aplicar Capturing en casa", url: "https://www.youtube.com/watch?v=WP-wtPet_uI" },
-      sensorial: { title: "Enriquecimiento sensorial: alfombras olfativas y licky mats", url: "https://www.youtube.com/watch?v=NAth4ZBEAnE" },
-      luringVsCapturing: { title: "Luring vs. Capturing sin frustración", url: "https://www.youtube.com/watch?v=kRN9KxcrCes" },
-      manejoEstres: { title: "Manejo en entornos de estrés y calma", url: "https://www.youtube.com/watch?v=ZHE8TGj_2BU" },
-      gestionAtencion: { title: "Gestión de atención y foco con distracciones", url: "https://www.youtube.com/watch?v=2kCQ6aXg9cI" },
-      elPlato: { title: "El plato como punto de inflexión: autocontrol amable", url: "https://www.youtube.com/watch?v=je3t9HAwOFs" },
-      descompresionOlfato: { title: "Descompresión y juego de olfato base", url: "https://www.youtube.com/watch?v=e1bEILT1h2E" },
-      luringBasico: { title: "Luring básico: Mirame, Sit y juego", url: "https://www.youtube.com/shorts/eKS3mjN0f3U" },
-      premiosAltoValor: { title: "Premios de alto valor saludables", url: "https://www.youtube.com/watch?v=XS4MsXDbGQI" },
-      recetasCongelados: { title: "Recetas de congelados y juguetes rellenables", url: "https://www.youtube.com/watch?v=h7VqP6OuSjw" },
-      focoExteriores: { title: "Foco con distracciones en exteriores", url: "https://www.youtube.com/watch?v=pC1aZf15pOE" },
-      bozalCanasta: { title: "Positivizar el bozal tipo canasta paso a paso", url: "https://www.youtube.com/shorts/PktcGcFK0U4" },
-      pretalSinMiedo: { title: "Poner el pretal sin miedo ni forcejeos", url: "https://www.youtube.com/watch?v=0GNAXQaeJhA" },
-      calmaCorrea: { title: "Calma antes de enganchar la correa / correa floja", url: "https://www.youtube.com/watch?v=XGzavHuQDmA" },
-      ladridosGestion: { title: "Gestión ambiental para bajar ladridos en casa", url: "https://www.youtube.com/watch?v=ZlxllSurxM0" },
-      mordiscones: { title: "Redirigir mordiscones al caminar o jugar", url: "https://www.youtube.com/watch?v=nkFNMYbJhy8" },
-      saltosVisitas: { title: "Frenar el salto al recibir visitas con amabilidad", url: "https://www.youtube.com/watch?v=3Lx2VMRC1D4" },
-      separacionBases: { title: "Ansiedad por separación: señales y bases (Nivel 1)", url: "https://www.youtube.com/watch?v=ny8sshxsoHo" },
-      separacionGradual: { title: "Quedarse solo en casa: salidas graduales (Nivel 2)", url: "https://www.youtube.com/watch?v=PvEXf5gY-OM" },
-      miedoCalle: { title: "Miedo profundo en la calle: distancia segura y respeto", url: "https://www.youtube.com/watch?v=wPjLYCiu4xk" },
-      inseguridadCalle: { title: "Inseguridad en la calle: construir confianza paso a paso", url: "https://www.youtube.com/watch?v=P7R3vpgz6mA" },
-      miedoTormentas: { title: "Miedo a tormentas y pirotecnia: fobia sonora y refugio", url: "https://www.youtube.com/watch?v=r09mb_nfTZo" },
-      proteccionRecursos: { title: "Protección de recursos: plato, hueso, juguete o sillón", url: "https://www.youtube.com/watch?v=AftyX0Kt7-s" },
-      reactividadPerros1: { title: "Reactividad hacia otros perros en paseo (Guía general)", url: "https://www.youtube.com/watch?v=hQrx64U2ZEc" },
-      reactividadPerros2: { title: "Causas de reactividad hacia otros perros (Nivel 2)", url: "https://www.youtube.com/watch?v=2dt0kVwF6j4" },
-      reactividadPerrosAlt: { title: "Reactividad: manejo preventivo y alternativa", url: "https://www.youtube.com/watch?v=dUz4mbJFU3M" },
-      reactividadPersonas: { title: "Reactividad hacia personas, niños, bicis o motos", url: "https://www.youtube.com/watch?v=egbkNwNUxog" },
-      habitosHigienicos: { title: "Hábitos higiénicos: enseñar pis y caca afuera sin retos", url: "https://www.youtube.com/watch?v=7coCAFVkewA" },
-      cuidadosCooperativos: { title: "Cuidados cooperativos: baño, cepillado y corte de uñas", url: "https://www.youtube.com/watch?v=oPDjqgxUcZM" },
-      miedoVeterinario: { title: "Miedo al veterinario, gotas o pipeta sin forcejeos", url: "https://www.youtube.com/watch?v=V-JIAM4RWPw" },
-      viajeAuto: { title: "Miedo o mareo al viajar en auto", url: "https://www.youtube.com/watch?v=zqTM2uDIOj8" },
-      perrosGatos: { title: "Convivencia entre perros y gatos en casa", url: "https://www.youtube.com/watch?v=nLm-gg11IrQ" },
-      perrosNinos: { title: "Convivencia segura entre perros y bebés/niños", url: "https://www.youtube.com/watch?v=k24VeWDxCaM" },
-      modoTurbina: { title: "Perro hiperactivo que no sabe desconectar (Modo turbina)", url: "https://www.youtube.com/watch?v=Z_CDerzy1e4" },
-      comunicacion1: { title: "Cómo hablarle al perro: tono y actitud (Nivel 1)", url: "https://www.youtube.com/watch?v=v4ZV8d6XwBc" },
-      comunicacion2: { title: "Comunicación canina: coherencia y energía (Nivel 2)", url: "https://www.youtube.com/watch?v=QDdqPw-MDfo" },
-      comunicacion3: { title: "Comunicación canina avanzada: lectura sutil (Nivel 3)", url: "https://www.youtube.com/watch?v=wJvndQ-7qwk" },
-      comunicacionAlt: { title: "Cómo hablarle y comunicarnos con el perro", url: "https://www.youtube.com/watch?v=-hOqlYRl5Pk" },
-      canalRespaldo: { title: "Canal Dos Adiestramiento (Guías amables)", url: "https://www.youtube.com/@dos_adiestramiento" }
-    };
-
-    const SUGGESTED_BEHAVIORS = [
-      {
-        title: "Ser un buen guía y referente seguro",
-        icon: "🧭",
-        desc: "Cómo percibe tu perro el entorno a través de tu calma, coherencia y ejemplo.",
-        video: CURATED_VIDEOS.buenGuia
-      },
-      {
-        title: "No tirar de la correa al pasear",
-        icon: "🦮",
-        desc: "Caminata relajada en forma de U sin tirones ni tensión.",
-        video: CURATED_VIDEOS.calmaCorrea
-      },
-      {
-        title: "Quedarse solo en casa tranquilo",
-        icon: "🏠",
-        desc: "Desensibilización a señales de salida y partidas graduales sin angustia.",
-        video: CURATED_VIDEOS.separacionBases
-      },
-      {
-        title: "Pasear calmo ante otros perros o bicis",
-        icon: "🐕‍🦺",
-        desc: "Manejo preventivo de distancia y foco ante estímulos en la calle.",
-        video: CURATED_VIDEOS.reactividadPerros1
-      },
-      {
-        title: "Superar miedo a tormentas o ruidos",
-        icon: "🌧️",
-        desc: "Creación de refugio seguro y acompañamiento sereno ante sonidos fuertes.",
-        video: CURATED_VIDEOS.miedoTormentas
-      },
-      {
-        title: "Soltar objetos sin proteger recursos",
-        icon: "🦴",
-        desc: "Intercambio justo para prevenir gruñidos alrededor del plato o juguetes.",
-        video: CURATED_VIDEOS.proteccionRecursos
-      },
-      {
-        title: "Hacer pis y caca afuera sin retos",
-        icon: "🧼",
-        desc: "Rutina de ventanas fisiológicas y refuerzo positivo inmediato.",
-        video: CURATED_VIDEOS.habitosHigienicos
-      },
-      {
-        title: "Aceptar baño, cepillado, auto y veterinaria",
-        icon: "🩺",
-        desc: "Cuidados cooperativos y viajes en auto sin forcejeos ni estrés.",
-        video: CURATED_VIDEOS.cuidadosCooperativos
-      },
-      {
-        title: "No saltar a las visitas al entrar",
-        icon: "🐾",
-        desc: "Saludo con las 4 patas en el suelo usando redirección olfativa.",
-        video: CURATED_VIDEOS.saltosVisitas
-      },
-      {
-        title: "Dejar de ladrar ante ruidos o timbre",
-        icon: "🔕",
-        desc: "Gestión ambiental y calma ante estímulos sonoros en casa.",
-        video: CURATED_VIDEOS.ladridosGestion
-      },
-      {
-        title: "Acudir al llamado con distracciones",
-        icon: "📣",
-        desc: "Respuesta alegre y confiable usando refuerzo positivo de alto valor.",
-        video: CURATED_VIDEOS.gestionAtencion
-      },
-      {
-        title: "Positivizar el bozal canasta",
-        icon: "🛡️",
-        desc: "Asociación voluntaria sin forcejeos para paseos o veterinaria.",
-        video: CURATED_VIDEOS.bozalCanasta
+      // Limpiamos Cache Storage y Service Workers si existieran (muy común que traben Safari/PWA)
+      const cleanupTasks = [];
+      if ('caches' in window) {
+        cleanupTasks.push(
+          caches.keys().then(names => Promise.all(names.map(name => caches.delete(name)))).catch(() => {})
+        );
       }
-    ];
-
-    const SENSORY_CHANNELS = [
-      { key: "Olfativa", icon: "👃", desc: "Juegos de olfato, alfombras o rastreo" },
-      { key: "Sonora", icon: "👂", desc: "Exposición gradual a sonidos cotidianos" },
-      { key: "Gustativa", icon: "👅", desc: "Licky mats, mordedores o texturas de comida" },
-      { key: "Visual", icon: "👁️", desc: "Observación tranquila del entorno" },
-      { key: "Texturas", icon: "🐾", desc: "Caminar sobre distintas superficies" }
-    ];
-
-    // =========================================================================
-    // ESTADO GLOBAL DE LA APLICACIÓN
-    // =========================================================================
-    const state = {
-      mode: 'demo', // 'demo' | 'account'
-      user: null,
-      authTab: 'register',
-      onboardingStep: 1,
-      activeRouteTab: 'tutor',
-      currentStage: 1,
-      selectedModalNode: null,
-      addedBehaviors: [],
-      userTouchedProblems: false,
-      profile: {
-        dogName: '',
-        dogAge: 'Cachorro',
-        physicalState: 'Activo / Sin restricciones',
-        walksOutside: 'Sí',
-        walkBehavior: 'Tira de la correa con ansiedad',
-        requiresMuzzle: 'No',
-        priorTraining: 'No',
-        mainProblem: 'Tironeo de correa',
-        mainProblems: ['Tironeo de correa'],
-        sensory: {
-          Olfativa: 'Bajo',
-          Sonora: 'Medio',
-          Gustativa: 'Bajo',
-          Visual: 'Medio',
-          Texturas: 'Medio'
-        },
-        tutorConditioning: 'Principiante',
-        tutorBodyLanguage: 'Principiante',
-        dailyMinutes: 30,
-        wantsReading: 'Sí'
-      },
-      roadmaps: {
-        tutor: [],
-        dog: []
-      }
-    };
-
-    // =========================================================================
-    // UTILIDADES GENERALES, SEGURIDAD ÉTICA Y BÚSQUEDA EN CANAL
-    // =========================================================================
-    function showToast(message, icon = '🎉') {
-      const box = document.getElementById('toast-box');
-      const iconEl = document.getElementById('toast-icon');
-      const textEl = document.getElementById('toast-text');
-      if (!box || !iconEl || !textEl) return;
-      iconEl.textContent = icon;
-      textEl.textContent = message;
-      box.classList.remove('hidden');
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => {
-        box.classList.add('hidden');
-      }, 3600);
-    }
-
-    function getUserPlanBackupKey(userId) {
-      return userId ? `dogolingo_plan_backup_${userId}` : null;
-    }
-
-    function saveLocalPlanBackup(userId) {
-      try {
-        const key = getUserPlanBackupKey(userId);
-        if (!key || !state.roadmaps?.tutor?.length || !state.roadmaps?.dog?.length) return;
-        const payload = {
-          profile: state.profile,
-          roadmaps: state.roadmaps,
-          added_behaviors: state.addedBehaviors,
-          current_stage: state.currentStage,
-          updated_at: new Date().toISOString()
-        };
-        window.localStorage.setItem(key, JSON.stringify(payload));
-      } catch (_) {}
-    }
-
-    function loadLocalPlanBackup(userId) {
-      try {
-        const key = getUserPlanBackupKey(userId);
-        if (!key) return null;
-        const raw = window.localStorage.getItem(key);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (parsed && Array.isArray(parsed.roadmaps?.tutor) && parsed.roadmaps.tutor.length > 0 && Array.isArray(parsed.roadmaps?.dog) && parsed.roadmaps.dog.length > 0) {
-          return parsed;
-        }
-      } catch (_) {}
-      return null;
-    }
-
-    function clearLocalPlanBackup(userId) {
-      try {
-        const key = getUserPlanBackupKey(userId);
-        if (key) window.localStorage.removeItem(key);
-      } catch (_) {}
-    }
-
-    function applyPlanSnapshot(snapshot) {
-      if (!snapshot || !snapshot.roadmaps) return false;
-      const tutorList = Array.isArray(snapshot.roadmaps.tutor) ? snapshot.roadmaps.tutor : [];
-      const dogList = Array.isArray(snapshot.roadmaps.dog) ? snapshot.roadmaps.dog : [];
-      if (tutorList.length === 0 || dogList.length === 0) return false;
-
-      const incomingProfile = snapshot.profile || {};
-      const normalizedProblems = Array.isArray(incomingProfile.mainProblems) && incomingProfile.mainProblems.length > 0
-        ? incomingProfile.mainProblems
-        : [incomingProfile.mainProblem || 'Tironeo de correa'];
-
-      state.profile = {
-        ...state.profile,
-        ...incomingProfile,
-        mainProblems: normalizedProblems,
-        mainProblem: normalizedProblems[0]
-      };
-      state.roadmaps = { tutor: tutorList, dog: dogList };
-      state.addedBehaviors = Array.isArray(snapshot.added_behaviors) ? snapshot.added_behaviors : [];
-      state.currentStage = Number(snapshot.current_stage || 1);
-      normalizeRouteStatuses('tutor');
-      normalizeRouteStatuses('dog');
-      return true;
-    }
-
-    function showScreen(screenId) {
-      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('hidden', id !== screenId);
-      });
-      const demoBanner = document.getElementById('demo-banner');
-      if (demoBanner) {
-        demoBanner.classList.toggle('hidden', !(state.mode === 'demo' && screenId !== 'screen-auth'));
-      }
-      scrollToTopSmooth();
-    }
-
-    function scrollToTopSmooth() {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      const scrollArea = document.getElementById('roadmap-scroll-area');
-      if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'instant' });
-    }
-
-    function escapeHtml(str = '') {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function sanitizeNodeIcon(icon, fallbackTitle = '') {
-      if (typeof icon === 'string' && icon.trim().length > 0 && !/^[a-z0-9_-]+$/i.test(icon.trim())) {
-        return icon.trim();
-      }
-      const lower = (fallbackTitle || '').toLowerCase();
-      if (lower.includes('bozal')) return '🛡️';
-      if (lower.includes('correa') || lower.includes('paseo')) return '🦮';
-      if (lower.includes('olfat') || lower.includes('mano')) return '👃';
-      if (lower.includes('mirame') || lower.includes('señal')) return '👀';
-      if (lower.includes('sit') || lower.includes('acostado')) return '🪑';
-      if (lower.includes('quieto')) return '📐';
-      if (lower.includes('solo') || lower.includes('separación')) return '🏠';
-      if (lower.includes('tormenta') || lower.includes('miedo')) return '🌧️';
-      if (lower.includes('recurso') || lower.includes('soltar')) return '🦴';
-      if (lower.includes('pis') || lower.includes('higién')) return '🧼';
-      if (lower.includes('veterin') || lower.includes('auto')) return '🩺';
-      return '🎯';
-    }
-
-    function containsHarmfulOrViolentBehavior(text = '') {
-      const clean = text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-
-      // Permitimos explícitamente conductas de autocontrol como "dejar de morder" o "no morder"
-      if (/\b(dejar\s+de|no)\s+mord(er|isquear)\b/.test(clean)) {
-        return false;
+      if ('serviceWorker' in navigator) {
+        cleanupTasks.push(
+          navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(r => r.unregister()))).catch(() => {})
+        );
       }
 
-      const forbiddenPatterns = [
-        /\batac(ar|a|e|o)\b/,
-        /\bmord(er|ida|edura)\b/,
-        /\bintruso(s)?\b/,
-        /\bladron(es)?\b/,
-        /\bguardia\b/,
-        /\bdefen(der|sa)\b/,
-        /\bpelea(r)?\b/,
-        /\bagresi(vo|on|vidad)\b/,
-        /\bpegar(le)?\b/,
-        /\bgolpe(ar|s)?\b/,
-        /\bcastig(o|ar)\b/,
-        /\bahorque\b/,
-        /\bpuas\b/,
-        /\belectrico\b/,
-        /\bdominar\b/,
-        /\bsometer\b/,
-        /\basustar\b/
-      ];
-      return forbiddenPatterns.some(rx => rx.test(clean));
-    }
-
-    function buildChannelSearchVideo(rawTopic = '') {
-      const stopWords = new Set(['que', 'no', 'como', 'hacer', 'para', 'mi', 'perro', 'el', 'la', 'los', 'las', 'un', 'una', 'de', 'del', 'al', 'en', 'con', 'por', 'a']);
-      const keywords = rawTopic
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s]/g, ' ')
-        .split(/\s+/)
-        .filter(w => w.length > 2 && !stopWords.has(w))
-        .slice(0, 4)
-        .join(' ');
-      const query = encodeURIComponent(keywords || 'adiestramiento positivo');
-      return {
-        title: `Buscar "${keywords || rawTopic}" en Dos Adiestramiento`,
-        url: `https://www.youtube.com/@dos_adiestramiento/search?query=${query}`
-      };
-    }
-
-    function normalizeRouteStatuses(routeKey) {
-      const list = state.roadmaps[routeKey];
-      if (!Array.isArray(list) || list.length === 0) return;
-      let foundActive = false;
-      list.forEach(node => {
-        if (node.status === 'completed') return;
-        if (!foundActive) {
-          node.status = 'active';
-          foundActive = true;
-        } else {
-          node.status = 'locked';
-        }
+      showToast('Limpiando caché y recargando...', '🧹');
+      Promise.all(cleanupTasks).finally(() => {
+        setTimeout(() => {
+          const cleanUrl = `${window.location.origin}${window.location.pathname}?v=${Date.now()}`;
+          window.location.replace(cleanUrl);
+        }, 350);
       });
     }
 
@@ -1395,7 +1348,7 @@
         }
         showToast('¡Contraseña actualizada con éxito!', '🔐');
       } catch (err) {
-        errEl.textContent = err.message || 'No se pudo actualizar la contraseña.';
+        errEl.textContent = formatAuthErrorMessage(err);
         errEl.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
@@ -1403,17 +1356,26 @@
       }
     }
 
-    if (supabaseClient) {
-      supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (event === 'PASSWORD_RECOVERY') {
-          state.mode = 'account';
-          state.user = session?.user || null;
-          const resetModal = document.getElementById('reset-password-modal');
-          const errEl = document.getElementById('reset-password-error');
-          if (errEl) errEl.classList.add('hidden');
-          if (resetModal) resetModal.classList.remove('hidden');
-        }
-      });
+    function formatAuthErrorMessage(err) {
+      const raw = String(err?.message || '').trim();
+      const lower = raw.toLowerCase();
+      if (!raw) return 'No se pudo completar la autenticación.';
+      if (lower.includes('invalid login credentials')) {
+        return 'Correo o contraseña incorrectos. Verificá tus datos e intentá de nuevo.';
+      }
+      if (lower.includes('email not confirmed')) {
+        return 'Tu correo aún no fue confirmado. Revisá tu bandeja de entrada o spam.';
+      }
+      if (lower.includes('user already registered')) {
+        return 'Este correo ya tiene una cuenta registrada. Probá iniciar sesión.';
+      }
+      if (lower.includes('password should be at least')) {
+        return 'La contraseña debe tener al menos 6 caracteres.';
+      }
+      if (lower.includes('rate limit') || lower.includes('too many requests')) {
+        return 'Demasiados intentos seguidos. Esperá unos segundos e intentá nuevamente.';
+      }
+      return raw;
     }
 
     async function handleAuthSubmit(event) {
@@ -1433,6 +1395,18 @@
 
       submitBtn.disabled = true;
       submitBtn.textContent = state.authTab === 'register' ? 'Creando cuenta...' : 'Iniciando sesión...';
+
+      // Modo de prueba QA: simula una promesa colgada en Safari/iOS para testear el botón "Limpiar caché local"
+      const shouldSimulateHang =
+        email.toLowerCase() === 'trabar@test.com' ||
+        new URLSearchParams(window.location.search).get('simular_traba') === '1';
+
+      if (shouldSimulateHang) {
+        try {
+          window.localStorage.setItem('sb-simulated-corrupt-token', 'corrupt_lock_state');
+        } catch (_) {}
+        return;
+      }
 
       try {
         // Limpiamos posibles tokens vencidos o bloqueados en iOS Safari antes de autenticar
@@ -1466,11 +1440,13 @@
           showToast('¡Cuenta lista! Armemos el plan de tu perro.', '✨');
         }
       } catch (err) {
-        errEl.textContent = err.message || 'No se pudo completar la autenticación.';
+        errEl.textContent = formatAuthErrorMessage(err);
         errEl.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
-        setAuthTab(state.authTab);
+        submitBtn.textContent = state.authTab === 'register'
+          ? 'Comenzar y guardar mi plan'
+          : 'Entrar y recuperar mi plan';
       }
     }
 
@@ -1599,12 +1575,37 @@
 
     async function restoreActiveSessionOnBoot() {
       if (!supabaseClient) return;
+
+      const isPasswordRecoveryRedirect = () => {
+        const hash = window.location.hash || '';
+        const search = window.location.search || '';
+        return hash.includes('type=recovery') || search.includes('type=recovery');
+      };
+
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          state.mode = 'account';
+          if (session?.user) state.user = session.user;
+          document.getElementById('reset-password-modal')?.classList.remove('hidden');
+        }
+      });
+
+      if (isPasswordRecoveryRedirect()) {
+        document.getElementById('reset-password-modal')?.classList.remove('hidden');
+      }
+
       try {
         const { data } = await withTimeout(supabaseClient.auth.getSession(), 5000);
         const sessionUser = data?.session?.user;
         if (sessionUser) {
           state.mode = 'account';
           state.user = sessionUser;
+
+          if (isPasswordRecoveryRedirect()) {
+            document.getElementById('reset-password-modal')?.classList.remove('hidden');
+            return;
+          }
+
           const hasPlan = await loadUserProgressFromCloud();
           if (hasPlan) {
             renderRoadmapsScreen();
@@ -1616,7 +1617,9 @@
           }
         }
       } catch (_) {
-        purgeCorruptSupabaseTokens();
+        if (!isPasswordRecoveryRedirect()) {
+          purgeCorruptSupabaseTokens();
+        }
       }
     }
 
@@ -2745,9 +2748,16 @@
       if (state.addedBehaviors.length > 0) {
         bar.classList.remove('hidden');
         countBadge.textContent = `${state.addedBehaviors.length} activo(s)`;
-        bar.innerHTML = state.addedBehaviors.map(b => `
-          <span class="shrink-0 inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-bold px-2.5 py-1 rounded-full">
+        bar.innerHTML = state.addedBehaviors.map((b, idx) => `
+          <span class="shrink-0 inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-bold pl-2.5 pr-1.5 py-1 rounded-full">
             <span>✨ ${escapeHtml(b)}</span>
+            <button
+              type="button"
+              onclick="removeDesiredBehaviorFromPlan(${idx})"
+              title="Eliminar ${escapeHtml(b)}"
+              aria-label="Eliminar ${escapeHtml(b)}"
+              class="w-4 h-4 rounded-full bg-emerald-200/80 hover:bg-rose-500 hover:text-white text-emerald-900 text-[10px] font-black flex items-center justify-center transition"
+            >×</button>
           </span>
         `).join('');
       } else {
@@ -3020,6 +3030,7 @@
       const tutorStatus = state.roadmaps.tutor.every(n => n.status === 'completed') ? 'active' : 'locked';
       state.roadmaps.tutor.push({
         id: `${customId}_t`,
+        customBehavior: title,
         title: `Cómo enseñar: ${title}`,
         duration: '4 min',
         icon: '📘',
@@ -3040,6 +3051,7 @@
       const dogStatus = state.roadmaps.dog.every(n => n.status === 'completed') ? 'active' : 'locked';
       state.roadmaps.dog.push({
         id: `${customId}_d`,
+        customBehavior: title,
         title: title,
         duration: '5 min',
         icon: icon,
@@ -3064,6 +3076,39 @@
       renderRoadmapsScreen();
       await saveUserProgressToCloud();
       showToast(`"${title}" agregado a la Ruta del Tutor y del Can`, '🚀');
+    }
+
+    async function removeDesiredBehaviorFromPlan(behaviorIndex) {
+      const behaviorTitle = state.addedBehaviors[behaviorIndex];
+      if (!behaviorTitle) return;
+
+      const targetLower = behaviorTitle.trim().toLowerCase();
+      const expectedTutorTitle = `cómo enseñar: ${targetLower}`;
+
+      state.addedBehaviors.splice(behaviorIndex, 1);
+
+      const removedTutorIds = new Set(
+        state.roadmaps.tutor
+          .filter(n =>
+            (n.customBehavior && n.customBehavior.trim().toLowerCase() === targetLower) ||
+            (String(n.id || '').startsWith('custom_') && (n.title || '').trim().toLowerCase() === expectedTutorTitle)
+          )
+          .map(n => n.id)
+      );
+
+      state.roadmaps.tutor = state.roadmaps.tutor.filter(n => !removedTutorIds.has(n.id));
+      state.roadmaps.dog = state.roadmaps.dog.filter(n => {
+        const matchesCustomProp = n.customBehavior && n.customBehavior.trim().toLowerCase() === targetLower;
+        const matchesCustomNode = String(n.id || '').startsWith('custom_') && (n.title || '').trim().toLowerCase() === targetLower;
+        const dependsOnRemoved = Array.isArray(n.requiresTutorIds) && n.requiresTutorIds.some(id => removedTutorIds.has(id));
+        return !matchesCustomProp && !matchesCustomNode && !dependsOnRemoved;
+      });
+
+      normalizeRouteStatuses('tutor');
+      normalizeRouteStatuses('dog');
+      renderRoadmapsScreen();
+      await saveUserProgressToCloud();
+      showToast(`"${behaviorTitle}" eliminado del plan`, '🗑️');
     }
 
     // =========================================================================
