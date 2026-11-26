@@ -842,7 +842,7 @@
       selectedModalNode: null,
       addedBehaviors: [],
       profile: {
-        dogName: 'Milo',
+        dogName: '',
         dogAge: 'Cachorro',
         physicalState: 'Activo / Sin restricciones',
         walksOutside: 'Sí',
@@ -1128,28 +1128,61 @@
       if (state.mode !== 'account' || !state.user) return;
       saveLocalPlanBackup(state.user.id);
       if (!supabaseClient) return;
+
+      const snapshot = {
+        profile: state.profile,
+        roadmaps: state.roadmaps,
+        added_behaviors: state.addedBehaviors,
+        current_stage: state.currentStage,
+        updated_at: new Date().toISOString()
+      };
+
+      let tableSynced = false;
+      let metadataSynced = false;
+
       try {
         const { error } = await supabaseClient
           .from('dogolingo_plans')
           .upsert({
             user_id: state.user.id,
-            profile: state.profile,
-            roadmaps: state.roadmaps,
-            added_behaviors: state.addedBehaviors,
-            current_stage: state.currentStage,
-            updated_at: new Date().toISOString()
+            ...snapshot
           }, { onConflict: 'user_id' });
-        if (error) {
-          console.warn('Error guardando plan en Supabase:', error.message);
+        if (!error) {
+          tableSynced = true;
+        } else {
+          console.warn('Error guardando plan en tabla Supabase:', error.message);
         }
       } catch (err) {
-        console.warn('No se pudo sincronizar con Supabase:', err.message);
+        console.warn('No se pudo sincronizar con tabla Supabase:', err.message);
+      }
+
+      try {
+        const { data, error } = await supabaseClient.auth.updateUser({
+          data: {
+            dogolingo_plan: snapshot
+          }
+        });
+        if (!error) {
+          metadataSynced = true;
+          if (data?.user) {
+            state.user = data.user;
+          }
+        } else {
+          console.warn('Error guardando respaldo en user_metadata:', error.message);
+        }
+      } catch (err) {
+        console.warn('No se pudo sincronizar user_metadata:', err.message);
+      }
+
+      if (!tableSynced && !metadataSynced) {
+        showToast('No se pudo guardar en la nube. Verificá tu conexión o sesión.', '⚠️');
       }
     }
 
     async function loadUserProgressFromCloud() {
       if (state.mode !== 'account' || !state.user) return false;
       const localBackup = loadLocalPlanBackup(state.user.id);
+      let cloudSnapshot = null;
 
       if (supabaseClient) {
         try {
@@ -1159,13 +1192,43 @@
             .eq('user_id', state.user.id)
             .maybeSingle();
 
-          if (!error && data && applyPlanSnapshot(data)) {
-            saveLocalPlanBackup(state.user.id);
-            return true;
+          if (!error && data && Array.isArray(data.roadmaps?.tutor) && data.roadmaps.tutor.length > 0) {
+            cloudSnapshot = data;
           }
         } catch (err) {
-          console.warn('Error leyendo plan desde Supabase:', err.message);
+          console.warn('Error leyendo plan desde tabla Supabase:', err.message);
         }
+
+        if (!cloudSnapshot) {
+          try {
+            const { data: userRes } = await supabaseClient.auth.getUser();
+            const freshUser = userRes?.user || state.user;
+            if (freshUser) state.user = freshUser;
+            const metaPlan = freshUser?.user_metadata?.dogolingo_plan;
+            if (metaPlan && Array.isArray(metaPlan.roadmaps?.tutor) && metaPlan.roadmaps.tutor.length > 0) {
+              cloudSnapshot = metaPlan;
+            }
+          } catch (err) {
+            console.warn('Error leyendo respaldo desde user_metadata:', err.message);
+          }
+        }
+      }
+
+      // Elegimos el respaldo más reciente entre la nube y el dispositivo local
+      if (cloudSnapshot && localBackup) {
+        const cloudTime = Date.parse(cloudSnapshot.updated_at || '') || 0;
+        const localTime = Date.parse(localBackup.updated_at || '') || 0;
+        const chosen = localTime > cloudTime ? localBackup : cloudSnapshot;
+        if (applyPlanSnapshot(chosen)) {
+          saveLocalPlanBackup(state.user.id);
+          if (localTime > cloudTime) saveUserProgressToCloud();
+          return true;
+        }
+      }
+
+      if (cloudSnapshot && applyPlanSnapshot(cloudSnapshot)) {
+        saveLocalPlanBackup(state.user.id);
+        return true;
       }
 
       if (localBackup && applyPlanSnapshot(localBackup)) {
@@ -1189,7 +1252,8 @@
             renderRoadmapsScreen();
             showScreen('screen-roadmaps');
           } else {
-            startOnboardingFlow(false);
+            resetProfileToDefaults(false);
+            startOnboardingFlow(true);
             showToast('Sesión iniciada. Completá el perfil para guardar tu plan.', '🐾');
           }
         }
@@ -1201,13 +1265,13 @@
       state.user = null;
       state.addedBehaviors = [];
       state.currentStage = 1;
-      resetProfileToDefaults();
+      resetProfileToDefaults(true);
       startOnboardingFlow(true);
     }
 
-    function resetProfileToDefaults() {
+    function resetProfileToDefaults(useDemoName = false) {
       state.profile = {
-        dogName: 'Milo',
+        dogName: useDemoName ? 'Milo' : '',
         dogAge: 'Cachorro',
         physicalState: 'Activo / Sin restricciones',
         walksOutside: 'Sí',
@@ -1303,9 +1367,14 @@
               .delete()
               .eq('user_id', state.user.id);
           } catch (_) {}
+          try {
+            await supabaseClient.auth.updateUser({
+              data: { dogolingo_plan: null }
+            });
+          } catch (_) {}
         }
       }
-      resetProfileToDefaults();
+      resetProfileToDefaults(state.mode === 'demo');
       startOnboardingFlow(true);
       showToast('Plan reiniciado. Volvamos a configurar tu perfil.', '🔄');
     }
@@ -1491,7 +1560,7 @@
     function nextOnboardingStep() {
       if (state.onboardingStep === 1) {
         const rawName = (document.getElementById('dog-name')?.value || '').trim();
-        state.profile.dogName = rawName || 'Milo';
+        state.profile.dogName = rawName || 'Tu perro';
         const walkSelect = document.getElementById('walk-behavior');
         if (walkSelect) state.profile.walkBehavior = walkSelect.value;
       }
