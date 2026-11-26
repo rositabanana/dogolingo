@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>DogoLingo • Entrenamiento Canino 100% Amable</title>
+  <link rel="icon" href="./favicon/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="./favicon/site.webmanifest" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -481,7 +486,7 @@
     <!-- ========================================================= -->
     <!-- MODAL 1: DETALLE DE LECCIÓN / NODO DE APRENDIZAJE         -->
     <!-- ========================================================= -->
-    <div id="lesson-modal" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="lesson-modal" onclick="if(event.target === this) closeLessonModal()" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div class="bg-white w-full max-w-md max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl fade-in">
         <!-- Header Modal -->
         <div class="px-5 py-4 border-b border-stone-200 flex items-center justify-between gap-3">
@@ -556,7 +561,7 @@
     <!-- ========================================================= -->
     <!-- MODAL 2: SUMAR COMPORTAMIENTO DESEADO (PERSONALIZACIÓN)   -->
     <!-- ========================================================= -->
-    <div id="behavior-modal" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="behavior-modal" onclick="if(event.target === this) closeBehaviorModal()" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div class="bg-white w-full max-w-md max-h-[88vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl fade-in">
         <div class="px-5 py-4 border-b border-stone-200 flex items-center justify-between">
           <div>
@@ -589,7 +594,7 @@
     <!-- ========================================================= -->
     <!-- MODAL 3: CONFIRMACIÓN PARA RESETEAR PLAN A CERO           -->
     <!-- ========================================================= -->
-    <div id="reset-plan-modal" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div id="reset-plan-modal" onclick="if(event.target === this) closeResetPlanModal()" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl fade-in">
         <div class="text-center space-y-1.5">
           <div class="w-12 h-12 mx-auto rounded-2xl bg-amber-100 text-2xl flex items-center justify-center">🔄</div>
@@ -612,7 +617,7 @@
     <!-- ========================================================= -->
     <!-- MODAL 4: ACERCA DEL PROYECTO Y AUTOR                      -->
     <!-- ========================================================= -->
-    <div id="about-modal" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div id="about-modal" onclick="if(event.target === this) closeAboutModal()" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl fade-in">
         <div class="text-center space-y-2">
           <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 text-2xl flex items-center justify-center">🌱</div>
@@ -799,6 +804,15 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const scrollArea = document.getElementById('roadmap-scroll-area');
       if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function escapeHtml(str = '') {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function sanitizeNodeIcon(icon, fallbackTitle = '') {
@@ -999,7 +1013,32 @@
       state.user = null;
       state.addedBehaviors = [];
       state.currentStage = 1;
+      resetProfileToDefaults();
       startOnboardingFlow(true);
+    }
+
+    function resetProfileToDefaults() {
+      state.profile = {
+        dogName: 'Milo',
+        dogAge: 'Cachorro',
+        physicalState: 'Activo / Sin restricciones',
+        walksOutside: 'Sí',
+        walkBehavior: 'Tira de la correa con ansiedad',
+        requiresMuzzle: 'No',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
+        sensory: {
+          Olfativa: 'Bajo',
+          Sonora: 'Medio',
+          Gustativa: 'Bajo',
+          Visual: 'Medio',
+          Texturas: 'Medio'
+        },
+        tutorConditioning: 'Principiante',
+        tutorBodyLanguage: 'Principiante',
+        dailyMinutes: 30,
+        wantsReading: 'Sí'
+      };
     }
 
     function startDemoPreset() {
@@ -1065,8 +1104,9 @@
       state.roadmaps = { tutor: [], dog: [] };
       state.addedBehaviors = [];
       state.currentStage = 1;
+      resetProfileToDefaults();
       await saveUserProgressToCloud();
-      startOnboardingFlow(false);
+      startOnboardingFlow(true);
       showToast('Plan reiniciado. Volvamos a configurar tu perfil.', '🔄');
     }
 
@@ -1138,9 +1178,46 @@
       if (nameInput) {
         nameInput.value = resetName ? '' : (state.profile.dogName || '');
       }
+      syncOnboardingUIWithProfile();
       renderSensoryInputs();
       updateOnboardingStepUI();
       showScreen('screen-onboarding');
+    }
+
+    function syncOnboardingUIWithProfile() {
+      const radioFields = [
+        'dogAge',
+        'physicalState',
+        'walksOutside',
+        'requiresMuzzle',
+        'priorTraining',
+        'mainProblem',
+        'tutorConditioning',
+        'tutorBodyLanguage',
+        'dailyMinutes',
+        'wantsReading'
+      ];
+
+      radioFields.forEach(field => {
+        const group = document.querySelector(`[data-radio-group="${field}"]`);
+        if (!group) return;
+        const targetVal = String(state.profile[field]);
+        group.querySelectorAll('.opt-btn').forEach(btn => {
+          const onclickAttr = btn.getAttribute('onclick') || '';
+          const isMatch = onclickAttr.includes(`'${targetVal}'`) || onclickAttr.includes(`, ${targetVal},`);
+          btn.classList.toggle('border-emerald-500', isMatch);
+          btn.classList.toggle('bg-emerald-50', isMatch);
+          btn.classList.toggle('text-emerald-900', isMatch);
+          btn.classList.toggle('border-stone-200', !isMatch);
+          btn.classList.toggle('bg-white', !isMatch);
+          btn.classList.toggle('text-stone-700', !isMatch);
+        });
+      });
+
+      const walkBox = document.getElementById('walk-behavior-box');
+      if (walkBox) walkBox.classList.toggle('hidden', state.profile.walksOutside !== 'Sí');
+      const walkSelect = document.getElementById('walk-behavior');
+      if (walkSelect) walkSelect.value = state.profile.walkBehavior;
     }
 
     function updateOnboardingStepUI() {
@@ -1183,11 +1260,12 @@
 
     function prepareContractScreen() {
       const p = state.profile;
+      const safeDogName = escapeHtml(p.dogName || 'tu perro');
       document.getElementById('contract-dog-name').textContent = p.dogName || 'tu perro';
       document.getElementById('contract-summary').innerHTML = `
-        Perfil configurado para <strong>${p.dogName}</strong> (${p.dogAge} • ${p.physicalState}).
-        Desafío prioritario: <strong>${p.mainProblem}</strong>.
-        Disponibilidad diaria: <strong>${p.dailyMinutes} min</strong> (con tope de <strong>15 min activos/día</strong> para cuidar su bienestar mental).
+        Perfil configurado para <strong>${safeDogName}</strong> (${escapeHtml(p.dogAge)} • ${escapeHtml(p.physicalState)}).
+        Desafío prioritario: <strong>${escapeHtml(p.mainProblem)}</strong>.
+        Disponibilidad diaria: <strong>${Number(p.dailyMinutes) || 30} min</strong> (con tope de <strong>15 min activos/día</strong> para cuidar su bienestar mental).
       `;
       const cb = document.getElementById('contract-checkbox');
       cb.checked = false;
@@ -1802,7 +1880,7 @@
         countBadge.textContent = `${state.addedBehaviors.length} activo(s)`;
         bar.innerHTML = state.addedBehaviors.map(b => `
           <span class="shrink-0 inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-bold px-2.5 py-1 rounded-full">
-            <span>✨ ${b}</span>
+            <span>✨ ${escapeHtml(b)}</span>
           </span>
         `).join('');
       } else {
@@ -1855,7 +1933,8 @@
         }
 
         const safeIcon = sanitizeNodeIcon(node.icon, node.title);
-        const cleanTitle = (node.title || '').replace(/(\s*\(Paso simplificado\))+/gi, '').trim();
+        const cleanTitle = escapeHtml((node.title || '').replace(/(\s*\(Paso simplificado\))+/gi, '').trim());
+        const safeDuration = escapeHtml(node.duration || '4 min');
 
         return `
           <div class="flex flex-col items-center ${offsetClass} transition-transform">
@@ -1868,7 +1947,7 @@
             </div>
             <div class="mt-2 text-center max-w-[175px]">
               <p class="font-display font-extrabold text-xs ${isLocked ? 'text-stone-500' : 'text-stone-900'} leading-tight">${cleanTitle}</p>
-              <span class="text-[10px] font-semibold text-stone-400">${node.duration}${node.simplifiedLevel ? ` • Paso simplificado ${node.simplifiedLevel > 1 ? `v${node.simplifiedLevel}` : ''}` : ''}</span>
+              <span class="text-[10px] font-semibold text-stone-400">${safeDuration}${node.simplifiedLevel ? ` • Paso simplificado ${node.simplifiedLevel > 1 ? `v${node.simplifiedLevel}` : ''}` : ''}</span>
             </div>
             ${idx < nodes.length - 1 ? `<div class="w-1.5 h-5 rounded-full ${isCompleted ? 'bg-amber-300' : 'bg-stone-200'} mt-2"></div>` : ''}
           </div>
@@ -1891,7 +1970,7 @@
 
       // Tags
       document.getElementById('modal-tags').innerHTML = (node.tags || []).map(t => `
-        <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full">${t}</span>
+        <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full">${escapeHtml(t)}</span>
       `).join('');
 
       // Recurso educativo y videos curados
@@ -1900,22 +1979,22 @@
       document.getElementById('modal-media-body').textContent = node.mediaBody;
 
       const videos = node.videos && node.videos.length ? node.videos : [CURATED_VIDEOS.canalRespaldo];
-      document.getElementById('modal-video-links').innerHTML = videos.map(v => `
-        <a href="${v.url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between bg-white hover:bg-sky-50 border border-sky-200 rounded-xl px-3 py-2.5 text-xs font-bold text-sky-900 transition">
+      document.getElementById('modal-video-links').innerHTML = videos.map(v => {
+        const safeUrl = /^https?:\/\//i.test(v.url || '') ? v.url : 'https://www.youtube.com/@dos_adiestramiento';
+        return `
+        <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between bg-white hover:bg-sky-50 border border-sky-200 rounded-xl px-3 py-2.5 text-xs font-bold text-sky-900 transition">
           <span class="flex items-center gap-2">
             <span class="text-rose-600">▶</span>
-            <span>${v.title}</span>
+            <span>${escapeHtml(v.title)}</span>
           </span>
           <span class="text-[10px] text-sky-600 shrink-0 ml-2">Ver ↗</span>
         </a>
-      `).join('');
+      `;
+      }).join('');
 
       // Pasos
-      document.getElementById('modal-steps-list').innerHTML = (node.steps || []).map(s => `<li>${s}</li>`).join('');
-      document.getElementById('modal-adaptive-note').innerHTML = `💡 <strong>Tip de bienestar:</strong> ${node.adaptiveTip}`;
-
-      // Gestión de bloqueos
-      const lockBanner = document.getElementById('modal-lock-banner');
+      document.getElementById('modal-steps-list').innerHTML = (node.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      document.getElementById('modal-adaptive-note').innerHTML = `💡 <strong>Tip de bienestar:</strong> ${escapeHtml(node.adaptiveTip)}`;
       const footer = document.getElementById('modal-actions-footer');
 
       if (crossLocked) {
