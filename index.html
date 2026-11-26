@@ -651,6 +651,7 @@
     // REPOSITORIO ESTRICTO DE VIDEOS CURADOS Y CANAL APROBADO
     // =========================================================================
     const CURATED_VIDEOS = {
+      buenGuia: { title: "Cómo ser un buen guía y referente seguro para tu perro", url: "https://www.youtube.com/watch?v=9b7F1QY9iWc" },
       estructura: { title: "Estructura, previsibilidad y refuerzo positivo", url: "https://www.youtube.com/watch?v=rYRhnF4-NUg" },
       senalesCalma: { title: "Lectura corporal y señales de calma (Turid Rugaas)", url: "https://www.youtube.com/watch?v=RppFTzWkFOw" },
       capturing: { title: "Cómo aplicar Capturing en casa", url: "https://www.youtube.com/watch?v=WP-wtPet_uI" },
@@ -673,7 +674,63 @@
       canalRespaldo: { title: "Canal Dos Adiestramiento (Guías amables)", url: "https://www.youtube.com/@dos_adiestramiento" }
     };
 
+    function buildChannelSearchVideo(topic) {
+      const stopWords = new Set([
+        'que', 'como', 'para', 'con', 'sin', 'por', 'los', 'las', 'del', 'una', 'uno',
+        'mi', 'mis', 'su', 'sus', 'al', 'el', 'la', 'lo', 'en', 'de', 'a', 'y', 'o',
+        'perro', 'perra', 'hacer', 'ensenar', 'enseñar', 'quiero', 'me', 'gustaria', 'gustaría'
+      ]);
+      const keywords = (topic || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2 && !stopWords.has(w))
+        .slice(0, 4);
+
+      const query = keywords.length > 0 ? keywords.join(' ') : (topic || 'adiestramiento').trim();
+      return {
+        title: `Buscar "${query}" en Dos Adiestramiento`,
+        url: `https://www.youtube.com/@dos_adiestramiento/search?query=${encodeURIComponent(query)}`
+      };
+    }
+
+    function containsHarmfulOrViolentBehavior(text) {
+      const normalized = (text || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+      const blockedPatterns = [
+        /\batac(ar|a|ando)?\b/,
+        /\bmord(er|ida|isqueo agresivo)\b/,
+        /\bpele(ar|a|as)\b/,
+        /\bagred(ir|a|e)\b/,
+        /\bagresiv(o|a|idad)\b/,
+        /\bpeg(ar|arle|o)\b/,
+        /\bgolpe(ar|arlo|s)?\b/,
+        /\bcastig(ar|o|os)\b/,
+        /\bahorc(ar|e)\b/,
+        /\bahogo\b/,
+        /\bpuas\b/,
+        /\belectric(o|a)\b/,
+        /\bshock\b/,
+        /\bsomet(er|imiento)\b/,
+        /\bdomin(ar|ancia)\b/,
+        /\basust(ar|arlo)\b/,
+        /\bmaltrat(ar|o)\b/,
+        /\bencerr(ar|arlo)\b/,
+        /\bpriv(ar|arlo) de (agua|comida)\b/,
+        /\bdefensa y ataque\b/,
+        /\bguardia agresiva\b/
+      ];
+
+      return blockedPatterns.some(regex => regex.test(normalized));
+    }
+
     const SUGGESTED_BEHAVIORS = [
+      { title: "Ser un buen guía y referente seguro", icon: "🧭", video: CURATED_VIDEOS.buenGuia, desc: "Tu perro percibe el mundo a través de tu ejemplo, calma y coherencia." },
       { title: "Positivizar el uso del bozal", icon: "🛡️", video: CURATED_VIDEOS.bozalCanasta, desc: "Asocia el bozal tipo canasta con comida rica y calma, sin forzar." },
       { title: "Colocar el pretal sin miedo", icon: "🦺", video: CURATED_VIDEOS.pretalSinMiedo, desc: "Desensibiliza el paso por la cabeza con premios y consentimiento." },
       { title: "Calma ante ruidos y timbre", icon: "🔕", video: CURATED_VIDEOS.ladridosGestion, desc: "Gestión ambiental + olfato para bajar reactividad sonora en casa." },
@@ -1335,21 +1392,21 @@
         ? [
             {
               id: 't1',
-              title: 'Retirada de Cebo (Fading Luring)',
+              title: 'Ser un Buen Guía y Retirada de Cebo',
               duration: '4 min',
-              icon: '🎯',
+              icon: '🧭',
               status: 'active',
-              tags: ['Refuerzo Variable', 'Timing', 'Sin dependencia'],
+              tags: ['Liderazgo Amable', 'Ejemplo y Calma', 'Timing'],
               mediaType: wantsReading ? 'reading' : 'video',
-              mediaTitle: 'Cómo pasar del premio en mano a la señal limpia',
-              mediaBody: `Como ${dog} ya conoce bases, el foco está en ocultar el premio antes de pedir la conducta y reforzar de forma intermitente para evitar que solo obedezca si ve comida.`,
-              videos: [CURATED_VIDEOS.luringVsCapturing, CURATED_VIDEOS.estructura],
+              mediaTitle: `Cómo percibe el mundo ${dog} a través de tu ejemplo`,
+              mediaBody: `Los perros interpretan el entorno leyendo nuestra coherencia, calma y lenguaje corporal. Ser un buen guía significa brindar seguridad predecible y retirar progresivamente el cebo para que confíe en tus señales.`,
+              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.luringVsCapturing],
               steps: [
+                'Antes de dar una señal, regulá tu postura y respiración para ser su referencia de calma.',
                 'Hacé 2 repeticiones con premio oculto en el bolsillo y marcá apenas ejecute la señal.',
-                'Variá la entrega: a veces premio de alto valor, a veces juego o permiso del entorno (Premack).',
-                'Evitá repetir la palabra más de una vez si está distraído: bajá la distancia al estímulo.'
+                'Evitá repetir palabras o tensar la correa: guiá con claridad y ejemplo sereno.'
               ],
-              adaptiveTip: 'Si duda sin comida visible, volvé un paso atrás con gesto vacío y premiá desde el bolsillo.'
+              adaptiveTip: 'Tu serenidad es el filtro con el que tu perro evalúa si una situación es segura.'
             },
             {
               id: 't2',
@@ -1429,21 +1486,21 @@
         : [
             {
               id: 't1',
-              title: 'El Cuadrante Amable y Timing',
-              duration: '3 min',
-              icon: '🧠',
+              title: 'Ser un Buen Guía y Timing Positivo',
+              duration: '4 min',
+              icon: '🧭',
               status: 'active',
-              tags: ['Refuerzo Positivo', 'Skinner Amable', 'Tono de Voz'],
+              tags: ['Liderazgo Amable', 'Ejemplo y Calma', 'Refuerzo Positivo'],
               mediaType: wantsReading ? 'reading' : 'video',
-              mediaTitle: 'Por qué premiar aciertos transforma la conducta',
-              mediaBody: 'En DogoLingo trabajamos con Refuerzo Positivo (sumar algo bueno cuando acierta) y Castigo Negativo suave (retirar atención brevemente si salta o insiste, sin enojo). El secreto es marcar el segundo exacto del acierto con una palabra corta como "¡Bien!" antes de dar el premio.',
-              videos: [CURATED_VIDEOS.estructura],
+              mediaTitle: `Tu perro percibe el mundo a través de tu guía`,
+              mediaBody: `Para ${dog}, sos su referente emocional: observa cómo reaccionás ante cada estímulo para decidir si debe relajarse o ponerse en alerta. Guiar con calma, coherencia y refuerzo positivo construye confianza real sin miedo ni castigos.`,
+              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.estructura],
               steps: [
-                'Prepará 10 trocitos blandos del tamaño de una lenteja.',
-                'Practicá decir "¡Bien!" con tono alegre y recién después llevar la mano al premio.',
-                'Mantené la calma corporal: tu voz grave y serena transmite seguridad.'
+                'Modelá la tranquilidad con voz grave y serena y movimientos pausados.',
+                'Prepará 10 trocitos blandos y practicá decir "¡Bien!" en el segundo exacto del acierto.',
+                'Recordá: el liderazgo amable se basa en seguridad y previsibilidad, nunca en imposición.'
               ],
-              adaptiveTip: 'Un timing preciso de 1 segundo acelera el aprendizaje 3 veces más que repetir órdenes.'
+              adaptiveTip: 'Un guía predecible y calmo reduce la ansiedad del perro desde el primer día.'
             },
             {
               id: 't2',
@@ -2038,10 +2095,15 @@
         return;
       }
 
+      if (containsHarmfulOrViolentBehavior(raw)) {
+        showToast('Solo trabajamos conductas amables y seguras, sin violencia ni aversivos.', '💚');
+        return;
+      }
+
       const matched = SUGGESTED_BEHAVIORS.find(s => s.title.toLowerCase() === raw.toLowerCase());
       const title = matched ? matched.title : raw;
       const icon = matched ? matched.icon : '✨';
-      const video = matched ? matched.video : CURATED_VIDEOS.canalRespaldo;
+      const video = matched ? matched.video : buildChannelSearchVideo(title);
       const customId = `custom_${Date.now()}`;
 
       if (!state.addedBehaviors.includes(title)) {
