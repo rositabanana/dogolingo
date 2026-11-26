@@ -304,6 +304,30 @@
                   <span>🦷 Mordisquea manos, ropa o muebles</span>
                   <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
                 </button>
+                <button type="button" onclick="toggleProblemOption('Ansiedad por separación')" data-problem="Ansiedad por separación" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🏠 Llora, ladra o rompe al quedarse solo</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Reactividad en paseo')" data-problem="Reactividad en paseo" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🐕‍🦺 Se altera o ladra a otros perros/estímulos</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Miedos e inseguridad')" data-problem="Miedos e inseguridad" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🌧️ Miedo a ruidos, tormentas o calle</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Protección de recursos')" data-problem="Protección de recursos" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🦴 Protege plato, juguetes o sillón</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Hábitos higiénicos')" data-problem="Hábitos higiénicos" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🧼 Hace pis o caca dentro de casa</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Cuidados cooperativos')" data-problem="Cuidados cooperativos" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🩺 Se estresa en veterinaria, baño o auto</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
               </div>
             </div>
           </div>
@@ -848,6 +872,27 @@
       ladridosGestion: { title: "Gestión ambiental para bajar ladridos en casa", url: "https://www.youtube.com/watch?v=ZlxllSurxM0" },
       mordiscones: { title: "Redirigir mordiscones al caminar o jugar", url: "https://www.youtube.com/watch?v=nkFNMYbJhy8" },
       saltosVisitas: { title: "Frenar el salto al recibir visitas con amabilidad", url: "https://www.youtube.com/watch?v=3Lx2VMRC1D4" },
+      separacionBases: { title: "Ansiedad por separación: señales y bases (Nivel 1)", url: "https://www.youtube.com/watch?v=ny8sshxsoHo" },
+      separacionGradual: { title: "Quedarse solo en casa: salidas graduales (Nivel 2)", url: "https://www.youtube.com/watch?v=PvEXf5gY-OM" },
+      miedoCalle: { title: "Miedo profundo en la calle: distancia segura y respeto", url: "https://www.youtube.com/watch?v=wPjLYCiu4xk" },
+      inseguridadCalle: { title: "Inseguridad en la calle: construir confianza paso a paso", url: "https://www.youtube.com/watch?v=P7R3vpgz6mA" },
+      miedoTormentas: { title: "Miedo a tormentas y pirotecnia: fobia sonora y refugio", url: "https://www.youtube.com/watch?v=r09mb_nfTZo" },
+      proteccionRecursos: { title: "Protección de recursos: plato, hueso, juguete o sillón", url: "https://www.youtube.com/watch?v=AftyX0Kt7-s" },
+      reactividadPerros1: { title: "Reactividad hacia otros perros en paseo (Guía general)", url: "https://www.youtube.com/watch?v=hQrx64U2ZEc" },
+      reactividadPerros2: { title: "Causas de reactividad hacia otros perros (Nivel 2)", url: "https://www.youtube.com/watch?v=2dt0kVwF6j4" },
+      reactividadPerrosAlt: { title: "Reactividad: manejo preventivo y alternativa", url: "https://www.youtube.com/watch?v=dUz4mbJFU3M" },
+      reactividadPersonas: { title: "Reactividad hacia personas, niños, bicis o motos", url: "https://www.youtube.com/watch?v=egbkNwNUxog" },
+      habitosHigienicos: { title: "Hábitos higiénicos: enseñar pis y caca afuera sin retos", url: "https://www.youtube.com/watch?v=7coCAFVkewA" },
+      cuidadosCooperativos: { title: "Cuidados cooperativos: baño, cepillado y corte de uñas", url: "https://www.youtube.com/watch?v=oPDjqgxUcZM" },
+      miedoVeterinario: { title: "Miedo al veterinario, gotas o pipeta sin forcejeos", url: "https://www.youtube.com/watch?v=V-JIAM4RWPw" },
+      viajeAuto: { title: "Miedo o mareo al viajar en auto", url: "https://www.youtube.com/watch?v=zqTM2uDIOj8" },
+      perrosGatos: { title: "Convivencia entre perros y gatos en casa", url: "https://www.youtube.com/watch?v=nLm-gg11IrQ" },
+      perrosNinos: { title: "Convivencia segura entre perros y bebés/niños", url: "https://www.youtube.com/watch?v=k24VeWDxCaM" },
+      modoTurbina: { title: "Perro hiperactivo que no sabe desconectar (Modo turbina)", url: "https://www.youtube.com/watch?v=Z_CDerzy1e4" },
+      comunicacion1: { title: "Cómo hablarle al perro: tono y actitud (Nivel 1)", url: "https://www.youtube.com/watch?v=v4ZV8d6XwBc" },
+      comunicacion2: { title: "Comunicación canina: coherencia y energía (Nivel 2)", url: "https://www.youtube.com/watch?v=QDdqPw-MDfo" },
+      comunicacion3: { title: "Comunicación canina avanzada: lectura sutil (Nivel 3)", url: "https://www.youtube.com/watch?v=wJvndQ-7qwk" },
+      comunicacionAlt: { title: "Cómo hablarle y comunicarnos con el perro", url: "https://www.youtube.com/watch?v=-hOqlYRl5Pk" },
       canalRespaldo: { title: "Canal Dos Adiestramiento (Guías amables)", url: "https://www.youtube.com/@dos_adiestramiento" }
     };
 
@@ -863,6 +908,42 @@
         icon: "🦮",
         desc: "Caminata relajada en forma de U sin tirones ni tensión.",
         video: CURATED_VIDEOS.calmaCorrea
+      },
+      {
+        title: "Quedarse solo en casa tranquilo",
+        icon: "🏠",
+        desc: "Desensibilización a señales de salida y partidas graduales sin angustia.",
+        video: CURATED_VIDEOS.separacionBases
+      },
+      {
+        title: "Pasear calmo ante otros perros o bicis",
+        icon: "🐕‍🦺",
+        desc: "Manejo preventivo de distancia y foco ante estímulos en la calle.",
+        video: CURATED_VIDEOS.reactividadPerros1
+      },
+      {
+        title: "Superar miedo a tormentas o ruidos",
+        icon: "🌧️",
+        desc: "Creación de refugio seguro y acompañamiento sereno ante sonidos fuertes.",
+        video: CURATED_VIDEOS.miedoTormentas
+      },
+      {
+        title: "Soltar objetos sin proteger recursos",
+        icon: "🦴",
+        desc: "Intercambio justo para prevenir gruñidos alrededor del plato o juguetes.",
+        video: CURATED_VIDEOS.proteccionRecursos
+      },
+      {
+        title: "Hacer pis y caca afuera sin retos",
+        icon: "🧼",
+        desc: "Rutina de ventanas fisiológicas y refuerzo positivo inmediato.",
+        video: CURATED_VIDEOS.habitosHigienicos
+      },
+      {
+        title: "Aceptar baño, cepillado, auto y veterinaria",
+        icon: "🩺",
+        desc: "Cuidados cooperativos y viajes en auto sin forcejeos ni estrés.",
+        video: CURATED_VIDEOS.cuidadosCooperativos
       },
       {
         title: "No saltar a las visitas al entrar",
@@ -1058,6 +1139,11 @@
       if (lower.includes('mirame') || lower.includes('señal')) return '👀';
       if (lower.includes('sit') || lower.includes('acostado')) return '🪑';
       if (lower.includes('quieto')) return '📐';
+      if (lower.includes('solo') || lower.includes('separación')) return '🏠';
+      if (lower.includes('tormenta') || lower.includes('miedo')) return '🌧️';
+      if (lower.includes('recurso') || lower.includes('soltar')) return '🦴';
+      if (lower.includes('pis') || lower.includes('higién')) return '🧼';
+      if (lower.includes('veterin') || lower.includes('auto')) return '🩺';
       return '🎯';
     }
 
@@ -1401,7 +1487,6 @@
         }
       }
 
-      // Elegimos el respaldo más reciente entre la nube y el dispositivo local
       if (cloudSnapshot && localBackup) {
         const cloudTime = Date.parse(cloudSnapshot.updated_at || '') || 0;
         const localTime = Date.parse(localBackup.updated_at || '') || 0;
@@ -1871,6 +1956,7 @@
           showToast(`¡Plan personalizado con IA para ${state.profile.dogName} listo!`, '🤖');
           return;
         }
+        throw new Error('Plan IA vacío');
       } catch (err) {
         console.warn('Usando respaldo pedagógico local:', err.message);
         buildRoadmapsFromProfile();
@@ -1908,7 +1994,7 @@
               mediaType: wantsReading ? 'reading' : 'video',
               mediaTitle: `Cómo percibe el mundo ${dog} a través de tu ejemplo`,
               mediaBody: `Los perros interpretan el entorno leyendo nuestra coherencia, calma y lenguaje corporal. Ser un buen guía significa brindar seguridad predecible y retirar progresivamente el cebo para que confíe en tus señales.`,
-              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.luringVsCapturing],
+              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.comunicacion2],
               steps: [
                 'Antes de dar una señal, regulá tu postura y respiración para ser su referencia de calma.',
                 'Hacé 2 repeticiones con premio oculto en el bolsillo y marcá apenas ejecute la señal.',
@@ -1998,11 +2084,11 @@
               duration: '4 min',
               icon: '🧭',
               status: 'active',
-              tags: ['Liderazgo Amable', 'Ejemplo y Calma', 'Refuerzo Positivo'],
+              tags: ['Liderazgo Amable', 'Tono y Actitud', 'Refuerzo Positivo'],
               mediaType: wantsReading ? 'reading' : 'video',
               mediaTitle: `Tu perro percibe el mundo a través de tu guía`,
-              mediaBody: `Para ${dog}, sos su referente emocional: observa cómo reaccionás ante cada estímulo para decidir si debe relajarse o ponerse en alerta. Guiar con calma, coherencia y refuerzo positivo construye confianza real sin miedo ni castigos.`,
-              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.estructura],
+              mediaBody: `Para ${dog}, sos su referente emocional: observa cómo reaccionás y cómo le hablás para decidir si debe relajarse o ponerse en alerta. Guiar con calma, coherencia y refuerzo positivo construye confianza real sin miedo ni castigos.`,
+              videos: [CURATED_VIDEOS.buenGuia, CURATED_VIDEOS.comunicacion1],
               steps: [
                 'Modelá la tranquilidad con voz grave y serena y movimientos pausados.',
                 'Prepará 10 trocitos blandos y practicá decir "¡Bien!" en el segundo exacto del acierto.',
@@ -2137,6 +2223,132 @@
         : [p.mainProblem || 'Tironeo de correa'];
 
       const buildChallengeNode = (problemKey, nodeId) => {
+        if (problemKey === 'Ansiedad por separación') {
+          return {
+            id: nodeId,
+            title: 'Desensibilización a Salidas y Calma Solo en Casa',
+            duration: '4 min',
+            icon: '🏠',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Separación', 'Salidas Graduales', 'Calma'],
+            mediaType: 'video',
+            mediaTitle: `Ayudar a ${dog} a transitar la soledad sin pánico`,
+            mediaBody: 'Desarmamos la ansiedad que disparan las llaves o la puerta y practicamos micro-ausencias tranquilas sin despedidas dramáticas.',
+            videos: [CURATED_VIDEOS.separacionBases, CURATED_VIDEOS.separacionGradual],
+            steps: [
+              'Agarrá las llaves o ponete la campera y volvé a sentarte en silencio hasta que ignore esas señales.',
+              'Practicá salir 15 segundos cerrando la puerta y volvé con calma antes de que llore.',
+              'Dejá un licky mat o alfombra olfativa suave para acompañar momentos tranquilos.'
+            ],
+            adaptiveTip: 'Nunca lo retes si rompió o lloró al volver: es pánico, no desobediencia.'
+          };
+        }
+        if (problemKey === 'Reactividad en paseo') {
+          return {
+            id: nodeId,
+            title: 'Manejo de Distancia y Calma ante Perros/Estímulos',
+            duration: '5 min',
+            icon: '🐕‍🦺',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Reactividad', 'Distancia Segura', 'Observación'],
+            mediaType: 'video',
+            mediaTitle: `Paseos más serenos frente a estímulos (${dog})`,
+            mediaBody: 'Trabajamos por debajo del umbral de reacción usando distancia lateral, giros en U y premios al mirar y volver a vos.',
+            videos: [CURATED_VIDEOS.reactividadPerros1, CURATED_VIDEOS.reactividadPersonas],
+            steps: [
+              'Mantené correa floja de 2–3 metros y cruzá de vereda o hacé un arco antes de que fije la mirada.',
+              'Cada vez que mire a otro perro, bici o moto en calma y vuelva a mirarte, marcá "¡Bien!" y premiá.',
+              'Elegí horarios tranquilos y sesiones breves de 5 minutos.'
+            ],
+            adaptiveTip: 'Tersar la correa aumenta la alerta; la distancia y el movimiento suave la reducen.'
+          };
+        }
+        if (problemKey === 'Miedos e inseguridad') {
+          return {
+            id: nodeId,
+            title: 'Refugio Seguro y Confianza ante Ruidos o Calle',
+            duration: '4 min',
+            icon: '🌧️',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Miedos', 'Fobia Sonora', 'Sin Forzar'],
+            mediaType: 'video',
+            mediaTitle: `Construir seguridad emocional para ${dog}`,
+            mediaBody: 'Respetamos sus tiempos sin arrastrarlo hacia estímulos que asustan y preparamos una zona refugio para tormentas o ruidos fuertes.',
+            videos: [CURATED_VIDEOS.miedoCalle, CURATED_VIDEOS.miedoTormentas],
+            steps: [
+              'Armá un rincón protegido en casa (persianas bajas, música suave, manta) disponible siempre.',
+              'En la calle, permitile detenerse a observar a distancia y premiá su curiosidad voluntaria.',
+              'Nunca lo obligues a acercarse a personas o ruidos que intenta evitar.'
+            ],
+            adaptiveTip: 'Acompañar con presencia serena no refuerza el miedo: le brinda base segura.'
+          };
+        }
+        if (problemKey === 'Protección de recursos') {
+          return {
+            id: nodeId,
+            title: 'Protocolo de Intercambio Justo y Confianza en el Plato',
+            duration: '4 min',
+            icon: '🦴',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Protección de Recursos', 'Intercambio', 'Seguridad'],
+            mediaType: 'video',
+            mediaTitle: `Que acercarse sume cosas buenas para ${dog}`,
+            mediaBody: 'Enseñamos que nuestra presencia cerca de su plato o juguete siempre trae algo extra sin quitarle lo suyo por la fuerza.',
+            videos: [CURATED_VIDEOS.proteccionRecursos, CURATED_VIDEOS.premiosAltoValor],
+            steps: [
+              'Mientras come a distancia cómoda, dejá caer un premio aún más rico cerca del plato y alejate tranquilo.',
+              'Practicá el intercambio ofreciendo premio por un juguete de bajo valor y devolviéndoselo enseguida.',
+              'Respetá siempre cualquier gruñido como señal de distancia y nunca lo castigues por avisar.'
+            ],
+            adaptiveTip: 'Quitar cosas a la fuerza enseña a defender con más intensidad.'
+          };
+        }
+        if (problemKey === 'Hábitos higiénicos') {
+          return {
+            id: nodeId,
+            title: 'Rutina de Hábitos Higiénicos y Refuerzo Inmediato',
+            duration: '4 min',
+            icon: '🧼',
+            status: 'locked',
+            requiresTutorIds: ['t1', 't3'],
+            tags: ['Hábitos Higiénicos', 'Rutina', 'Sin Retos'],
+            mediaType: 'video',
+            mediaTitle: `Enseñar a ${dog} dónde hacer pis y caca con claridad`,
+            mediaBody: 'Aprovechamos sus ventanas fisiológicas naturales (al despertar, comer y jugar) y premiamos en el segundo exacto en que termina afuera.',
+            videos: [CURATED_VIDEOS.habitosHigienicos, CURATED_VIDEOS.estructura],
+            steps: [
+              'Sacalo a pasear 10–15 minutos después de comer, dormir siesta o jugar activo.',
+              'Llevá premios en el bolsillo y premialo apenas termine de hacer afuera (no al subir a casa).',
+              'Si ocurre un accidente adentro, limpiá con limpiador enzimático sin retarlo.'
+            ],
+            adaptiveTip: 'Retar por un accidente solo enseña a esconderse para hacer.'
+          };
+        }
+        if (problemKey === 'Cuidados cooperativos') {
+          return {
+            id: nodeId,
+            title: 'Cuidados Cooperativos: Manipulación, Veterinaria y Auto',
+            duration: '4 min',
+            icon: '🩺',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Cuidados Cooperativos', 'Veterinaria', 'Viaje en Auto'],
+            mediaType: 'video',
+            mediaTitle: `Preparar cepillado, veterinaria y auto sin forcejeos (${dog})`,
+            mediaBody: 'Asociamos el contacto en patas/orejas, el cepillo y el auto con comida y pausas voluntarias.',
+            videos: [CURATED_VIDEOS.cuidadosCooperativos, CURATED_VIDEOS.miedoVeterinario],
+            steps: [
+              'Tocá suavemente una pata o la botella de pipeta/cepillo 1 segundo y premiá al instante.',
+              'Si va a viajar en auto, practicá subir y comer premios con el motor apagado antes de rodar.',
+              'Detenete apenas muestre señales de incomodidad para mantener su confianza.'
+            ],
+            adaptiveTip: 'La cooperación voluntaria hace más seguras las visitas al veterinario.'
+          };
+        }
         if (problemKey === 'Impulsividad / Saltos') {
           return {
             id: nodeId,
@@ -2182,20 +2394,20 @@
         if (problemKey === 'Ansiedad / Inquietud') {
           return {
             id: nodeId,
-            title: 'Estación de Calma y Olfato Profundo',
+            title: 'Estación de Calma y Descompresión (Modo Turbina)',
             duration: '5 min',
             icon: '💤',
             status: 'locked',
             requiresTutorIds: ['t2', 't3'],
             tags: ['Capturing', 'Descompresión', 'Calma'],
             mediaType: 'video',
-            mediaTitle: `Construir un refugio de relajación para ${dog}`,
-            mediaBody: 'Capturamos cada vez que elige echarse relajado sobre su manta o alfombra.',
-            videos: [CURATED_VIDEOS.capturing, CURATED_VIDEOS.descompresionOlfato],
+            mediaTitle: `Ayudar a ${dog} a bajar revoluciones en casa`,
+            mediaBody: 'Capturamos cada vez que elige echarse relajado sobre su manta y reemplazamos juegos hiper-excitantes por olfato.',
+            videos: [CURATED_VIDEOS.modoTurbina, CURATED_VIDEOS.capturing],
             steps: [
               'Colocá su manta favorita en un rincón tranquilo.',
               'Cada vez que se eche o apoye el mentón, dejá caer un premio suave entre sus patas.',
-              'No le pidas comandos: premiá su decisión voluntaria de descansar.'
+              'Cambiá lanzamientos repetitivos de pelota por búsqueda olfativa tranquila.'
             ],
             adaptiveTip: 'Usá voz muy baja y movimientos lentos para no activarlo.'
           };
@@ -2413,13 +2625,11 @@
       document.getElementById('roadmap-age-badge').textContent = p.dogAge;
       document.getElementById('roadmap-time-cap').textContent = `${p.dailyMinutes} min/día`;
 
-      // Contadores de progreso
       const tDone = state.roadmaps.tutor.filter(n => n.status === 'completed').length;
       const dDone = state.roadmaps.dog.filter(n => n.status === 'completed').length;
       document.getElementById('tutor-progress-badge').textContent = `${tDone}/${state.roadmaps.tutor.length}`;
       document.getElementById('dog-progress-badge').textContent = `${dDone}/${state.roadmaps.dog.length}`;
 
-      // Chips de comportamientos agregados
       const bar = document.getElementById('added-behaviors-bar');
       const countBadge = document.getElementById('active-behaviors-count');
       if (state.addedBehaviors.length > 0) {
@@ -2515,12 +2725,10 @@
       document.getElementById('modal-node-badge').textContent = `${route === 'tutor' ? 'Ruta del Tutor' : 'Ruta del Can'} • ${node.duration}`;
       document.getElementById('modal-node-title').textContent = node.title;
 
-      // Tags
       document.getElementById('modal-tags').innerHTML = (node.tags || []).map(t => `
         <span class="text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full">${escapeHtml(t)}</span>
       `).join('');
 
-      // Recurso educativo y videos curados
       document.getElementById('modal-media-label').textContent = node.mediaType === 'reading' ? '📚 Lectura + Video de Apoyo' : '🎬 Video Curado';
       document.getElementById('modal-media-title').textContent = node.mediaTitle;
       document.getElementById('modal-media-body').textContent = node.mediaBody;
@@ -2539,7 +2747,6 @@
       `;
       }).join('');
 
-      // Pasos
       document.getElementById('modal-steps-list').innerHTML = (node.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
       document.getElementById('modal-adaptive-note').innerHTML = `💡 <strong>Tip de bienestar:</strong> ${escapeHtml(node.adaptiveTip)}`;
       const lockBanner = document.getElementById('modal-lock-banner');
@@ -2588,7 +2795,6 @@
       const list = state.roadmaps[route];
       list[index].status = 'completed';
 
-      // Desbloquea el siguiente nodo de esa ruta
       if (index + 1 < list.length && list[index + 1].status === 'locked') {
         list[index + 1].status = 'active';
       }
@@ -2701,7 +2907,6 @@
         state.addedBehaviors.push(title);
       }
 
-      // Inyecta nodo teórico en Ruta del Tutor
       const tutorStatus = state.roadmaps.tutor.every(n => n.status === 'completed') ? 'active' : 'locked';
       state.roadmaps.tutor.push({
         id: `${customId}_t`,
@@ -2722,7 +2927,6 @@
         adaptiveTip: 'Si tu perro duda, dividí el objetivo en un paso todavía más pequeño.'
       });
 
-      // Inyecta nodo práctico en Ruta del Can con dependencia cruzada al nodo del tutor recién creado
       const dogStatus = state.roadmaps.dog.every(n => n.status === 'completed') ? 'active' : 'locked';
       state.roadmaps.dog.push({
         id: `${customId}_d`,
@@ -2809,7 +3013,7 @@
             mediaType: 'video',
             mediaTitle: 'Por qué nunca hay que sacar cosas de la boca a la fuerza',
             mediaBody: 'Quitar objetos por la fuerza enseña al perro a tragar rápido o gruñir. El intercambio amable crea cooperación voluntaria.',
-            videos: [CURATED_VIDEOS.premiosAltoValor, buildChannelSearchVideo('soltar intercambio')],
+            videos: [CURATED_VIDEOS.proteccionRecursos, CURATED_VIDEOS.premiosAltoValor],
             steps: [
               'Cuando tenga un juguete permitido, acercá un premio rico a su nariz.',
               'Apenas abra la boca para tomar el premio, decí "Soltá", premiá y devolvele su juguete.',
@@ -2840,15 +3044,15 @@
         {
           tutor: {
             id: `t_stage_${stageNumber}_${ts + 2}`,
-            title: `Generalización en Parques y Estación Manta (Place)`,
+            title: `Comunicación Sutil (Nivel 3) y Estación Manta (Place)`,
             duration: '5 min',
             icon: '🧭',
             status: 'locked',
-            tags: [`Etapa ${stageNumber}`, 'Exterior', 'Autocontrol'],
+            tags: [`Etapa ${stageNumber}`, 'Comunicación Nivel 3', 'Exterior'],
             mediaType: 'video',
             mediaTitle: 'Llevar la calma de casa a entornos abiertos',
-            mediaBody: 'Cuando cambiamos de escenario, bajamos la duración exigida y usamos premios de alto valor para consolidar foco y calma.',
-            videos: [CURATED_VIDEOS.focoExteriores, CURATED_VIDEOS.gestionAtencion],
+            mediaBody: 'Cuando cambiamos de escenario, afinamos nuestra lectura sutil, bajamos la duración exigida y usamos premios de alto valor.',
+            videos: [CURATED_VIDEOS.comunicacion3, CURATED_VIDEOS.focoExteriores],
             steps: [
               'Elegí un sector tranquilo de la plaza y dejá que olfatee 3 minutos antes de pedir ejercicios.',
               'Practicá Mirame, Sit y Acostado en bloques de 2 repeticiones fáciles.',
