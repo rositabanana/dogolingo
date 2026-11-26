@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="DogoLingo" />
@@ -1051,6 +1051,7 @@
       currentStage: 1,
       selectedModalNode: null,
       addedBehaviors: [],
+      userTouchedProblems: false,
       profile: {
         dogName: '',
         dogAge: 'Cachorro',
@@ -1174,9 +1175,9 @@
     }
 
     function scrollToTopSmooth() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
       const scrollArea = document.getElementById('roadmap-scroll-area');
-      if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+      if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     function escapeHtml(str = '') {
@@ -1819,6 +1820,7 @@
 
       state.profile.mainProblems = currentList;
       state.profile.mainProblem = currentList[0];
+      state.userTouchedProblems = true;
       syncProblemsUI();
     }
 
@@ -1851,6 +1853,7 @@
 
     function startOnboardingFlow(resetName = false) {
       state.onboardingStep = 1;
+      state.userTouchedProblems = false;
       const nameInput = document.getElementById('dog-name');
       if (nameInput) {
         nameInput.value = resetName ? '' : (state.profile.dogName || '');
@@ -1922,7 +1925,23 @@
         const rawName = (document.getElementById('dog-name')?.value || '').trim();
         state.profile.dogName = rawName || 'Tu perro';
         const walkSelect = document.getElementById('walk-behavior');
-        if (walkSelect) state.profile.walkBehavior = walkSelect.value;
+        if (walkSelect) {
+          state.profile.walkBehavior = walkSelect.value;
+          if (!state.userTouchedProblems && state.profile.walksOutside === 'Sí') {
+            const walkToProblemMap = {
+              'Tira de la correa con ansiedad': 'Tironeo de correa',
+              'Se sobreexcita o ladra a perros/personas': 'Reactividad en paseo',
+              'Camina con miedo o inseguridad': 'Miedos e inseguridad',
+              'Pasea bastante tranquilo, busca mejorar foco': 'Falta de atención'
+            };
+            const mappedProblem = walkToProblemMap[walkSelect.value];
+            if (mappedProblem) {
+              state.profile.mainProblems = [mappedProblem];
+              state.profile.mainProblem = mappedProblem;
+              syncProblemsUI();
+            }
+          }
+        }
       }
 
       if (state.onboardingStep < 3) {
