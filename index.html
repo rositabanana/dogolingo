@@ -73,8 +73,14 @@
     <section id="screen-auth" class="flex-1 flex flex-col justify-between p-5 pb-8 fade-in">
       <!-- Header Marca -->
       <div class="text-center pt-4">
-        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500 text-white text-4xl shadow-[0_6px_0_0_#059669] mb-4">
-          🐾
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white border-2 border-emerald-200 shadow-[0_6px_0_0_#059669] mb-4 overflow-hidden">
+          <img
+            src="./dogolingo logo.jpg"
+            alt="Logo de DogoLingo"
+            class="w-full h-full object-cover"
+            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+          />
+          <span class="hidden text-4xl">🐾</span>
         </div>
         <h1 class="font-display font-black text-3xl tracking-tight text-stone-900">DogoLingo</h1>
         <p class="text-sm text-stone-600 mt-1.5 max-w-xs mx-auto leading-relaxed">
@@ -674,99 +680,81 @@
       canalRespaldo: { title: "Canal Dos Adiestramiento (Guías amables)", url: "https://www.youtube.com/@dos_adiestramiento" }
     };
 
-    function buildChannelSearchVideo(topic) {
-      const stopWords = new Set([
-        'que', 'como', 'para', 'con', 'sin', 'por', 'los', 'las', 'del', 'una', 'uno',
-        'mi', 'mis', 'su', 'sus', 'al', 'el', 'la', 'lo', 'en', 'de', 'a', 'y', 'o',
-        'perro', 'perra', 'hacer', 'ensenar', 'enseñar', 'quiero', 'me', 'gustaria', 'gustaría'
-      ]);
-      const keywords = (topic || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s]/g, ' ')
-        .split(/\s+/)
-        .filter(w => w.length > 2 && !stopWords.has(w))
-        .slice(0, 4);
-
-      const query = keywords.length > 0 ? keywords.join(' ') : (topic || 'adiestramiento').trim();
-      return {
-        title: `Buscar "${query}" en Dos Adiestramiento`,
-        url: `https://www.youtube.com/@dos_adiestramiento/search?query=${encodeURIComponent(query)}`
-      };
-    }
-
-    function containsHarmfulOrViolentBehavior(text) {
-      const normalized = (text || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-
-      const blockedPatterns = [
-        /\batac(ar|a|ando)?\b/,
-        /\bmord(er|ida|isqueo agresivo)\b/,
-        /\bpele(ar|a|as)\b/,
-        /\bagred(ir|a|e)\b/,
-        /\bagresiv(o|a|idad)\b/,
-        /\bpeg(ar|arle|o)\b/,
-        /\bgolpe(ar|arlo|s)?\b/,
-        /\bcastig(ar|o|os)\b/,
-        /\bahorc(ar|e)\b/,
-        /\bahogo\b/,
-        /\bpuas\b/,
-        /\belectric(o|a)\b/,
-        /\bshock\b/,
-        /\bsomet(er|imiento)\b/,
-        /\bdomin(ar|ancia)\b/,
-        /\basust(ar|arlo)\b/,
-        /\bmaltrat(ar|o)\b/,
-        /\bencerr(ar|arlo)\b/,
-        /\bpriv(ar|arlo) de (agua|comida)\b/,
-        /\bdefensa y ataque\b/,
-        /\bguardia agresiva\b/
-      ];
-
-      return blockedPatterns.some(regex => regex.test(normalized));
-    }
-
     const SUGGESTED_BEHAVIORS = [
-      { title: "Ser un buen guía y referente seguro", icon: "🧭", video: CURATED_VIDEOS.buenGuia, desc: "Tu perro percibe el mundo a través de tu ejemplo, calma y coherencia." },
-      { title: "Positivizar el uso del bozal", icon: "🛡️", video: CURATED_VIDEOS.bozalCanasta, desc: "Asocia el bozal tipo canasta con comida rica y calma, sin forzar." },
-      { title: "Colocar el pretal sin miedo", icon: "🦺", video: CURATED_VIDEOS.pretalSinMiedo, desc: "Desensibiliza el paso por la cabeza con premios y consentimiento." },
-      { title: "Calma ante ruidos y timbre", icon: "🔕", video: CURATED_VIDEOS.ladridosGestion, desc: "Gestión ambiental + olfato para bajar reactividad sonora en casa." },
-      { title: "Recibir visitas sin saltar", icon: "🚪", video: CURATED_VIDEOS.saltosVisitas, desc: "Principio de Premack: cuatro patas en el suelo desbloquean el saludo." },
-      { title: "Dejar de mordisquear manos o ropa", icon: "🧸", video: CURATED_VIDEOS.mordiscones, desc: "Redirección inmediata a mordedor + retiro suave de atención si insiste." },
-      { title: "Llamado confiable en el parque", icon: "📣", video: CURATED_VIDEOS.focoExteriores, desc: "Construcción progresiva con correa larga y premios de alto valor." }
+      {
+        title: "Ser un buen guía y referente seguro",
+        icon: "🧭",
+        desc: "Cómo percibe tu perro el entorno a través de tu calma, coherencia y ejemplo.",
+        video: CURATED_VIDEOS.buenGuia
+      },
+      {
+        title: "No tirar de la correa al pasear",
+        icon: "🦮",
+        desc: "Caminata relajada en forma de U sin tirones ni tensión.",
+        video: CURATED_VIDEOS.calmaCorrea
+      },
+      {
+        title: "No saltar a las visitas al entrar",
+        icon: "🐾",
+        desc: "Saludo con las 4 patas en el suelo usando redirección olfativa.",
+        video: CURATED_VIDEOS.saltosVisitas
+      },
+      {
+        title: "Dejar de ladrar ante ruidos o timbre",
+        icon: "🔕",
+        desc: "Gestión ambiental y calma ante estímulos sonoros en casa.",
+        video: CURATED_VIDEOS.ladridosGestion
+      },
+      {
+        title: "Acudir al llamado con distracciones",
+        icon: "📣",
+        desc: "Respuesta alegre y confiable usando refuerzo positivo de alto valor.",
+        video: CURATED_VIDEOS.gestionAtencion
+      },
+      {
+        title: "Positivizar el bozal canasta",
+        icon: "🛡️",
+        desc: "Asociación voluntaria sin forcejeos para paseos o veterinaria.",
+        video: CURATED_VIDEOS.bozalCanasta
+      }
+    ];
+
+    const SENSORY_CHANNELS = [
+      { key: "Olfativa", icon: "👃", desc: "Juegos de olfato, alfombras o rastreo" },
+      { key: "Sonora", icon: "👂", desc: "Exposición gradual a sonidos cotidianos" },
+      { key: "Gustativa", icon: "👅", desc: "Licky mats, mordedores o texturas de comida" },
+      { key: "Visual", icon: "👁️", desc: "Observación tranquila del entorno" },
+      { key: "Texturas", icon: "🐾", desc: "Caminar sobre distintas superficies" }
     ];
 
     // =========================================================================
     // ESTADO GLOBAL DE LA APLICACIÓN
     // =========================================================================
     const state = {
-      authMode: 'register', // 'register' | 'login'
-      isDemo: false,
+      mode: 'demo', // 'demo' | 'account'
       user: null,
+      authTab: 'register',
       onboardingStep: 1,
-      activeRouteTab: 'tutor', // 'tutor' | 'dog'
+      activeRouteTab: 'tutor',
       currentStage: 1,
-      selectedModalNode: null, // { route, index }
+      selectedModalNode: null,
       addedBehaviors: [],
       profile: {
-        dogName: '',
+        dogName: 'Milo',
         dogAge: 'Cachorro',
         physicalState: 'Activo / Sin restricciones',
         walksOutside: 'Sí',
         walkBehavior: 'Tira de la correa con ansiedad',
         requiresMuzzle: 'No',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
         sensory: {
           Olfativa: 'Bajo',
           Sonora: 'Medio',
           Gustativa: 'Bajo',
           Visual: 'Medio',
-          Texturas: 'Bajo'
+          Texturas: 'Medio'
         },
-        priorTraining: 'No',
-        mainProblem: 'Tironeo de correa',
         tutorConditioning: 'Principiante',
         tutorBodyLanguage: 'Principiante',
         dailyMinutes: 30,
@@ -779,13 +767,181 @@
     };
 
     // =========================================================================
-    // PERSISTENCIA EN SUPABASE (SOLO CUENTAS REALES)
+    // UTILIDADES GENERALES, SEGURIDAD ÉTICA Y BÚSQUEDA EN CANAL
     // =========================================================================
-    async function saveUserProgressToCloud() {
-      if (state.isDemo || !state.user || !supabaseClient) return;
+    function showToast(message, icon = '🎉') {
+      const box = document.getElementById('toast-box');
+      const iconEl = document.getElementById('toast-icon');
+      const textEl = document.getElementById('toast-text');
+      if (!box || !iconEl || !textEl) return;
+      iconEl.textContent = icon;
+      textEl.textContent = message;
+      box.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 3600);
+    }
+
+    function showScreen(screenId) {
+      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== screenId);
+      });
+      const demoBanner = document.getElementById('demo-banner');
+      if (demoBanner) {
+        demoBanner.classList.toggle('hidden', !(state.mode === 'demo' && screenId !== 'screen-auth'));
+      }
+      scrollToTopSmooth();
+    }
+
+    function scrollToTopSmooth() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const scrollArea = document.getElementById('roadmap-scroll-area');
+      if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sanitizeNodeIcon(icon, fallbackTitle = '') {
+      if (typeof icon === 'string' && icon.trim().length > 0 && !/^[a-z0-9_-]+$/i.test(icon.trim())) {
+        return icon.trim();
+      }
+      const lower = (fallbackTitle || '').toLowerCase();
+      if (lower.includes('bozal')) return '🛡️';
+      if (lower.includes('correa') || lower.includes('paseo')) return '🦮';
+      if (lower.includes('olfat') || lower.includes('mano')) return '👃';
+      if (lower.includes('mirame') || lower.includes('señal')) return '👀';
+      if (lower.includes('sit') || lower.includes('acostado')) return '🪑';
+      if (lower.includes('quieto')) return '📐';
+      return '🎯';
+    }
+
+    function containsHarmfulOrViolentBehavior(text = '') {
+      const clean = text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const forbiddenPatterns = [
+        /\batac(ar|e)\b/,
+        /\bmord(er|ida)\s+(a\s+)?(persona|gente|nino|perro|alguien)/,
+        /\bpelea(r)?\b/,
+        /\bagresi(vo|on|vidad)\b/,
+        /\bpegar(le)?\b/,
+        /\bgolpe(ar|s)?\b/,
+        /\bcastig(o|ar)\b/,
+        /\bahorque\b/,
+        /\bpuas\b/,
+        /\belectrico\b/,
+        /\bdominar\b/,
+        /\bsometer\b/,
+        /\basustar\b/
+      ];
+      return forbiddenPatterns.some(rx => rx.test(clean));
+    }
+
+    function buildChannelSearchVideo(rawTopic = '') {
+      const stopWords = new Set(['que', 'no', 'como', 'hacer', 'para', 'mi', 'perro', 'el', 'la', 'los', 'las', 'un', 'una', 'de', 'del', 'al', 'en', 'con', 'por', 'a']);
+      const keywords = rawTopic
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2 && !stopWords.has(w))
+        .slice(0, 4)
+        .join(' ');
+      const query = encodeURIComponent(keywords || 'adiestramiento positivo');
+      return {
+        title: `Buscar "${keywords || rawTopic}" en Dos Adiestramiento`,
+        url: `https://www.youtube.com/@dos_adiestramiento/search?query=${query}`
+      };
+    }
+
+    function normalizeRouteStatuses(routeKey) {
+      const list = state.roadmaps[routeKey];
+      if (!Array.isArray(list) || list.length === 0) return;
+      let foundActive = false;
+      list.forEach(node => {
+        if (node.status === 'completed') return;
+        if (!foundActive) {
+          node.status = 'active';
+          foundActive = true;
+        } else {
+          node.status = 'locked';
+        }
+      });
+    }
+
+    // =========================================================================
+    // AUTENTICACIÓN, MODOS DEMO Y PERSISTENCIA EN SUPABASE
+    // =========================================================================
+    function setAuthTab(tab) {
+      state.authTab = tab;
+      const regBtn = document.getElementById('tab-register');
+      const logBtn = document.getElementById('tab-login');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const errEl = document.getElementById('auth-error');
+      if (errEl) errEl.classList.add('hidden');
+
+      if (tab === 'register') {
+        regBtn.className = 'py-2 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition';
+        logBtn.className = 'py-2 text-xs font-bold rounded-xl text-stone-500 transition';
+        submitBtn.textContent = 'Comenzar y guardar mi plan';
+      } else {
+        logBtn.className = 'py-2 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition';
+        regBtn.className = 'py-2 text-xs font-bold rounded-xl text-stone-500 transition';
+        submitBtn.textContent = 'Entrar y recuperar mi plan';
+      }
+    }
+
+    async function handleAuthSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errEl = document.getElementById('auth-error');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      errEl.classList.add('hidden');
+
+      if (!supabaseClient) {
+        errEl.textContent = 'Supabase no está configurado en este entorno. Probá los modos Demo.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = state.authTab === 'register' ? 'Creando cuenta...' : 'Iniciando sesión...';
+
       try {
-        const { error } = await supabaseClient
-          .from('user_plans')
+        const res = state.authTab === 'register'
+          ? await supabaseClient.auth.signUp({ email, password })
+          : await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (res.error) throw res.error;
+        state.mode = 'account';
+        state.user = res.data?.user || null;
+
+        const loaded = await loadUserProgressFromCloud();
+        if (loaded) {
+          renderRoadmapsScreen();
+          showScreen('screen-roadmaps');
+          showToast('¡Bienvenido de nuevo! Tu progreso fue restaurado.', '🐾');
+        } else {
+          startOnboardingFlow(false);
+          showToast('¡Cuenta lista! Armemos el plan de tu perro.', '✨');
+        }
+      } catch (err) {
+        errEl.textContent = err.message || 'No se pudo completar la autenticación.';
+        errEl.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        setAuthTab(state.authTab);
+      }
+    }
+
+    async function saveUserProgressToCloud() {
+      if (state.mode !== 'account' || !state.user || !supabaseClient) return;
+      try {
+        await supabaseClient
+          .from('dogolingo_plans')
           .upsert({
             user_id: state.user.id,
             profile: state.profile,
@@ -794,41 +950,29 @@
             current_stage: state.currentStage,
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id' });
-
-        if (error) {
-          console.error('Error guardando en Supabase:', error.message);
-        }
       } catch (err) {
-        console.error('Fallo de red guardando en Supabase:', err);
+        console.warn('No se pudo sincronizar con Supabase:', err.message);
       }
     }
 
-    async function loadUserProgressFromCloud(userId) {
-      if (!supabaseClient || !userId) return false;
+    async function loadUserProgressFromCloud() {
+      if (state.mode !== 'account' || !state.user || !supabaseClient) return false;
       try {
         const { data, error } = await supabaseClient
-          .from('user_plans')
+          .from('dogolingo_plans')
           .select('*')
-          .eq('user_id', userId)
+          .eq('user_id', state.user.id)
           .maybeSingle();
 
-        if (error) {
-          console.error('Error leyendo plan de Supabase:', error.message);
-          return false;
-        }
-
-        if (data && data.roadmaps && ((data.roadmaps.tutor && data.roadmaps.tutor.length > 0) || (data.roadmaps.dog && data.roadmaps.dog.length > 0))) {
-          state.profile = { ...state.profile, ...(data.profile || {}) };
-          state.roadmaps = data.roadmaps;
-          state.addedBehaviors = data.added_behaviors || [];
-          state.currentStage = data.current_stage || 1;
-          normalizeRouteStatuses('tutor');
-          normalizeRouteStatuses('dog');
-          return true;
-        }
-        return false;
-      } catch (err) {
-        console.error('Error inesperado cargando plan:', err);
+        if (error || !data || !data.roadmaps) return false;
+        state.profile = { ...state.profile, ...(data.profile || {}) };
+        state.roadmaps = data.roadmaps;
+        state.addedBehaviors = Array.isArray(data.added_behaviors) ? data.added_behaviors : [];
+        state.currentStage = Number(data.current_stage || 1);
+        normalizeRouteStatuses('tutor');
+        normalizeRouteStatuses('dog');
+        return true;
+      } catch (_) {
         return false;
       }
     }
@@ -836,225 +980,75 @@
     async function restoreActiveSessionOnBoot() {
       if (!supabaseClient) return;
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session && session.user) {
-          state.isDemo = false;
-          state.user = { id: session.user.id, email: session.user.email };
-          updateDemoBanner();
-          const hasSavedPlan = await loadUserProgressFromCloud(session.user.id);
-          if (hasSavedPlan) {
+        const { data } = await supabaseClient.auth.getSession();
+        const sessionUser = data?.session?.user;
+        if (sessionUser) {
+          state.mode = 'account';
+          state.user = sessionUser;
+          const hasPlan = await loadUserProgressFromCloud();
+          if (hasPlan) {
             renderRoadmapsScreen();
             showScreen('screen-roadmaps');
-          } else {
-            state.onboardingStep = 1;
-            renderOnboardingStep();
-            showScreen('screen-onboarding');
           }
         }
-      } catch (err) {
-        console.warn('No se pudo restaurar sesión previa:', err);
-      }
+      } catch (_) {}
     }
 
-    // =========================================================================
-    // NAVEGACIÓN Y HELPERS DE INTERFAZ
-    // =========================================================================
-    function scrollToTopSmooth() {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      const onboardingScroll = document.getElementById('onboarding-steps-container');
-      if (onboardingScroll) onboardingScroll.scrollTop = 0;
-      const roadmapScroll = document.getElementById('roadmap-scroll-area');
-      if (roadmapScroll) roadmapScroll.scrollTop = 0;
-    }
-
-    function showToast(msg, icon = '🎉') {
-      const box = document.getElementById('toast-box');
-      document.getElementById('toast-icon').textContent = icon;
-      document.getElementById('toast-text').textContent = msg;
-      box.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3400);
-    }
-
-    function showScreen(screenId) {
-      ['screen-auth', 'screen-onboarding', 'screen-contract', 'screen-roadmaps'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(screenId).classList.remove('hidden');
-      scrollToTopSmooth();
-    }
-
-    function updateDemoBanner() {
-      const banner = document.getElementById('demo-banner');
-      if (state.isDemo) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-      }
-    }
-
-    function setAuthTab(mode) {
-      state.authMode = mode;
-      const regTab = document.getElementById('tab-register');
-      const logTab = document.getElementById('tab-login');
-      const submitBtn = document.getElementById('auth-submit-btn');
-      document.getElementById('auth-error').classList.add('hidden');
-
-      if (mode === 'register') {
-        regTab.className = 'py-2 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition';
-        logTab.className = 'py-2 text-xs font-bold rounded-xl text-stone-500 transition';
-        submitBtn.textContent = 'Comenzar y guardar mi plan';
-      } else {
-        logTab.className = 'py-2 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition';
-        regTab.className = 'py-2 text-xs font-bold rounded-xl text-stone-500 transition';
-        submitBtn.textContent = 'Ingresar a mi plan guardado';
-      }
-    }
-
-    async function handleAuthSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
-      const errEl = document.getElementById('auth-error');
-      const submitBtn = document.getElementById('auth-submit-btn');
-
-      if (!email || password.length < 6) {
-        errEl.textContent = 'Ingresá un correo válido y una contraseña de al menos 6 caracteres.';
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      errEl.classList.add('hidden');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = state.authMode === 'register' ? 'Creando cuenta...' : 'Ingresando...';
-
-      try {
-        if (!supabaseClient) {
-          throw new Error('Falta configurar SUPABASE_URL y SUPABASE_ANON_KEY en index.html.');
-        }
-
-        if (state.authMode === 'register') {
-          const { data, error } = await supabaseClient.auth.signUp({ email, password });
-          if (error) throw error;
-          if (!data.user) throw new Error('No se pudo crear el usuario. Verificá tu correo.');
-
-          state.isDemo = false;
-          state.user = { id: data.user.id, email: data.user.email };
-          updateDemoBanner();
-
-          // Si venía de Modo Demo con un plan ya armado, lo migramos directo a la nube
-          if ((state.roadmaps.tutor && state.roadmaps.tutor.length > 0) || (state.roadmaps.dog && state.roadmaps.dog.length > 0)) {
-            await saveUserProgressToCloud();
-            renderRoadmapsScreen();
-            showScreen('screen-roadmaps');
-            showToast('¡Cuenta creada! Tu plan demo quedó guardado en la nube.', '☁️');
-            return;
-          }
-
-          showToast(`¡Cuenta creada para ${email}!`, '✅');
-          state.onboardingStep = 1;
-          renderOnboardingStep();
-          showScreen('screen-onboarding');
-        } else {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-
-          state.isDemo = false;
-          state.user = { id: data.user.id, email: data.user.email };
-          updateDemoBanner();
-
-          const hasSavedPlan = await loadUserProgressFromCloud(data.user.id);
-          if (hasSavedPlan) {
-            renderRoadmapsScreen();
-            showScreen('screen-roadmaps');
-            showToast(`¡Bienvenido de nuevo, ${state.profile.dogName || 'tutor'}!`, '🐾');
-          } else {
-            state.onboardingStep = 1;
-            renderOnboardingStep();
-            showScreen('screen-onboarding');
-            showToast('Sesión iniciada. Armemos el plan de tu perro.', '✨');
-          }
-        }
-      } catch (err) {
-        errEl.textContent = err.message || 'No se pudo completar la autenticación.';
-        errEl.classList.remove('hidden');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    }
-
-    // =========================================================================
-    // MODOS DEMO (100% VOLÁTILES, SIN BASE DE DATOS)
-    // =========================================================================
     function startDemoScratch() {
-      state.isDemo = true;
+      state.mode = 'demo';
       state.user = null;
       state.addedBehaviors = [];
       state.currentStage = 1;
-      updateDemoBanner();
-      state.onboardingStep = 1;
-      renderOnboardingStep();
-      showScreen('screen-onboarding');
-      showToast('Modo Demo iniciado: completá los 3 pasos', '🧪');
+      startOnboardingFlow(true);
     }
 
     function startDemoPreset() {
-      state.isDemo = true;
+      state.mode = 'demo';
       state.user = null;
+      state.addedBehaviors = [];
       state.currentStage = 1;
-      state.addedBehaviors = ['Positivizar el uso del bozal'];
       state.profile = {
         dogName: 'Milo',
         dogAge: 'Joven',
         physicalState: 'Activo / Sin restricciones',
         walksOutside: 'Sí',
         walkBehavior: 'Tira de la correa con ansiedad',
-        requiresMuzzle: 'Sí',
+        requiresMuzzle: 'No',
+        priorTraining: 'No',
+        mainProblem: 'Tironeo de correa',
         sensory: {
           Olfativa: 'Bajo',
           Sonora: 'Medio',
           Gustativa: 'Bajo',
-          Visual: 'Alto',
-          Texturas: 'Bajo'
+          Visual: 'Medio',
+          Texturas: 'Medio'
         },
-        priorTraining: 'No',
-        mainProblem: 'Tironeo de correa',
         tutorConditioning: 'Principiante',
-        tutorBodyLanguage: 'Algunas señales',
-        dailyMinutes: 45,
+        tutorBodyLanguage: 'Principiante',
+        dailyMinutes: 30,
         wantsReading: 'Sí'
       };
-      updateDemoBanner();
       buildRoadmapsFromProfile();
-      // Precargamos progreso realista en el demo para mostrar estados completados, activos y bloqueados
       state.roadmaps.tutor[0].status = 'completed';
-      state.roadmaps.tutor[1].status = 'completed';
-      state.roadmaps.tutor[2].status = 'active';
-      state.roadmaps.dog[0].status = 'completed';
-      state.roadmaps.dog[1].status = 'active';
-
+      normalizeRouteStatuses('tutor');
+      normalizeRouteStatuses('dog');
       renderRoadmapsScreen();
       showScreen('screen-roadmaps');
-      showToast('Caso precargado de Milo (45 min/día • tope 15m/día)', '🐶');
+      showToast('Demo precargada con Milo lista para explorar', '🐶');
     }
 
     function switchDemoToAccount() {
-      setAuthTab('register');
       showScreen('screen-auth');
-      showToast('Creá tu cuenta para conservar tu progreso', '💾');
+      setAuthTab('register');
+      showToast('Creá tu cuenta para guardar tu progreso en la nube', '💾');
     }
 
     async function resetToHome() {
-      if (!state.isDemo && supabaseClient) {
-        try { await supabaseClient.auth.signOut(); } catch (_) {}
+      if (state.mode === 'account' && supabaseClient) {
+        await supabaseClient.auth.signOut().catch(() => {});
       }
-      state.isDemo = false;
       state.user = null;
-      state.roadmaps = { tutor: [], dog: [] };
-      state.addedBehaviors = [];
-      updateDemoBanner();
+      state.mode = 'demo';
       showScreen('screen-auth');
     }
 
@@ -1066,6 +1060,16 @@
       document.getElementById('reset-plan-modal').classList.add('hidden');
     }
 
+    async function confirmResetPlan() {
+      closeResetPlanModal();
+      state.roadmaps = { tutor: [], dog: [] };
+      state.addedBehaviors = [];
+      state.currentStage = 1;
+      await saveUserProgressToCloud();
+      startOnboardingFlow(false);
+      showToast('Plan reiniciado. Volvamos a configurar tu perfil.', '🔄');
+    }
+
     function openAboutModal() {
       document.getElementById('about-modal').classList.remove('hidden');
     }
@@ -1074,60 +1078,36 @@
       document.getElementById('about-modal').classList.add('hidden');
     }
 
-    async function confirmResetPlan() {
-      closeResetPlanModal();
-      state.roadmaps = { tutor: [], dog: [] };
-      state.addedBehaviors = [];
-      state.currentStage = 1;
-      state.onboardingStep = 1;
-
-      if (!state.isDemo && state.user && supabaseClient) {
-        try {
-          await supabaseClient
-            .from('user_plans')
-            .delete()
-            .eq('user_id', state.user.id);
-        } catch (err) {
-          console.warn('Error limpiando plan en Supabase:', err);
-        }
-      }
-
-      const cb = document.getElementById('contract-checkbox');
-      if (cb) cb.checked = false;
-      toggleContractButton();
-
-      renderOnboardingStep();
-      showScreen('screen-onboarding');
-      showToast('Plan reseteado. Completá el diagnóstico desde cero.', '🔄');
-    }
-
     // =========================================================================
-    // ONBOARDING PROGRESIVO DE 3 PASOS
+    // ONBOARDING PROGRESIVO (3 PASOS) Y CONTRATO DE BIENESTAR
     // =========================================================================
     function renderSensoryInputs() {
       const container = document.getElementById('sensory-inputs');
-      const channels = [
-        { key: 'Olfativa', label: '👃 Olfativa', hint: 'Alfombras olfativas, búsqueda de premios' },
-        { key: 'Sonora', label: '👂 Sonora', hint: 'Habitualidad a ruidos urbanos, calma acústica' },
-        { key: 'Gustativa', label: '👅 Gustativa', hint: 'Licky mats, mordedores naturales, congelados' },
-        { key: 'Visual', label: '👁️ Visual', hint: 'Observación tranquila a distancia sin sobreestimulación' },
-        { key: 'Texturas', label: '🐾 Texturas', hint: 'Superficies variadas (pasto, goma, madera)' }
-      ];
-
-      container.innerHTML = channels.map(ch => `
-        <div class="flex items-center justify-between gap-2 bg-stone-50 px-3 py-2 rounded-2xl border border-stone-200/70">
-          <div>
-            <p class="text-xs font-bold text-stone-800">${ch.label}</p>
-            <p class="text-[10px] text-stone-500">${ch.hint}</p>
+      if (!container) return;
+      container.innerHTML = SENSORY_CHANNELS.map(ch => {
+        const currentVal = state.profile.sensory[ch.key] || 'Medio';
+        return `
+          <div class="flex items-center justify-between gap-2 bg-stone-50 px-3 py-2 rounded-2xl border border-stone-200/80">
+            <div class="min-w-0">
+              <p class="text-xs font-extrabold text-stone-800">${ch.icon} ${ch.key}</p>
+              <p class="text-[10px] text-stone-500 truncate">${ch.desc}</p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              ${['Bajo', 'Medio', 'Alto'].map(lvl => `
+                <button
+                  type="button"
+                  onclick="setSensoryLevel('${ch.key}', '${lvl}')"
+                  class="px-2 py-1 rounded-xl text-[10px] font-extrabold transition ${
+                    currentVal === lvl
+                      ? 'bg-emerald-500 text-white shadow-2xs'
+                      : 'bg-white border border-stone-200 text-stone-600'
+                  }"
+                >${lvl}</button>
+              `).join('')}
+            </div>
           </div>
-          <div class="flex gap-1">
-            ${['Bajo', 'Medio', 'Alto'].map(lvl => {
-              const active = state.profile.sensory[ch.key] === lvl;
-              return `<button type="button" onclick="setSensoryLevel('${ch.key}', '${lvl}')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold transition ${active ? 'bg-emerald-500 text-white shadow-2xs' : 'bg-white text-stone-600 border border-stone-200'}">${lvl}</button>`;
-            }).join('')}
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function setSensoryLevel(channel, level) {
@@ -1135,37 +1115,49 @@
       renderSensoryInputs();
     }
 
-    function selectOption(groupName, value, btnEl) {
-      state.profile[groupName] = value;
-      const group = btnEl.closest('[data-radio-group]');
-      group.querySelectorAll('.opt-btn').forEach(b => {
-        b.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
-        b.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
-      });
-      btnEl.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
-      btnEl.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
-
-      if (groupName === 'walksOutside') {
-        document.getElementById('walk-behavior-box').style.display = value === 'Sí' ? 'block' : 'none';
+    function selectOption(field, value, btnEl) {
+      state.profile[field] = value;
+      const group = btnEl?.closest('[data-radio-group]');
+      if (group) {
+        group.querySelectorAll('.opt-btn').forEach(btn => {
+          btn.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+          btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        });
+        btnEl.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        btnEl.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+      }
+      if (field === 'walksOutside') {
+        const walkBox = document.getElementById('walk-behavior-box');
+        if (walkBox) walkBox.classList.toggle('hidden', value !== 'Sí');
       }
     }
 
-    function renderOnboardingStep() {
+    function startOnboardingFlow(resetName = false) {
+      state.onboardingStep = 1;
+      const nameInput = document.getElementById('dog-name');
+      if (nameInput) {
+        nameInput.value = resetName ? '' : (state.profile.dogName || '');
+      }
+      renderSensoryInputs();
+      updateOnboardingStepUI();
+      showScreen('screen-onboarding');
+    }
+
+    function updateOnboardingStepUI() {
       const step = state.onboardingStep;
       [1, 2, 3].forEach(n => {
-        document.getElementById(`step-${n}`).classList.toggle('hidden', n !== step);
+        const el = document.getElementById(`step-${n}`);
+        if (el) el.classList.toggle('hidden', n !== step);
       });
       document.getElementById('onboarding-progress-bar').style.width = `${Math.round((step / 3) * 100)}%`;
       document.getElementById('onboarding-step-label').textContent = `${step}/3`;
-      document.getElementById('onboarding-next-btn').textContent = step === 3 ? 'Revisar compromiso →' : 'Continuar →';
-      if (step === 1) renderSensoryInputs();
-      scrollToTopSmooth();
+      document.getElementById('onboarding-next-btn').textContent = step === 3 ? 'Revisar acuerdo de bienestar →' : 'Continuar →';
     }
 
     function prevOnboardingStep() {
       if (state.onboardingStep > 1) {
-        state.onboardingStep--;
-        renderOnboardingStep();
+        state.onboardingStep -= 1;
+        updateOnboardingStepUI();
       } else {
         showScreen('screen-auth');
       }
@@ -1173,150 +1165,78 @@
 
     function nextOnboardingStep() {
       if (state.onboardingStep === 1) {
-        const nameInput = document.getElementById('dog-name').value.trim();
-        state.profile.dogName = nameInput || 'Toby';
-        state.profile.walkBehavior = document.getElementById('walk-behavior').value;
-        state.onboardingStep = 2;
-        renderOnboardingStep();
-      } else if (state.onboardingStep === 2) {
-        state.onboardingStep = 3;
-        renderOnboardingStep();
+        const rawName = (document.getElementById('dog-name')?.value || '').trim();
+        state.profile.dogName = rawName || 'Milo';
+        const walkSelect = document.getElementById('walk-behavior');
+        if (walkSelect) state.profile.walkBehavior = walkSelect.value;
+      }
+
+      if (state.onboardingStep < 3) {
+        state.onboardingStep += 1;
+        updateOnboardingStepUI();
+        scrollToTopSmooth();
       } else {
         prepareContractScreen();
         showScreen('screen-contract');
       }
     }
 
-    // =========================================================================
-    // PANTALLA DE COMPROMISO Y MOTOR PEDAGÓGICO
-    // =========================================================================
     function prepareContractScreen() {
       const p = state.profile;
-      document.getElementById('contract-dog-name').textContent = p.dogName;
-      const lowChannels = Object.entries(p.sensory)
-        .filter(([, v]) => v === 'Bajo')
-        .map(([k]) => k);
-
-      const sensoryText = lowChannels.length > 0
-        ? `Priorizaremos enriquecimiento en sus canales bajos (${lowChannels.join(', ')}).`
-        : `Tiene muy buena base sensorial en casa, así que potenciaremos desafíos cognitivos progresivos.`;
-
+      document.getElementById('contract-dog-name').textContent = p.dogName || 'tu perro';
       document.getElementById('contract-summary').innerHTML = `
-        <strong>Diagnóstico de ${p.dogName}:</strong> etapa <strong>${p.dogAge}</strong> (${p.physicalState}).
-        Dispone de <strong>${p.dailyMinutes} min/día</strong>, que organizaremos con un tope estricto de <strong>15 minutos activos diarios</strong> para el can y el resto en tu capacitación + relajación olfativa.
-        ${sensoryText}
+        Perfil configurado para <strong>${p.dogName}</strong> (${p.dogAge} • ${p.physicalState}).
+        Desafío prioritario: <strong>${p.mainProblem}</strong>.
+        Disponibilidad diaria: <strong>${p.dailyMinutes} min</strong> (con tope de <strong>15 min activos/día</strong> para cuidar su bienestar mental).
       `;
+      const cb = document.getElementById('contract-checkbox');
+      cb.checked = false;
+      toggleContractButton();
     }
 
     function toggleContractButton() {
       const checked = document.getElementById('contract-checkbox').checked;
       const btn = document.getElementById('generate-plan-btn');
       btn.disabled = !checked;
-      if (checked) {
-        btn.className = 'w-full min-h-[52px] rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-extrabold text-sm tracking-wide shadow-[0_4px_0_0_#059669] duo-btn';
-      } else {
-        btn.className = 'w-full min-h-[52px] rounded-2xl bg-stone-300 text-stone-500 font-display font-extrabold text-sm tracking-wide transition';
-      }
+      btn.className = checked
+        ? 'w-full min-h-[52px] rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-extrabold text-sm tracking-wide shadow-[0_4px_0_0_#059669] duo-btn'
+        : 'w-full min-h-[52px] rounded-2xl bg-stone-300 text-stone-500 font-display font-extrabold text-sm tracking-wide transition';
     }
 
+    // =========================================================================
+    // CLIENTE DE LA FUNCIÓN SERVERLESS GEMINI
+    // =========================================================================
     async function callGeminiPlanner(payload) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000);
-      try {
-        const res = await fetch('/.netlify/functions/gemini-plan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          throw new Error(data.error || `HTTP ${res.status}`);
-        }
-        return data;
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          throw new Error('Tiempo de espera agotado');
-        }
-        throw err;
-      } finally {
-        clearTimeout(timeoutId);
+      const response = await fetch('/.netlify/functions/gemini-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      return await response.json();
     }
 
-    // Traductor defensivo: garantiza que cada nodo tenga siempre un emoji limpio
-    function sanitizeNodeIcon(rawIcon, title = '') {
-      const text = (rawIcon || '').trim();
-      if (text && !/^[a-z0-9_-]+$/i.test(text) && [...text].length <= 4) {
-        return text;
-      }
-      const key = `${text} ${title}`.toLowerCase();
-      if (key.includes('walk') || key.includes('correa') || key.includes('paseo')) return '🦮';
-      if (key.includes('seat') || key.includes('calma') || key.includes('descanso') || key.includes('relax')) return '💤';
-      if (key.includes('scale') || key.includes('paso') || key.includes('progres') || key.includes('tiempo')) return '🎯';
-      if (key.includes('olfat') || key.includes('nose') || key.includes('sniff')) return '👃';
-      if (key.includes('plato') || key.includes('food') || key.includes('comida') || key.includes('bowl')) return '🥣';
-      if (key.includes('eye') || key.includes('mirame') || key.includes('atencion') || key.includes('foco')) return '👀';
-      if (key.includes('heart') || key.includes('vinculo') || key.includes('amab')) return '💚';
-      if (key.includes('shield') || key.includes('bozal') || key.includes('segur')) return '🛡️';
-      if (key.includes('brain') || key.includes('psico') || key.includes('mente')) return '🧠';
-      return '🐾';
+    function normalizeLessonTitleKey(title = '') {
+      return title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/^etapa\s*\d+\s*:\s*/i, '')
+        .replace(/(\s*\(paso simplificado\))+/gi, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
 
-    // Inserta automáticamente una lección de repaso consolidado cada 8 lecciones (posiciones 8, 16, 24...)
-    function ensureReviewEveryEight(routeKey) {
-      const list = state.roadmaps[routeKey] || [];
-      const dog = state.profile.dogName || 'tu perro';
-      const rebuilt = [];
-      let nonReviewCount = 0;
-
-      for (const item of list) {
-        if (item && item.isReviewNode) continue;
-        rebuilt.push(item);
-        nonReviewCount++;
-        if (nonReviewCount % 7 === 0) {
-          const reviewBlock = Math.floor(nonReviewCount / 7);
-          const recentTitles = rebuilt.slice(-3).map(n => n.title).join(', ');
-          const reviewId = `${routeKey}_review_${reviewBlock}`;
-          const existingReview = list.find(n => n && n.id === reviewId);
-          rebuilt.push(existingReview || {
-            id: reviewId,
-            title: `Repaso Consolidado #${reviewBlock}`,
-            duration: '5 min',
-            icon: '🔁',
-            isReviewNode: true,
-            status: 'locked',
-            requiresTutorIds: [],
-            tags: ['Repaso cada 8 lecciones', 'Consolidación', 'Refuerzo Positivo'],
-            mediaType: 'reading',
-            mediaTitle: `Pausa estratégica para afianzar lo aprendido con ${dog}`,
-            mediaBody: `Antes de sumar nuevos criterios, repasamos en un entorno tranquilo las últimas prácticas (${recentTitles || 'enfoque, calma y comunicación'}) con sesiones cortas de 3 a 5 minutos.`,
-            videos: [CURATED_VIDEOS.estructura],
-            steps: [
-              `Elegí 2 ejercicios recientes (${recentTitles || 'los últimos trabajados'}) y hacé 3 repeticiones fáciles con premios de alto valor.`,
-              'Mantené la sesión por debajo de los 5 minutos totales y terminá siempre con un acierto seguro.',
-              `Observá si ${dog} responde fluido; si duda en algún paso, bajá un poco la distracción antes de avanzar.`
-            ],
-            adaptiveTip: 'Consolidar cada 8 lecciones evita la saturación cognitiva y fija los hábitos a largo plazo.'
-          });
-        }
-      }
-      state.roadmaps[routeKey] = rebuilt;
-    }
-
-    // Garantiza que cada ruta tenga siempre un único nodo 'active' (HOY) secuencial
-    function normalizeRouteStatuses(routeKey) {
-      ensureReviewEveryEight(routeKey);
-      const list = state.roadmaps[routeKey] || [];
-      let foundActive = false;
-      list.forEach(node => {
-        if (node.status === 'completed') return;
-        if (!foundActive) {
-          node.status = 'active';
-          foundActive = true;
-        } else {
-          node.status = 'locked';
-        }
+    function filterNonDuplicateNodes(candidateNodes = [], existingNodes = []) {
+      const seenKeys = new Set(existingNodes.map(n => normalizeLessonTitleKey(n.title)));
+      return candidateNodes.filter(node => {
+        const key = normalizeLessonTitleKey(node.title);
+        if (!key || seenKeys.has(key)) return false;
+        seenKeys.add(key);
+        return true;
       });
     }
 
@@ -1687,50 +1607,94 @@
       } else {
         dogNodes.push({
           id: 'd2',
-          title: isExperienced ? 'Foco y Mirame con Distracciones' : 'Mirame y Luring Base en Casa',
+          title: 'Calma antes de Salir y Pretal Amable',
           duration: '4 min',
-          icon: '👀',
+          icon: '🦺',
           status: 'locked',
           requiresTutorIds: ['t2', 't3'],
-          tags: ['Foco', 'Vínculo', 'Atención'],
+          tags: ['Premack', 'Pretal sin Miedo', 'Calma'],
           mediaType: 'video',
-          mediaTitle: `Conexión visual voluntaria con ${dog}`,
-          mediaBody: 'Que tu perro elija mirarte ante un estímulo es la base para cualquier paseo tranquilo.',
-          videos: [isExperienced ? CURATED_VIDEOS.gestionAtencion : CURATED_VIDEOS.luringBasico, CURATED_VIDEOS.luringVsCapturing],
+          mediaTitle: 'Preparar el paseo sin sobreexcitación',
+          mediaBody: 'Asociamos el pretal con premios y abrimos la puerta solo cuando hay calma.',
+          videos: [CURATED_VIDEOS.pretalSinMiedo, CURATED_VIDEOS.calmaCorrea],
           steps: [
-            'Esperá en silencio hasta que busque tus ojos en lugar de la mano.',
-            'Marcá "¡Bien!" al instante y premiá.',
-            isSeniorOrSensitive ? 'Practicá echado o sentado cómodo sin exigir posturas forzadas.' : 'Hacé 5 repeticiones en 3 minutos.'
+            'Mostrá el pretal y premiá que meta la cabeza voluntariamente.',
+            'Si salta al ver la correa, frená 3 segundos hasta que apoye las 4 patas.',
+            'Salgan por la puerta con calma y correa floja.'
           ],
-          adaptiveTip: 'Nunca lo llames si sabés que no puede responder todavía.'
+          adaptiveTip: 'Un paseo tranquilo empieza antes de cruzar la puerta.'
         });
       }
 
-      // Nodo 3: Descompresión / Sensorial
+      // Nodo 3: Mirame (Contacto Visual Voluntario)
       dogNodes.push({
         id: 'd3',
-        title: 'Circuito de Olfato y Calma',
-        duration: '5 min',
-        icon: '🌿',
+        title: 'Mirame: Contacto Visual Voluntario',
+        duration: '4 min',
+        icon: '👀',
         status: 'locked',
-        requiresTutorIds: ['t4'],
-        tags: ['Olfato', 'Baja Pulsaciones', 'Enriquecimiento'],
+        requiresTutorIds: ['t2', 't3'],
+        tags: ['Mirame', 'Foco y Vínculo', 'Refuerzo Positivo'],
         mediaType: 'video',
-        mediaTitle: 'Juego de búsqueda libre sin exigencia',
-        mediaBody: 'El olfateo activa el sistema parasimpático y reduce el cortisol acumulado.',
-        videos: [CURATED_VIDEOS.descompresionOlfato, CURATED_VIDEOS.sensorial],
+        mediaTitle: `Construir el puente de atención con ${dog}`,
+        mediaBody: 'Enseñamos que mirar tus ojos trae cosas buenas, sin llamar su nombre de más ni forzar su cabeza.',
+        videos: [CURATED_VIDEOS.luringBasico, CURATED_VIDEOS.gestionAtencion],
         steps: [
-          'Esparcí un puñado de premios en el pasto o en una alfombra olfativa.',
-          'Decí "Buscá" y dejalo explorar en silencio.',
-          'Ideal antes o después de un paseo estimulante.'
+          'Llevá un premio desde su nariz hasta el entrecejo de tus ojos.',
+          'Apenas haga contacto visual, marcá "¡Bien!" y premiá.',
+          'Practicá 5 repeticiones cortas (menos de 3 minutos) en un ambiente tranquilo.'
         ],
-        adaptiveTip: 'No cuenta dentro del límite de 15 min de comandos porque es relajación natural.'
+        adaptiveTip: 'Mirame es la base para redirigir su atención antes de cualquier distracción.'
       });
 
-      // Nodo 4: Paseo / Correa (o Exterior)
+      // Nodo 4: Habilidades Funcionales: Sit y Acostado (Down)
+      dogNodes.push({
+        id: 'd4',
+        title: isExperienced ? 'Sit y Acostado sin Cebo (Fading Luring)' : 'Sit (Sentado) y Acostado con Luring Amable',
+        duration: '4 min',
+        icon: '🪑',
+        status: 'locked',
+        requiresTutorIds: ['t3'],
+        tags: ['Sit', 'Acostado', 'Luring y Retirada de Cebo'],
+        mediaType: 'video',
+        mediaTitle: `Posturas de calma funcional para ${dog}`,
+        mediaBody: isSeniorOrSensitive
+          ? 'Trabajamos el sentado o echado sobre superficie antideslizante, premiando la postura cómoda sin apurar.'
+          : 'Guiamos con premio desde la nariz hacia arriba (Sit) y hacia el piso (Acostado), retirando el cebo desde la cuarta repetición.',
+        videos: [CURATED_VIDEOS.luringBasico, CURATED_VIDEOS.luringVsCapturing],
+        steps: [
+          'Guiá suavemente con un premio frente a su nariz hasta que apoye la cola (Sit) y marcá "¡Bien!".',
+          'Desde sentado, bajá el premio entre sus patas delanteras hacia el suelo para invitar al Acostado.',
+          'Repetí 3 veces con premio en mano y en la 4ta usá el mismo gesto con la mano vacía, premiando desde la otra.'
+        ],
+        adaptiveTip: 'Nunca presiones su lomo ni lo fuerces físicamente a bajar.'
+      });
+
+      // Nodo 5: Quieto / Permanencia Base + Juego Cognitivo ¿En qué mano está?
+      dogNodes.push({
+        id: 'd5',
+        title: 'Quieto Inicial y Juego: ¿En qué mano está?',
+        duration: '5 min',
+        icon: '✊',
+        status: 'locked',
+        requiresTutorIds: ['t3', 't4'],
+        tags: ['Quieto', 'Juego Cognitivo', 'Olfato y Elección'],
+        mediaType: 'video',
+        mediaTitle: 'Permanencia corta + desafío mental de olfato en casa',
+        mediaBody: 'Combinamos 3 segundos de Quieto con el juego "¿En qué mano está?" para estimular su nariz, concentración y autocontrol.',
+        videos: [CURATED_VIDEOS.descompresionOlfato, buildChannelSearchVideo('quieto permanencia')],
+        steps: [
+          'Con tu perro en Sit o Acostado, mostrá palma abierta 2 segundos, premiá en el lugar y liberá con "¡Libre!".',
+          'Luego cerrá ambos puños con un premio escondido en uno y acercalos a su altura.',
+          'Cuando toque con el hocico o pata la mano correcta (sin morder), abrí el puño y premiá.'
+        ],
+        adaptiveTip: 'El juego "¿En qué mano está?" cansa mentalmente sin impacto físico y refuerza la paciencia.'
+      });
+
+      // Nodo 6: Paseo / Correa (o Exterior)
       if (p.walksOutside === 'Sí') {
         dogNodes.push({
-          id: 'd4',
+          id: 'd6',
           title: isExperienced ? 'Correa Floja y Giros en U' : 'Correa Floja: Nivel Cero en Casa',
           duration: '4 min',
           icon: '🦮',
@@ -1750,9 +1714,9 @@
         });
       }
 
-      // Nodo 5: Generalización en Exteriores
+      // Nodo 7: Generalización en Exteriores
       dogNodes.push({
-        id: 'd5',
+        id: 'd7',
         title: 'Foco en Exteriores con Estímulos',
         duration: '5 min',
         icon: '🌳',
@@ -1771,10 +1735,10 @@
         adaptiveTip: 'Menos es más: terminá siempre antes de que se canse.'
       });
 
-      // Nodo 6: Bozal SOLO si el usuario indicó que sí lo requiere
+      // Nodo 8: Bozal SOLO si el usuario indicó que sí lo requiere
       if (p.requiresMuzzle === 'Sí') {
         dogNodes.push({
-          id: 'd6',
+          id: 'd8',
           title: 'Positivización del Bozal Canasta',
           duration: '4 min',
           icon: '🛡️',
@@ -2164,6 +2128,180 @@
     // =========================================================================
     // SCROLL INFINITO / GENERACIÓN PROGRESIVA DE SIGUIENTES ETAPAS CON IA
     // =========================================================================
+    function buildProgressiveLocalStage(stageNumber) {
+      const dog = state.profile.dogName || 'tu perro';
+      const ts = Date.now();
+      const modules = [
+        {
+          tutor: {
+            id: `t_stage_${stageNumber}_${ts}`,
+            title: `Regla de las 3D en el Quieto (Distancia, Duración, Distracción)`,
+            duration: '4 min',
+            icon: '📐',
+            status: 'locked',
+            tags: [`Etapa ${stageNumber}`, 'Quieto', 'Progresión 3D'],
+            mediaType: 'video',
+            mediaTitle: 'Cómo avanzar en la permanencia sin que el perro se levante',
+            mediaBody: 'El secreto del Quieto confiable es subir una sola variable por sesión: primero segundos, luego pasos de distancia y recién al final distracciones suaves.',
+            videos: [CURATED_VIDEOS.estructura, buildChannelSearchVideo('quieto permanencia')],
+            steps: [
+              'Si sumás 2 pasos de distancia, bajá el tiempo de espera a solo 3 segundos.',
+              'Volvé siempre hacia tu perro para premiar en su lugar antes de dar la palabra de liberación.',
+              'Evitá repetir "quieto, quieto": una sola señal clara alcanza.'
+            ],
+            adaptiveTip: 'Si rompe la postura, simplemente volvemos un paso atrás sin retos.'
+          },
+          dog: {
+            id: `d_stage_${stageNumber}_${ts}`,
+            title: `Quieto con Distancia y Dar la Pata (Vínculo)`,
+            duration: '5 min',
+            icon: '🐾',
+            status: 'locked',
+            requiresTutorIds: [`t_stage_${stageNumber}_${ts}`],
+            tags: [`Etapa ${stageNumber}`, 'Quieto', 'Dar la Pata'],
+            mediaType: 'video',
+            mediaTitle: `Permanencia en calma y truco cooperativo para ${dog}`,
+            mediaBody: 'Combinamos un Quieto de 2 pasos de distancia con el aprendizaje amable de Dar la Pata / Choca esos cinco para fortalecer confianza.',
+            videos: [buildChannelSearchVideo('dar la pata trucos'), CURATED_VIDEOS.luringBasico],
+            steps: [
+              'Pedí Sit o Acostado, señalá Quieto, dá 2 pasos atrás, volvé, premiá y liberá con "¡Libre!".',
+              'Para Dar la Pata, cerrá un premio en tu puño bajo; cuando intente tocarlo con su pata, marcá "¡Bien!" y abrí la mano.',
+              'Hacé solo 4 repeticiones por lado para mantener alta su motivación.'
+            ],
+            adaptiveTip: 'Los trucos cooperativos aumentan la seguridad y el entusiasmo sin presión.'
+          }
+        },
+        {
+          tutor: {
+            id: `t_stage_${stageNumber}_${ts + 1}`,
+            title: `Intercambio Justo y Prevención de Protección de Recursos`,
+            duration: '4 min',
+            icon: '🤝',
+            status: 'locked',
+            tags: [`Etapa ${stageNumber}`, 'Soltar', 'Confianza'],
+            mediaType: 'video',
+            mediaTitle: 'Por qué nunca hay que sacar cosas de la boca a la fuerza',
+            mediaBody: 'Quitar objetos por la fuerza enseña al perro a tragar rápido o gruñir. El intercambio amable crea cooperación voluntaria.',
+            videos: [CURATED_VIDEOS.premiosAltoValor, buildChannelSearchVideo('soltar intercambio')],
+            steps: [
+              'Cuando tenga un juguete permitido, acercá un premio rico a su nariz.',
+              'Apenas abra la boca para tomar el premio, decí "Soltá", premiá y devolvele su juguete.',
+              'Practicá 3 veces con objetos de bajo valor antes de pasar a cosas más atractivas.'
+            ],
+            adaptiveTip: 'Devolverle su juguete después del intercambio le enseña que soltar no significa perder.'
+          },
+          dog: {
+            id: `d_stage_${stageNumber}_${ts + 1}`,
+            title: `Soltar con Intercambio y Olfato en Cajas`,
+            duration: '5 min',
+            icon: '📦',
+            status: 'locked',
+            requiresTutorIds: [`t_stage_${stageNumber}_${ts + 1}`],
+            tags: [`Etapa ${stageNumber}`, 'Soltar', 'Juego Cognitivo'],
+            mediaType: 'video',
+            mediaTitle: `Juego de soltar y búsqueda en cajas para ${dog}`,
+            mediaBody: 'Practicamos Soltar con intercambio positivo y cerramos con búsqueda olfativa entre cajas o vasos.',
+            videos: [CURATED_VIDEOS.sensorial, buildChannelSearchVideo('juegos de olfato')],
+            steps: [
+              'Jugá suave con un mordedor, pedí "Soltá" ofreciendo un premio y retomá el juego al instante.',
+              'Colocá 3 cajas de cartón o vasos boca abajo y escondé un premio debajo de uno.',
+              'Invitá a que use su nariz para señalar cuál tiene el premio.'
+            ],
+            adaptiveTip: 'Resolver acertijos de olfato canaliza energía y reduce el aburrimiento en casa.'
+          }
+        },
+        {
+          tutor: {
+            id: `t_stage_${stageNumber}_${ts + 2}`,
+            title: `Generalización en Parques y Estación Manta (Place)`,
+            duration: '5 min',
+            icon: '🧭',
+            status: 'locked',
+            tags: [`Etapa ${stageNumber}`, 'Exterior', 'Autocontrol'],
+            mediaType: 'video',
+            mediaTitle: 'Llevar la calma de casa a entornos abiertos',
+            mediaBody: 'Cuando cambiamos de escenario, bajamos la duración exigida y usamos premios de alto valor para consolidar foco y calma.',
+            videos: [CURATED_VIDEOS.focoExteriores, CURATED_VIDEOS.gestionAtencion],
+            steps: [
+              'Elegí un sector tranquilo de la plaza y dejá que olfatee 3 minutos antes de pedir ejercicios.',
+              'Practicá Mirame, Sit y Acostado en bloques de 2 repeticiones fáciles.',
+              'Cerrá siempre con olfateo libre en el pasto.'
+            ],
+            adaptiveTip: 'En lugares nuevos, el objetivo principal es la calma, no la perfección.'
+          },
+          dog: {
+            id: `d_stage_${stageNumber}_${ts + 2}`,
+            title: `Ir a su Manta (Place) y Mirame con Estímulos`,
+            duration: '5 min',
+            icon: '🏕️',
+            status: 'locked',
+            requiresTutorIds: [`t_stage_${stageNumber}_${ts + 2}`],
+            tags: [`Etapa ${stageNumber}`, 'Place / Manta', 'Mirame Avanzado'],
+            mediaType: 'video',
+            mediaTitle: `Refugio portátil de calma y atención para ${dog}`,
+            mediaBody: 'Enseñamos a ir voluntariamente a su manta para relajarse y sostenemos el contacto visual ante distracciones moderadas.',
+            videos: [CURATED_VIDEOS.capturing, CURATED_VIDEOS.focoExteriores],
+            steps: [
+              'Apoyá su manta en el piso y premiá cada vez que ponga 2 o 4 patas encima.',
+              'Invitalo a echarse sobre la manta y entregá 2 premios pausados entre sus patas.',
+              'Practicá 3 repeticiones de Mirame con un estímulo suave a distancia segura.'
+            ],
+            adaptiveTip: 'Llevar su manta a visitas o cafés le da una señal clara de dónde descansar.'
+          }
+        }
+      ];
+
+      // Elegimos el primer módulo cuyo título todavía no haya sido usado
+      for (const mod of modules) {
+        const tutorDup = filterNonDuplicateNodes([mod.tutor], state.roadmaps.tutor).length === 0;
+        const dogDup = filterNonDuplicateNodes([mod.dog], state.roadmaps.dog).length === 0;
+        if (!tutorDup && !dogDup) {
+          return mod;
+        }
+      }
+
+      // Fallback para etapas muy avanzadas (Etapa 6+) con variación dinámica única
+      return {
+        tutor: {
+          id: `t_stage_${stageNumber}_${ts + 9}`,
+          title: `Encadenamiento de Señales y Calma Profunda (Nivel ${stageNumber})`,
+          duration: '5 min',
+          icon: '🎓',
+          status: 'locked',
+          tags: [`Etapa ${stageNumber}`, 'Fluidez', 'Bienestar'],
+          mediaType: 'video',
+          mediaTitle: 'Alternar ejercicios activos con pausas de descompresión',
+          mediaBody: 'Combinamos señales conocidas en secuencias breves y divertidas, intercalando pausas olfativas para mantener la mente fresca.',
+          videos: [CURATED_VIDEOS.luringVsCapturing, CURATED_VIDEOS.descompresionOlfato],
+          steps: [
+            'Alterná 2 señales fluidas (ej. Mirame + Sit) antes de entregar el premio.',
+            'Hacé una pausa de 15 segundos de calma entre bloques.',
+            'Mantené siempre el tope de 15 minutos activos diarios.'
+          ],
+          adaptiveTip: 'Variar el orden de los ejercicios mantiene al perro atento y entusiasmado.'
+        },
+        dog: {
+          id: `d_stage_${stageNumber}_${ts + 9}`,
+          title: `Circuito Combinado: Mirame, Sit, Acostado y Olfato (Nivel ${stageNumber})`,
+          duration: '5 min',
+          icon: '🏆',
+          status: 'locked',
+          requiresTutorIds: [`t_stage_${stageNumber}_${ts + 9}`],
+          tags: [`Etapa ${stageNumber}`, 'Circuito Amable', 'Cognición'],
+          mediaType: 'video',
+          mediaTitle: `Desafío integral sin estrés para ${dog}`,
+          mediaBody: 'Integramos atención, posturas de calma y búsqueda olfativa en una micro-sesión divertida.',
+          videos: [CURATED_VIDEOS.gestionAtencion, CURATED_VIDEOS.descompresionOlfato],
+          steps: [
+            'Pedí Mirame, luego Sit y finalizá con Acostado por 5 segundos.',
+            'Premiá con entusiasmo tranquilo y liberá a buscar 3 premios escondidos.',
+            'Cerrá la sesión mientras todavía tiene ganas de seguir.'
+          ],
+          adaptiveTip: 'Terminar en el punto alto de motivación consolida todo el aprendizaje.'
+        }
+      };
+    }
+
     async function generateNextStage() {
       const btn = document.getElementById('load-next-stage-btn');
       btn.disabled = true;
@@ -2171,9 +2309,9 @@
 
       const nextStage = state.currentStage + 1;
       const completedTitles = [
-        ...state.roadmaps.tutor.map(n => n.title),
-        ...state.roadmaps.dog.map(n => n.title)
-      ];
+        ...state.roadmaps.tutor.map(n => normalizeLessonTitleKey(n.title)),
+        ...state.roadmaps.dog.map(n => normalizeLessonTitleKey(n.title))
+      ].filter(Boolean);
 
       try {
         const aiStage = await callGeminiPlanner({
@@ -2184,68 +2322,42 @@
         });
 
         if (aiStage && Array.isArray(aiStage.tutor) && Array.isArray(aiStage.dog)) {
-          state.currentStage = nextStage;
-          const newTutorNodes = normalizeAiNodes(aiStage.tutor, 'tutor');
-          const newDogNodes = normalizeAiNodes(aiStage.dog, 'dog');
-          state.roadmaps.tutor.push(...newTutorNodes);
-          state.roadmaps.dog.push(...newDogNodes);
+          const newTutorNodes = filterNonDuplicateNodes(
+            normalizeAiNodes(aiStage.tutor, 'tutor'),
+            state.roadmaps.tutor
+          );
+          const newDogNodes = filterNonDuplicateNodes(
+            normalizeAiNodes(aiStage.dog, 'dog'),
+            state.roadmaps.dog
+          );
 
-          normalizeRouteStatuses('tutor');
-          normalizeRouteStatuses('dog');
-          renderRoadmapsScreen();
-          await saveUserProgressToCloud();
-          showToast(`¡Etapa ${nextStage} generada por Gemini sin repetir ejercicios!`, '🤖');
-          return;
+          if (newTutorNodes.length > 0 && newDogNodes.length > 0) {
+            state.currentStage = nextStage;
+            state.roadmaps.tutor.push(...newTutorNodes);
+            state.roadmaps.dog.push(...newDogNodes);
+
+            normalizeRouteStatuses('tutor');
+            normalizeRouteStatuses('dog');
+            renderRoadmapsScreen();
+            await saveUserProgressToCloud();
+            showToast(`¡Etapa ${nextStage} generada por Gemini sin repetir ejercicios!`, '🤖');
+            return;
+          }
         }
+        throw new Error('La respuesta no aportó lecciones nuevas');
       } catch (err) {
         console.warn('Usando expansión progresiva local:', err.message);
         state.currentStage = nextStage;
-        const stageTag = `Etapa ${nextStage}`;
+        const localStage = buildProgressiveLocalStage(nextStage);
 
-        state.roadmaps.tutor.push({
-          id: `t_stage_${nextStage}_${Date.now()}`,
-          title: `${stageTag}: Generalización en Parques`,
-          duration: '5 min',
-          icon: '🧭',
-          status: 'locked',
-          tags: [stageTag, 'Criterio Avanzado', 'Entornos Nuevos'],
-          mediaType: 'video',
-          mediaTitle: 'Transferir lo aprendido a lugares nuevos con más estímulos',
-          mediaBody: 'Un perro no generaliza automáticamente de casa a la plaza: bajamos criterios 2 días en cada lugar nuevo y subimos el valor del premio.',
-          videos: [CURATED_VIDEOS.focoExteriores, CURATED_VIDEOS.gestionAtencion],
-          steps: [
-            'Elegí un entorno nuevo tranquilo y dejalo olfatear 3 minutos antes de pedir nada.',
-            'Practicá 3 repeticiones fáciles de foco y correa floja.',
-            'Aumentá la duración de la calma de 3 a 8 segundos de forma gradual.'
-          ],
-          adaptiveTip: 'Subí una sola variable por vez: distancia, duración o distracción.'
-        });
-
-        state.roadmaps.dog.push({
-          id: `d_stage_${nextStage}_${Date.now()}`,
-          title: `${stageTag}: Permanencia con Distracciones`,
-          duration: '5 min',
-          icon: '🏆',
-          status: 'locked',
-          requiresTutorIds: [state.roadmaps.tutor[state.roadmaps.tutor.length - 1].id],
-          tags: [stageTag, 'Autocontrol Avanzado', 'Sin Estrés'],
-          mediaType: 'video',
-          mediaTitle: `Calma sostenida para ${state.profile.dogName} en movimiento`,
-          mediaBody: 'Consolidamos el autocontrol frente a movimiento moderado manteniendo el tope de 15 minutos activos diarios.',
-          videos: [CURATED_VIDEOS.calmaCorrea, CURATED_VIDEOS.descompresionOlfato],
-          steps: [
-            'Pedí calma en su manta o a tu lado mientras das 3 pasos laterales.',
-            'Premiá en el lugar antes de liberar con "¡Libre!".',
-            'Cerrá siempre con búsqueda olfativa de descompresión.'
-          ],
-          adaptiveTip: 'Si rompe la posición, volvé a 1 paso de distancia sin retarlo.'
-        });
+        state.roadmaps.tutor.push(localStage.tutor);
+        state.roadmaps.dog.push(localStage.dog);
 
         normalizeRouteStatuses('tutor');
         normalizeRouteStatuses('dog');
         renderRoadmapsScreen();
         await saveUserProgressToCloud();
-        showToast(`Etapa ${nextStage} generada (respaldo local).`, '✨');
+        showToast(`Etapa ${nextStage} generada con nuevos ejercicios.`, '✨');
       } finally {
         btn.disabled = false;
         btn.textContent = `✨ Generar Etapa ${state.currentStage + 1} con IA`;
