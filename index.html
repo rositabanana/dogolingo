@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="DogoLingo" />
   <title>DogoLingo • Entrenamiento Canino 100% Amable</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310b981'/%3E%3Cellipse cx='32' cy='40' rx='12' ry='10' fill='white'/%3E%3Ccircle cx='18' cy='25' r='5.5' fill='white'/%3E%3Ccircle cx='27' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='37' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='46' cy='25' r='5.5' fill='white'/%3E%3C/svg%3E" />
   <link rel="alternate icon" href="./favicon.ico" sizes="any" />
@@ -22,7 +25,15 @@
       background-color: #f7f5f0;
       color: #1c1917;
       -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
       overflow-x: hidden;
+    }
+    button, a, label, [role="button"], [onclick] {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    input, select, textarea {
+      font-size: 16px !important;
     }
     .font-display {
       font-family: 'Nunito', sans-serif;
@@ -110,11 +121,11 @@
         <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-3">
           <div>
             <label class="block text-xs font-semibold text-stone-700 mb-1">Correo electrónico</label>
-            <input id="auth-email" type="email" required placeholder="tutor@ejemplo.com" class="w-full px-3.5 py-3 rounded-2xl border border-stone-300 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" />
+            <input id="auth-email" type="email" autocomplete="email" autocapitalize="none" autocorrect="off" required placeholder="tutor@ejemplo.com" class="w-full px-3.5 py-3 rounded-2xl border border-stone-300 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-stone-700 mb-1">Contraseña</label>
-            <input id="auth-password" type="password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3.5 py-3 rounded-2xl border border-stone-300 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" />
+            <input id="auth-password" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full px-3.5 py-3 rounded-2xl border border-stone-300 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" />
             <div id="forgot-password-row" class="hidden flex justify-end mt-1.5">
               <button type="button" onclick="openForgotPasswordModal()" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
                 ¿Olvidaste tu contraseña?
@@ -125,6 +136,11 @@
           <button type="submit" id="auth-submit-btn" class="w-full min-h-[48px] rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-extrabold text-sm tracking-wide shadow-[0_4px_0_0_#059669] duo-btn">
             Comenzar y guardar mi plan
           </button>
+          <div class="pt-1 text-center">
+            <button type="button" onclick="clearAppCacheAndReload()" class="text-[11px] font-medium text-stone-400 hover:text-stone-600 underline">
+              ¿Problemas para ingresar? Limpiar caché local
+            </button>
+          </div>
         </form>
       </div>
 
@@ -844,9 +860,53 @@
       SUPABASE_URL.startsWith('https://') &&
       SUPABASE_ANON_KEY.length > 20;
 
+    // Evita deadlocks de navigator.locks en WebKit / Safari de iOS
+    const iosSafeAuthLock = async (_name, _acquireTimeout, fn) => {
+      return await fn();
+    };
+
     const supabaseClient = isSupabaseConfigured
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            lock: iosSafeAuthLock,
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        })
       : null;
+
+    function withTimeout(promise, ms = 10000, timeoutMsg = 'La solicitud tardó demasiado. Verificá tu conexión e intentá de nuevo.') {
+      let timer;
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+          timer = setTimeout(() => reject(new Error(timeoutMsg)), ms);
+        })
+      ]).finally(() => clearTimeout(timer));
+    }
+
+    function purgeCorruptSupabaseTokens() {
+      try {
+        const keysToRemove = [];
+        for (let i = 0; i < window.localStorage.length; i++) {
+          const k = window.localStorage.key(i);
+          if (k && (k.startsWith('sb-') || k.includes('supabase.auth'))) {
+            keysToRemove.push(k);
+          }
+        }
+        keysToRemove.forEach(k => window.localStorage.removeItem(k));
+      } catch (_) {}
+    }
+
+    function clearAppCacheAndReload() {
+      purgeCorruptSupabaseTokens();
+      try {
+        window.sessionStorage.clear();
+      } catch (_) {}
+      const cleanUrl = `${window.location.origin}${window.location.pathname}?v=${Date.now()}`;
+      window.location.replace(cleanUrl);
+    }
 
     // =========================================================================
     // REPOSITORIO ESTRICTO DE VIDEOS CURADOS Y CANAL APROBADO
@@ -1272,9 +1332,10 @@
 
       try {
         const redirectTo = window.location.origin + window.location.pathname;
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-          redirectTo
-        });
+        const { error } = await withTimeout(
+          supabaseClient.auth.resetPasswordForEmail(email, { redirectTo }),
+          10000
+        );
         if (error) throw error;
 
         feedbackEl.textContent = '¡Listo! Revisá tu bandeja de entrada (y spam) para abrir el enlace de recuperación.';
@@ -1313,9 +1374,10 @@
       submitBtn.textContent = 'Actualizando...';
 
       try {
-        const { data, error } = await supabaseClient.auth.updateUser({
-          password: newPassword
-        });
+        const { data, error } = await withTimeout(
+          supabaseClient.auth.updateUser({ password: newPassword }),
+          10000
+        );
         if (error) throw error;
 
         document.getElementById('reset-password-modal')?.classList.add('hidden');
@@ -1355,6 +1417,7 @@
 
     async function handleAuthSubmit(event) {
       event.preventDefault();
+      document.activeElement?.blur?.();
       const email = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-password').value;
       const errEl = document.getElementById('auth-error');
@@ -1371,15 +1434,28 @@
       submitBtn.textContent = state.authTab === 'register' ? 'Creando cuenta...' : 'Iniciando sesión...';
 
       try {
-        const res = state.authTab === 'register'
-          ? await supabaseClient.auth.signUp({ email, password })
-          : await supabaseClient.auth.signInWithPassword({ email, password });
+        // Limpiamos posibles tokens vencidos o bloqueados en iOS Safari antes de autenticar
+        purgeCorruptSupabaseTokens();
+
+        const authPromise = state.authTab === 'register'
+          ? supabaseClient.auth.signUp({ email, password })
+          : supabaseClient.auth.signInWithPassword({ email, password });
+
+        const res = await withTimeout(
+          authPromise,
+          12000,
+          'No se pudo conectar en iPhone/Safari. Tocá "Limpiar caché local" e intentá nuevamente.'
+        );
 
         if (res.error) throw res.error;
         state.mode = 'account';
         state.user = res.data?.user || null;
 
-        const loaded = await loadUserProgressFromCloud();
+        const loaded = await withTimeout(
+          loadUserProgressFromCloud(),
+          8000
+        ).catch(() => false);
+
         if (loaded) {
           renderRoadmapsScreen();
           showScreen('screen-roadmaps');
@@ -1414,12 +1490,15 @@
       let metadataSynced = false;
 
       try {
-        const { error } = await supabaseClient
-          .from('dogolingo_plans')
-          .upsert({
-            user_id: state.user.id,
-            ...snapshot
-          }, { onConflict: 'user_id' });
+        const { error } = await withTimeout(
+          supabaseClient
+            .from('dogolingo_plans')
+            .upsert({
+              user_id: state.user.id,
+              ...snapshot
+            }, { onConflict: 'user_id' }),
+          8000
+        );
         if (!error) {
           tableSynced = true;
         } else {
@@ -1430,11 +1509,14 @@
       }
 
       try {
-        const { data, error } = await supabaseClient.auth.updateUser({
-          data: {
-            dogolingo_plan: snapshot
-          }
-        });
+        const { data, error } = await withTimeout(
+          supabaseClient.auth.updateUser({
+            data: {
+              dogolingo_plan: snapshot
+            }
+          }),
+          8000
+        );
         if (!error) {
           metadataSynced = true;
           if (data?.user) {
@@ -1459,11 +1541,14 @@
 
       if (supabaseClient) {
         try {
-          const { data, error } = await supabaseClient
-            .from('dogolingo_plans')
-            .select('*')
-            .eq('user_id', state.user.id)
-            .maybeSingle();
+          const { data, error } = await withTimeout(
+            supabaseClient
+              .from('dogolingo_plans')
+              .select('*')
+              .eq('user_id', state.user.id)
+              .maybeSingle(),
+            6000
+          );
 
           if (!error && data && Array.isArray(data.roadmaps?.tutor) && data.roadmaps.tutor.length > 0) {
             cloudSnapshot = data;
@@ -1474,7 +1559,7 @@
 
         if (!cloudSnapshot) {
           try {
-            const { data: userRes } = await supabaseClient.auth.getUser();
+            const { data: userRes } = await withTimeout(supabaseClient.auth.getUser(), 6000);
             const freshUser = userRes?.user || state.user;
             if (freshUser) state.user = freshUser;
             const metaPlan = freshUser?.user_metadata?.dogolingo_plan;
@@ -1514,7 +1599,7 @@
     async function restoreActiveSessionOnBoot() {
       if (!supabaseClient) return;
       try {
-        const { data } = await supabaseClient.auth.getSession();
+        const { data } = await withTimeout(supabaseClient.auth.getSession(), 5000);
         const sessionUser = data?.session?.user;
         if (sessionUser) {
           state.mode = 'account';
@@ -1529,7 +1614,9 @@
             showToast('Sesión iniciada. Completá el perfil para guardar tu plan.', '🐾');
           }
         }
-      } catch (_) {}
+      } catch (_) {
+        purgeCorruptSupabaseTokens();
+      }
     }
 
     function startDemoScratch() {
@@ -1610,8 +1697,9 @@
 
     async function resetToHome() {
       if (state.mode === 'account' && supabaseClient) {
-        await supabaseClient.auth.signOut().catch(() => {});
+        await withTimeout(supabaseClient.auth.signOut(), 4000).catch(() => {});
       }
+      purgeCorruptSupabaseTokens();
       state.user = null;
       state.mode = 'demo';
       showScreen('screen-auth');
@@ -1880,11 +1968,14 @@
     // CLIENTE DE LA FUNCIÓN SERVERLESS GEMINI
     // =========================================================================
     async function callGeminiPlanner(payload) {
-      const response = await fetch('/.netlify/functions/gemini-plan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const response = await withTimeout(
+        fetch('/.netlify/functions/gemini-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }),
+        20000
+      );
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -3216,7 +3307,8 @@
 
     function detectMobilePlatform() {
       const ua = window.navigator.userAgent || '';
-      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+      const isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+      if ((/iPad|iPhone|iPod/.test(ua) || isIpadOs) && !window.MSStream) return 'ios';
       return 'android';
     }
 
@@ -3293,6 +3385,7 @@
     }
 
     // Inicialización al cargar la página
+    document.addEventListener('touchstart', function () {}, { passive: true });
     renderSensoryInputs();
     restoreActiveSessionOnBoot();
     setTimeout(maybeShowInstallPrompt, 1400);
