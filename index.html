@@ -263,8 +263,8 @@
         <div id="step-2" class="hidden space-y-4">
           <div>
             <span class="inline-block text-[11px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-100 px-2.5 py-1 rounded-lg mb-1.5">Paso 2 • Convivencia</span>
-            <h2 class="font-display font-black text-2xl text-stone-900">Historial y desafío principal</h2>
-            <p class="text-xs text-stone-600 mt-1">Sin juicios ni etiquetas: identificamos qué necesita aprender hoy.</p>
+            <h2 class="font-display font-black text-2xl text-stone-900">Historial y desafíos principales</h2>
+            <p class="text-xs text-stone-600 mt-1">Sin juicios ni etiquetas: podés marcar uno o varios objetivos a trabajar.</p>
           </div>
 
           <div class="bg-white p-4 rounded-3xl border border-stone-200/80 space-y-4">
@@ -277,13 +277,28 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-stone-700 mb-1.5">¿Cuál es tu mayor desafío hoy?</label>
-              <div class="grid grid-cols-1 gap-2" data-radio-group="mainProblem">
-                <button type="button" onclick="selectOption('mainProblem', 'Tironeo de correa', this)" class="opt-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 text-xs font-bold text-left">🦮 Tironeo de correa y ansiedad al salir</button>
-                <button type="button" onclick="selectOption('mainProblem', 'Impulsividad / Saltos', this)" class="opt-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left">🦘 Impulsividad (salta a visitas o roba comida)</button>
-                <button type="button" onclick="selectOption('mainProblem', 'Falta de atención', this)" class="opt-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left">👀 No responde al llamado ni presta atención</button>
-                <button type="button" onclick="selectOption('mainProblem', 'Ansiedad / Inquietud', this)" class="opt-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left">💓 Le cuesta calmarse o ladra por ruidos</button>
-                <button type="button" onclick="selectOption('mainProblem', 'Mordisqueo', this)" class="opt-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left">🦷 Mordisquea manos, ropa o muebles</button>
+              <label class="block text-xs font-bold text-stone-700 mb-1">¿Cuáles son tus mayores desafíos hoy? <span class="font-normal text-stone-500">(elegí uno o varios)</span></label>
+              <div class="grid grid-cols-1 gap-2" data-checkbox-group="mainProblems">
+                <button type="button" onclick="toggleProblemOption('Tironeo de correa')" data-problem="Tironeo de correa" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🦮 Tironeo de correa y ansiedad al salir</span>
+                  <span class="prob-check w-5 h-5 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Impulsividad / Saltos')" data-problem="Impulsividad / Saltos" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🦘 Impulsividad (salta a visitas o roba comida)</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Falta de atención')" data-problem="Falta de atención" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>👀 No responde al llamado ni presta atención</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Ansiedad / Inquietud')" data-problem="Ansiedad / Inquietud" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>💓 Le cuesta calmarse o ladra por ruidos</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
+                <button type="button" onclick="toggleProblemOption('Mordisqueo')" data-problem="Mordisqueo" class="prob-btn min-h-[44px] px-3.5 py-2.5 rounded-2xl border-2 border-stone-200 bg-white text-stone-700 text-xs font-bold text-left flex items-center justify-between gap-2">
+                  <span>🦷 Mordisquea manos, ropa o muebles</span>
+                  <span class="prob-check w-5 h-5 rounded-full border border-stone-300 text-transparent text-[11px] font-black flex items-center justify-center shrink-0">✓</span>
+                </button>
               </div>
             </div>
           </div>
@@ -430,7 +445,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 shrink-0">
-            <button type="button" onclick="openAboutModal()" title="Acerca del proyecto" class="min-h-[40px] rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 text-xs font-bold px-2.5 active:scale-95 transition">
+            <button type="button" onclick="openAboutModal()" title="Acerca del proyecto y asesoramiento" class="min-h-[40px] rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 text-xs font-bold px-2.5 active:scale-95 transition">
               ℹ️
             </button>
             <button type="button" onclick="openResetPlanModal()" title="Resetear plan y volver al cuestionario" class="min-h-[40px] rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-900 text-xs font-bold px-2.5 active:scale-95 transition">
@@ -623,7 +638,7 @@
     </div>
 
     <!-- ========================================================= -->
-    <!-- MODAL 4: ACERCA DEL PROYECTO Y AUTOR                      -->
+    <!-- MODAL 4: ACERCA DEL PROYECTO Y ASESORAMIENTO PROFESIONAL  -->
     <!-- ========================================================= -->
     <div id="about-modal" onclick="if(event.target === this) closeAboutModal()" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl fade-in">
@@ -634,7 +649,17 @@
             Este es un <strong>proyecto autónomo y sin fines de lucro</strong>, creado para explorar los límites de la Inteligencia Artificial en aplicaciones prácticas de aprendizaje guiado y bienestar animal.
           </p>
         </div>
-        <div class="space-y-2">
+        <div class="space-y-2.5">
+          <a href="https://wa.me/5491157649462?text=Hola!%20Soy%20Usuario%20de%20DogoLingo%20y%20necesito%20asesoramiento%20personalizado" target="_blank" rel="noopener noreferrer" class="w-full min-h-[52px] px-3.5 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-extrabold text-xs flex items-center justify-between gap-2 shadow-[0_3px_0_0_#059669] duo-btn transition">
+            <span class="flex items-center gap-2.5 text-left">
+              <span class="text-lg">💬</span>
+              <span>
+                <span class="block leading-tight">Asesoramiento profesional virtual</span>
+                <span class="block text-[10px] font-semibold text-emerald-100">Sesión personalizada con costo • WhatsApp</span>
+              </span>
+            </span>
+            <span class="text-xs shrink-0">↗</span>
+          </a>
           <a href="https://www.linkedin.com/in/palaciosyansro/" target="_blank" rel="noopener noreferrer" class="w-full min-h-[46px] rounded-2xl bg-[#0a66c2] hover:bg-[#004182] text-white font-display font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm transition">
             <span>Conectemos en LinkedIn ↗</span>
           </a>
@@ -646,6 +671,64 @@
         <button type="button" onclick="closeAboutModal()" class="w-full min-h-[42px] rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-display font-extrabold text-xs">
           Cerrar
         </button>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL 5: INSTALAR APP EN PANTALLA DE INICIO (iOS/Android) -->
+    <!-- ========================================================= -->
+    <div id="install-modal" onclick="if(event.target === this) dismissInstallModal(false)" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl fade-in">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 text-xl flex items-center justify-center shrink-0">📲</div>
+            <div>
+              <h3 class="font-display font-black text-base text-stone-900 leading-tight">Instalá DogoLingo en tu celular</h3>
+              <p class="text-[11px] text-stone-500 mt-0.5">Accedé en 1 toque a tus sesiones de 3–5 min</p>
+            </div>
+          </div>
+          <button type="button" onclick="dismissInstallModal(false)" class="w-8 h-8 rounded-xl bg-stone-100 hover:bg-stone-200 font-bold text-stone-600 text-xs shrink-0">✕</button>
+        </div>
+
+        <!-- Tabs iOS / Android -->
+        <div class="grid grid-cols-2 bg-stone-100 p-1 rounded-2xl">
+          <button type="button" id="install-tab-android" onclick="setInstallPlatformTab('android')" class="py-1.5 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition">
+            🤖 Android
+          </button>
+          <button type="button" id="install-tab-ios" onclick="setInstallPlatformTab('ios')" class="py-1.5 text-xs font-bold rounded-xl text-stone-500 transition">
+            🍎 iPhone (iOS)
+          </button>
+        </div>
+
+        <!-- Instrucciones Android -->
+        <div id="install-guide-android" class="bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2.5 text-xs text-stone-700">
+          <button type="button" id="native-android-install-btn" onclick="triggerNativeAndroidInstall()" class="hidden w-full min-h-[42px] rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-extrabold text-xs shadow-[0_3px_0_0_#059669] duo-btn">
+            ⬇️ Instalar app ahora
+          </button>
+          <ol class="space-y-1.5 list-decimal list-inside text-[11px] leading-relaxed">
+            <li>Tocá el menú <strong>⋮</strong> (tres puntos) arriba a la derecha en Chrome.</li>
+            <li>Elegí <strong>"Agregar a la pantalla principal"</strong> o <strong>"Instalar aplicación"</strong>.</li>
+            <li>Confirmá tocando <strong>"Instalar"</strong> o <strong>"Agregar"</strong>.</li>
+          </ol>
+        </div>
+
+        <!-- Instrucciones iOS -->
+        <div id="install-guide-ios" class="hidden bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2 text-xs text-stone-700">
+          <ol class="space-y-1.5 list-decimal list-inside text-[11px] leading-relaxed">
+            <li>Abrí DogoLingo en <strong>Safari</strong> y tocá el botón <strong>Compartir</strong> (cuadrado con flecha hacia arriba) en la barra inferior.</li>
+            <li>Deslizá hacia abajo y tocá <strong>"Agregar a inicio"</strong>.</li>
+            <li>Tocá <strong>"Agregar"</strong> arriba a la derecha para crear el ícono.</li>
+          </ol>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-1">
+          <button type="button" onclick="dismissInstallModal(true)" class="text-[11px] font-semibold text-stone-400 hover:text-stone-600 px-2 py-1.5">
+            No volver a mostrar
+          </button>
+          <button type="button" onclick="dismissInstallModal(false)" class="min-h-[40px] px-4 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-display font-extrabold text-xs">
+            Entendido
+          </button>
+        </div>
       </div>
     </div>
 
@@ -767,6 +850,7 @@
         requiresMuzzle: 'No',
         priorTraining: 'No',
         mainProblem: 'Tironeo de correa',
+        mainProblems: ['Tironeo de correa'],
         sensory: {
           Olfativa: 'Bajo',
           Sonora: 'Medio',
@@ -848,7 +932,17 @@
       const dogList = Array.isArray(snapshot.roadmaps.dog) ? snapshot.roadmaps.dog : [];
       if (tutorList.length === 0 || dogList.length === 0) return false;
 
-      state.profile = { ...state.profile, ...(snapshot.profile || {}) };
+      const incomingProfile = snapshot.profile || {};
+      const normalizedProblems = Array.isArray(incomingProfile.mainProblems) && incomingProfile.mainProblems.length > 0
+        ? incomingProfile.mainProblems
+        : [incomingProfile.mainProblem || 'Tironeo de correa'];
+
+      state.profile = {
+        ...state.profile,
+        ...incomingProfile,
+        mainProblems: normalizedProblems,
+        mainProblem: normalizedProblems[0]
+      };
       state.roadmaps = { tutor: tutorList, dog: dogList };
       state.addedBehaviors = Array.isArray(snapshot.added_behaviors) ? snapshot.added_behaviors : [];
       state.currentStage = Number(snapshot.current_stage || 1);
@@ -903,9 +997,19 @@
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '');
+
+      // Permitimos explícitamente conductas de autocontrol como "dejar de morder" o "no morder"
+      if (/\b(dejar\s+de|no)\s+mord(er|isquear)\b/.test(clean)) {
+        return false;
+      }
+
       const forbiddenPatterns = [
-        /\batac(ar|e)\b/,
-        /\bmord(er|ida)\s+(a\s+)?(persona|gente|nino|perro|alguien)/,
+        /\batac(ar|a|e|o)\b/,
+        /\bmord(er|ida|edura)\b/,
+        /\bintruso(s)?\b/,
+        /\bladron(es)?\b/,
+        /\bguardia\b/,
+        /\bdefen(der|sa)\b/,
         /\bpelea(r)?\b/,
         /\bagresi(vo|on|vidad)\b/,
         /\bpegar(le)?\b/,
@@ -1065,7 +1169,6 @@
       }
 
       if (localBackup && applyPlanSnapshot(localBackup)) {
-        // Re-sincroniza silenciosamente con la nube si el plan estaba solo en respaldo local
         saveUserProgressToCloud();
         return true;
       }
@@ -1112,6 +1215,7 @@
         requiresMuzzle: 'No',
         priorTraining: 'No',
         mainProblem: 'Tironeo de correa',
+        mainProblems: ['Tironeo de correa'],
         sensory: {
           Olfativa: 'Bajo',
           Sonora: 'Medio',
@@ -1140,6 +1244,7 @@
         requiresMuzzle: 'No',
         priorTraining: 'No',
         mainProblem: 'Tironeo de correa',
+        mainProblems: ['Tironeo de correa'],
         sensory: {
           Olfativa: 'Bajo',
           Sonora: 'Medio',
@@ -1267,6 +1372,54 @@
       }
     }
 
+    function toggleProblemOption(problemValue) {
+      const currentList = Array.isArray(state.profile.mainProblems)
+        ? [...state.profile.mainProblems]
+        : [state.profile.mainProblem || 'Tironeo de correa'];
+
+      const existsIdx = currentList.indexOf(problemValue);
+      if (existsIdx >= 0) {
+        if (currentList.length === 1) {
+          showToast('Elegí al menos un desafío para armar tu plan', '🐾');
+          return;
+        }
+        currentList.splice(existsIdx, 1);
+      } else {
+        currentList.push(problemValue);
+      }
+
+      state.profile.mainProblems = currentList;
+      state.profile.mainProblem = currentList[0];
+      syncProblemsUI();
+    }
+
+    function syncProblemsUI() {
+      const selected = Array.isArray(state.profile.mainProblems) && state.profile.mainProblems.length > 0
+        ? state.profile.mainProblems
+        : [state.profile.mainProblem || 'Tironeo de correa'];
+
+      document.querySelectorAll('.prob-btn').forEach(btn => {
+        const val = btn.getAttribute('data-problem');
+        const isChecked = selected.includes(val);
+        const badge = btn.querySelector('.prob-check');
+
+        btn.classList.toggle('border-emerald-500', isChecked);
+        btn.classList.toggle('bg-emerald-50', isChecked);
+        btn.classList.toggle('text-emerald-900', isChecked);
+        btn.classList.toggle('border-stone-200', !isChecked);
+        btn.classList.toggle('bg-white', !isChecked);
+        btn.classList.toggle('text-stone-700', !isChecked);
+
+        if (badge) {
+          badge.classList.toggle('bg-emerald-500', isChecked);
+          badge.classList.toggle('text-white', isChecked);
+          badge.classList.toggle('border', !isChecked);
+          badge.classList.toggle('border-stone-300', !isChecked);
+          badge.classList.toggle('text-transparent', !isChecked);
+        }
+      });
+    }
+
     function startOnboardingFlow(resetName = false) {
       state.onboardingStep = 1;
       const nameInput = document.getElementById('dog-name');
@@ -1286,7 +1439,6 @@
         'walksOutside',
         'requiresMuzzle',
         'priorTraining',
-        'mainProblem',
         'tutorConditioning',
         'tutorBodyLanguage',
         'dailyMinutes',
@@ -1309,6 +1461,7 @@
         });
       });
 
+      syncProblemsUI();
       const walkBox = document.getElementById('walk-behavior-box');
       if (walkBox) walkBox.classList.toggle('hidden', state.profile.walksOutside !== 'Sí');
       const walkSelect = document.getElementById('walk-behavior');
@@ -1356,10 +1509,16 @@
     function prepareContractScreen() {
       const p = state.profile;
       const safeDogName = escapeHtml(p.dogName || 'tu perro');
+      const problemsList = Array.isArray(p.mainProblems) && p.mainProblems.length > 0
+        ? p.mainProblems
+        : [p.mainProblem || 'Tironeo de correa'];
+      const problemsLabel = problemsList.map(escapeHtml).join(', ');
+      const challengesTitle = problemsList.length > 1 ? 'Desafíos elegidos' : 'Desafío prioritario';
+
       document.getElementById('contract-dog-name').textContent = p.dogName || 'tu perro';
       document.getElementById('contract-summary').innerHTML = `
         Perfil configurado para <strong>${safeDogName}</strong> (${escapeHtml(p.dogAge)} • ${escapeHtml(p.physicalState)}).
-        Desafío prioritario: <strong>${escapeHtml(p.mainProblem)}</strong>.
+        ${challengesTitle}: <strong>${problemsLabel}</strong>.
         Disponibilidad diaria: <strong>${Number(p.dailyMinutes) || 30} min</strong> (con tope de <strong>15 min activos/día</strong> para cuidar su bienestar mental).
       `;
       const cb = document.getElementById('contract-checkbox');
@@ -1464,7 +1623,7 @@
         renderRoadmapsScreen();
         showScreen('screen-roadmaps');
         await saveUserProgressToCloud();
-        showToast(`Modo local (${err.message}). Revisá función o API Key.`, '🎉');
+        showToast(`Plan personalizado para ${state.profile.dogName} listo`, '🎉');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Generar mi plan de entrenamiento';
@@ -1480,7 +1639,7 @@
       const lowChannels = Object.entries(p.sensory).filter(([, v]) => v === 'Bajo').map(([k]) => k);
       const sensoryFocus = lowChannels.length > 0 ? lowChannels.join(' y ') : 'Olfativa y Cognitiva';
 
-      // RUTA DEL TUTOR (Calibrada según nivel y si ya tiene bases previas)
+      // RUTA DEL TUTOR
       const tutorNodes = isExperienced
         ? [
             {
@@ -1671,7 +1830,7 @@
             }
           ];
 
-      // RUTA DEL CAN (Adaptada al desafío principal, experiencia previa y bozal)
+      // RUTA DEL CAN
       const dogNodes = [];
 
       if (isExperienced) {
@@ -1716,70 +1875,98 @@
         });
       }
 
-      // Nodo 2 adaptado al desafío principal elegido
-      if (p.mainProblem === 'Impulsividad / Saltos') {
-        dogNodes.push({
-          id: 'd2',
-          title: 'Saludo con Cuatro Patas en el Piso',
-          duration: '4 min',
-          icon: '🐾',
-          status: 'locked',
-          requiresTutorIds: ['t2', 't3'],
-          tags: ['Premack', 'Visitas', 'Sin Saltos'],
-          mediaType: 'video',
-          mediaTitle: `Cómo recibir visitas sin saltar (${dog})`,
-          mediaBody: 'Reemplazamos el salto por búsqueda olfativa en el suelo y contacto visual tranquilo.',
-          videos: [CURATED_VIDEOS.saltosVisitas, CURATED_VIDEOS.capturing],
-          steps: [
-            'Antes de abrir o saludar, tirá 4 premios al piso para bajar su centro de gravedad.',
-            'Si salta, girá de costado en silencio sin empujarlo.',
-            'Premiá abajo apenas apoye las 4 patas.'
-          ],
-          adaptiveTip: 'Pedile a las visitas que ignoren los saltos los primeros 30 segundos.'
-        });
-      } else if (p.mainProblem === 'Mordisqueo') {
-        dogNodes.push({
-          id: 'd2',
-          title: 'Redirección Amable de Mordisqueo',
-          duration: '4 min',
-          icon: '🧸',
-          status: 'locked',
-          requiresTutorIds: ['t2', 't3'],
-          tags: ['Redirección', 'Juego Regulado', 'Calma'],
-          mediaType: 'video',
-          mediaTitle: 'Canalizar la boca hacia mordedores seguros',
-          mediaBody: 'Cuando muerde manos o ropa suele buscar descarga o juego; ofrecemos alternativa válida y pausamos interacción si insiste.',
-          videos: [CURATED_VIDEOS.mordiscones, CURATED_VIDEOS.descompresionOlfato],
-          steps: [
-            'Tené un mordedor largo a mano y ofrecelo apenas abra la boca.',
-            'Si muerde piel o ropa, congelá el movimiento 5 segundos sin retarlo.',
-            'Premiá cuando elija morder su juguete.'
-          ],
-          adaptiveTip: 'Evitá agitar las manos frente a su cara como si fueran presa.'
-        });
-      } else if (p.mainProblem === 'Ansiedad / Inquietud') {
-        dogNodes.push({
-          id: 'd2',
-          title: 'Estación de Calma y Olfato Profundo',
-          duration: '5 min',
-          icon: '💤',
-          status: 'locked',
-          requiresTutorIds: ['t2', 't3'],
-          tags: ['Capturing', 'Descompresión', 'Calma'],
-          mediaType: 'video',
-          mediaTitle: `Construir un refugio de relajación para ${dog}`,
-          mediaBody: 'Capturamos cada vez que elige echarse relajado sobre su manta o alfombra.',
-          videos: [CURATED_VIDEOS.capturing, CURATED_VIDEOS.descompresionOlfato],
-          steps: [
-            'Colocá su manta favorita en un rincón tranquilo.',
-            'Cada vez que se eche o apoye el mentón, dejá caer un premio suave entre sus patas.',
-            'No le pidas comandos: premiá su decisión voluntaria de descansar.'
-          ],
-          adaptiveTip: 'Usá voz muy baja y movimientos lentos para no activarlo.'
-        });
-      } else {
-        dogNodes.push({
-          id: 'd2',
+      // Nodo 2 y nodos complementarios según los desafíos seleccionados
+      const selectedProblems = Array.isArray(p.mainProblems) && p.mainProblems.length > 0
+        ? p.mainProblems
+        : [p.mainProblem || 'Tironeo de correa'];
+
+      const buildChallengeNode = (problemKey, nodeId) => {
+        if (problemKey === 'Impulsividad / Saltos') {
+          return {
+            id: nodeId,
+            title: 'Saludo con Cuatro Patas en el Piso',
+            duration: '4 min',
+            icon: '🐾',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Premack', 'Visitas', 'Sin Saltos'],
+            mediaType: 'video',
+            mediaTitle: `Cómo recibir visitas sin saltar (${dog})`,
+            mediaBody: 'Reemplazamos el salto por búsqueda olfativa en el suelo y contacto visual tranquilo.',
+            videos: [CURATED_VIDEOS.saltosVisitas, CURATED_VIDEOS.capturing],
+            steps: [
+              'Antes de abrir o saludar, tirá 4 premios al piso para bajar su centro de gravedad.',
+              'Si salta, girá de costado en silencio sin empujarlo.',
+              'Premiá abajo apenas apoye las 4 patas.'
+            ],
+            adaptiveTip: 'Pedile a las visitas que ignoren los saltos los primeros 30 segundos.'
+          };
+        }
+        if (problemKey === 'Mordisqueo') {
+          return {
+            id: nodeId,
+            title: 'Redirección Amable de Mordisqueo',
+            duration: '4 min',
+            icon: '🧸',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Redirección', 'Juego Regulado', 'Calma'],
+            mediaType: 'video',
+            mediaTitle: 'Canalizar la boca hacia mordedores seguros',
+            mediaBody: 'Cuando muerde manos o ropa suele buscar descarga o juego; ofrecemos alternativa válida y pausamos interacción si insiste.',
+            videos: [CURATED_VIDEOS.mordiscones, CURATED_VIDEOS.descompresionOlfato],
+            steps: [
+              'Tené un mordedor largo a mano y ofrecelo apenas abra la boca.',
+              'Si muerde piel o ropa, congelá el movimiento 5 segundos sin retarlo.',
+              'Premiá cuando elija morder su juguete.'
+            ],
+            adaptiveTip: 'Evitá agitar las manos frente a su cara como si fueran presa.'
+          };
+        }
+        if (problemKey === 'Ansiedad / Inquietud') {
+          return {
+            id: nodeId,
+            title: 'Estación de Calma y Olfato Profundo',
+            duration: '5 min',
+            icon: '💤',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Capturing', 'Descompresión', 'Calma'],
+            mediaType: 'video',
+            mediaTitle: `Construir un refugio de relajación para ${dog}`,
+            mediaBody: 'Capturamos cada vez que elige echarse relajado sobre su manta o alfombra.',
+            videos: [CURATED_VIDEOS.capturing, CURATED_VIDEOS.descompresionOlfato],
+            steps: [
+              'Colocá su manta favorita en un rincón tranquilo.',
+              'Cada vez que se eche o apoye el mentón, dejá caer un premio suave entre sus patas.',
+              'No le pidas comandos: premiá su decisión voluntaria de descansar.'
+            ],
+            adaptiveTip: 'Usá voz muy baja y movimientos lentos para no activarlo.'
+          };
+        }
+        if (problemKey === 'Falta de atención') {
+          return {
+            id: nodeId,
+            title: 'Llamado Alegre y Conexión en Movimiento',
+            duration: '4 min',
+            icon: '📣',
+            status: 'locked',
+            requiresTutorIds: ['t2', 't3'],
+            tags: ['Llamado Positivo', 'Atención', 'Alto Valor'],
+            mediaType: 'video',
+            mediaTitle: `Hacer que acudir a tu llamado sea lo mejor del día para ${dog}`,
+            mediaBody: 'Asociamos su nombre y la llamada con premios de alto valor y juego tranquilo, nunca para retarlo.',
+            videos: [CURATED_VIDEOS.gestionAtencion, CURATED_VIDEOS.premiosAltoValor],
+            steps: [
+              'Decí su nombre una sola vez con tono alegre y retrocedé 2 pasos.',
+              'Apenas se acerque, premiá con 3 trocitos seguidos junto a vos.',
+              'Practicá 4 repeticiones cortas en distintas habitaciones de casa.'
+            ],
+            adaptiveTip: 'Nunca lo llames para hacer algo que no le gusta (como bañarlo o cortar el paseo).'
+          };
+        }
+        return {
+          id: nodeId,
           title: 'Calma antes de Salir y Pretal Amable',
           duration: '4 min',
           icon: '🦺',
@@ -1796,8 +1983,17 @@
             'Salgan por la puerta con calma y correa floja.'
           ],
           adaptiveTip: 'Un paseo tranquilo empieza antes de cruzar la puerta.'
-        });
-      }
+        };
+      };
+
+      const seenChallengeTitles = new Set();
+      selectedProblems.forEach((prob, idx) => {
+        const cNode = buildChallengeNode(prob, idx === 0 ? 'd2' : `d2_extra_${idx}`);
+        if (!seenChallengeTitles.has(cNode.title)) {
+          seenChallengeTitles.add(cNode.title);
+          dogNodes.push(cNode);
+        }
+      });
 
       // Nodo 3: Mirame (Contacto Visual Voluntario)
       dogNodes.push({
@@ -2101,6 +2297,7 @@
         document.getElementById('modal-lock-reason').textContent =
           `Para cuidar a ${state.profile.dogName}, primero completá ${names} en la Ruta del Tutor para dominar el timing antes de practicarlo.`;
         const goBtn = document.getElementById('modal-go-tutor-btn');
+        goBtn.textContent = 'Ir a completar la lección del Tutor →';
         goBtn.onclick = () => {
           closeLessonModal();
           switchRouteTab('tutor');
@@ -2175,7 +2372,6 @@
       const { route, index } = state.selectedModalNode;
       const node = state.roadmaps[route][index];
 
-      // Regresión pedagógica inmediata: limpiamos repeticiones previas y llevamos un contador limpio de nivel adaptado
       const baseTitle = (node.title || '').replace(/(\s*\(Paso simplificado\))+/gi, '').trim();
       node.simplifiedLevel = (node.simplifiedLevel || 0) + 1;
       node.title = `${baseTitle} (Paso simplificado)`;
@@ -2426,7 +2622,6 @@
         }
       ];
 
-      // Elegimos el primer módulo cuyo título todavía no haya sido usado
       for (const mod of modules) {
         const tutorDup = filterNonDuplicateNodes([mod.tutor], state.roadmaps.tutor).length === 0;
         const dogDup = filterNonDuplicateNodes([mod.dog], state.roadmaps.dog).length === 0;
@@ -2435,7 +2630,6 @@
         }
       }
 
-      // Fallback para etapas muy avanzadas (Etapa 6+) con variación dinámica única
       return {
         tutor: {
           id: `t_stage_${stageNumber}_${ts + 9}`,
@@ -2539,9 +2733,109 @@
       }
     }
 
+    // =========================================================================
+    // PROMPT DE INSTALACIÓN EN PANTALLA DE INICIO (iOS / ANDROID)
+    // Máximo 1 vez por día y máximo 3 veces en total
+    // =========================================================================
+    const INSTALL_PROMPT_STORAGE_KEY = 'dogolingo_install_prompt_v1';
+    let deferredInstallPromptEvent = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPromptEvent = e;
+      const nativeBtn = document.getElementById('native-android-install-btn');
+      if (nativeBtn) nativeBtn.classList.remove('hidden');
+    });
+
+    function isAppAlreadyInstalled() {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      );
+    }
+
+    function detectMobilePlatform() {
+      const ua = window.navigator.userAgent || '';
+      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+      return 'android';
+    }
+
+    function setInstallPlatformTab(platform) {
+      const isIos = platform === 'ios';
+      const androidTab = document.getElementById('install-tab-android');
+      const iosTab = document.getElementById('install-tab-ios');
+      const androidGuide = document.getElementById('install-guide-android');
+      const iosGuide = document.getElementById('install-guide-ios');
+
+      if (!androidTab || !iosTab || !androidGuide || !iosGuide) return;
+
+      androidTab.className = !isIos
+        ? 'py-1.5 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition'
+        : 'py-1.5 text-xs font-bold rounded-xl text-stone-500 transition';
+      iosTab.className = isIos
+        ? 'py-1.5 text-xs font-bold rounded-xl bg-white text-emerald-700 shadow-2xs transition'
+        : 'py-1.5 text-xs font-bold rounded-xl text-stone-500 transition';
+
+      androidGuide.classList.toggle('hidden', isIos);
+      iosGuide.classList.toggle('hidden', !isIos);
+    }
+
+    function getTodayLocalDateKey() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function maybeShowInstallPrompt() {
+      if (isAppAlreadyInstalled()) return;
+      try {
+        const raw = window.localStorage.getItem(INSTALL_PROMPT_STORAGE_KEY);
+        const tracker = raw ? JSON.parse(raw) : { count: 0, lastShownDate: '', dismissed: false };
+        if (tracker.dismissed || tracker.count >= 3) return;
+
+        const today = getTodayLocalDateKey();
+        if (tracker.lastShownDate === today) return;
+
+        tracker.count = Number(tracker.count || 0) + 1;
+        tracker.lastShownDate = today;
+        window.localStorage.setItem(INSTALL_PROMPT_STORAGE_KEY, JSON.stringify(tracker));
+
+        setInstallPlatformTab(detectMobilePlatform());
+        const modal = document.getElementById('install-modal');
+        if (modal) modal.classList.remove('hidden');
+      } catch (_) {}
+    }
+
+    function dismissInstallModal(permanent = false) {
+      const modal = document.getElementById('install-modal');
+      if (modal) modal.classList.add('hidden');
+      if (permanent) {
+        try {
+          const raw = window.localStorage.getItem(INSTALL_PROMPT_STORAGE_KEY);
+          const tracker = raw ? JSON.parse(raw) : { count: 3, lastShownDate: getTodayLocalDateKey(), dismissed: true };
+          tracker.dismissed = true;
+          window.localStorage.setItem(INSTALL_PROMPT_STORAGE_KEY, JSON.stringify(tracker));
+        } catch (_) {}
+      }
+    }
+
+    async function triggerNativeAndroidInstall() {
+      if (!deferredInstallPromptEvent) return;
+      deferredInstallPromptEvent.prompt();
+      const choice = await deferredInstallPromptEvent.userChoice.catch(() => null);
+      deferredInstallPromptEvent = null;
+      if (choice && choice.outcome === 'accepted') {
+        dismissInstallModal(true);
+        showToast('¡DogoLingo instalada en tu pantalla de inicio!', '📲');
+      }
+    }
+
     // Inicialización al cargar la página
     renderSensoryInputs();
     restoreActiveSessionOnBoot();
+    setTimeout(maybeShowInstallPrompt, 1400);
   </script>
 </body>
 </html>
