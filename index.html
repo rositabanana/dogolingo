@@ -7,6 +7,22 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="DogoLingo" />
   <title>DogoLingo • Entrenamiento Canino 100% Amable</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-51NEBX3GGF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-51NEBX3GGF');
+
+    function trackGAEvent(eventName, params = {}) {
+      try {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', eventName, params);
+        }
+      } catch (_) {}
+    }
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310b981'/%3E%3Cellipse cx='32' cy='40' rx='12' ry='10' fill='white'/%3E%3Ccircle cx='18' cy='25' r='5.5' fill='white'/%3E%3Ccircle cx='27' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='37' cy='18' r='5.5' fill='white'/%3E%3Ccircle cx='46' cy='25' r='5.5' fill='white'/%3E%3C/svg%3E" />
   <link rel="alternate icon" href="./favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
@@ -65,11 +81,56 @@
     .fade-in {
       animation: fadeIn 0.25s ease-out forwards;
     }
+    /* Animación de Splash Screen */
+    @keyframes splashLogoFloat {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.06) translateY(-5px); }
+    }
+    @keyframes splashProgressFill {
+      0% { width: 8%; }
+      65% { width: 84%; }
+      100% { width: 100%; }
+    }
+    .splash-logo-anim {
+      animation: splashLogoFloat 1.6s infinite ease-in-out;
+    }
+    .splash-bar-anim {
+      animation: splashProgressFill 1.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #splash-screen {
+      background-color: #12b992;
+      transition: opacity 0.45s ease-out;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="min-h-screen flex justify-center bg-[#f3efe6]">
+
+  <!-- ========================================================= -->
+  <!-- PANTALLA DE CARGA (SPLASH / LOADING SCREEN)               -->
+  <!-- ========================================================= -->
+  <div id="splash-screen" role="status" aria-live="polite" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 text-white select-none">
+    <div class="w-28 h-28 rounded-3xl bg-white shadow-[0_8px_0_0_rgba(6,95,70,0.28)] border-4 border-white/80 flex items-center justify-center overflow-hidden splash-logo-anim mb-5">
+      <img
+        src="./dogolingo logo.jpg"
+        alt="Logo de DogoLingo"
+        class="w-full h-full object-cover"
+        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+      />
+      <span class="hidden text-5xl">🐶</span>
+    </div>
+
+    <h1 class="font-display font-black text-3xl tracking-tight text-white drop-shadow-2xs">DogoLingo</h1>
+    <p id="splash-status-text" class="text-xs font-semibold text-white/95 mt-1.5 tracking-wide">
+      Preparando sesiones amables...
+    </p>
+
+    <!-- Barra de progreso suave -->
+    <div class="w-48 h-2 bg-black/20 rounded-full overflow-hidden mt-5 p-0.5">
+      <div class="h-full bg-white rounded-full splash-bar-anim"></div>
+    </div>
+  </div>
 
   <!-- Contenedor Mobile-First centrado -->
   <div id="app-shell" class="w-full max-w-md min-h-screen bg-[#faf8f4] shadow-xl flex flex-col relative overflow-x-hidden">
@@ -1196,7 +1257,6 @@
     function clearAppCacheAndReload() {
       purgeCorruptSupabaseTokens();
       try {
-        // Limpiamos claves residuales de la app sin borrar backups si no es necesario, o limpiamos todo el auth
         Object.keys(window.localStorage || {}).forEach(k => {
           if (k.startsWith('sb-') || k.includes('supabase') || k.includes('gotrue')) {
             window.localStorage.removeItem(k);
@@ -1205,7 +1265,6 @@
         window.sessionStorage.clear();
       } catch (_) {}
 
-      // Limpiamos Cache Storage y Service Workers si existieran (muy común que traben Safari/PWA)
       const cleanupTasks = [];
       if ('caches' in window) {
         cleanupTasks.push(
@@ -1396,7 +1455,6 @@
       submitBtn.disabled = true;
       submitBtn.textContent = state.authTab === 'register' ? 'Creando cuenta...' : 'Iniciando sesión...';
 
-      // Modo de prueba QA: simula una promesa colgada en Safari/iOS para testear el botón "Limpiar caché local"
       const shouldSimulateHang =
         email.toLowerCase() === 'trabar@test.com' ||
         new URLSearchParams(window.location.search).get('simular_traba') === '1';
@@ -1409,7 +1467,6 @@
       }
 
       try {
-        // Limpiamos posibles tokens vencidos o bloqueados en iOS Safari antes de autenticar
         purgeCorruptSupabaseTokens();
 
         const authPromise = state.authTab === 'register'
@@ -1624,6 +1681,7 @@
     }
 
     function startDemoScratch() {
+      trackGAEvent('demo_started', { demo_type: 'scratch' });
       state.mode = 'demo';
       state.user = null;
       state.addedBehaviors = [];
@@ -1658,6 +1716,7 @@
     }
 
     function startDemoPreset() {
+      trackGAEvent('demo_started', { demo_type: 'milo_preset' });
       state.mode = 'demo';
       state.user = null;
       state.addedBehaviors = [];
@@ -1744,6 +1803,10 @@
     }
 
     function openAboutModal() {
+      trackGAEvent('info_seen', {
+        mode: state.mode,
+        stage_number: state.currentStage
+      });
       document.getElementById('about-modal').classList.remove('hidden');
     }
 
@@ -2050,6 +2113,8 @@
       btn.textContent = '🤖 Diseñando plan personalizado con Gemini...';
       state.currentStage = 1;
 
+      const problemsCount = Array.isArray(state.profile.mainProblems) ? state.profile.mainProblems.length : 1;
+
       try {
         const aiPlan = await callGeminiPlanner({
           action: 'GENERATE_STAGE',
@@ -2066,6 +2131,12 @@
           renderRoadmapsScreen();
           showScreen('screen-roadmaps');
           await saveUserProgressToCloud();
+          trackGAEvent('plan_generated', {
+            source: 'gemini_ai',
+            mode: state.mode,
+            dog_age: state.profile.dogAge,
+            problems_count: problemsCount
+          });
           showToast(`¡Plan personalizado con IA para ${state.profile.dogName} listo!`, '🤖');
           return;
         }
@@ -2078,6 +2149,12 @@
         renderRoadmapsScreen();
         showScreen('screen-roadmaps');
         await saveUserProgressToCloud();
+        trackGAEvent('plan_generated', {
+          source: 'local_fallback',
+          mode: state.mode,
+          dog_age: state.profile.dogAge,
+          problems_count: problemsCount
+        });
         showToast(`Plan personalizado para ${state.profile.dogName} listo`, '🎉');
       } finally {
         btn.disabled = false;
@@ -2330,7 +2407,6 @@
         });
       }
 
-      // Nodo 2 y nodos complementarios según los desafíos seleccionados
       const selectedProblems = Array.isArray(p.mainProblems) && p.mainProblems.length > 0
         ? p.mainProblems
         : [p.mainProblem || 'Tironeo de correa'];
@@ -2913,6 +2989,7 @@
       if (!state.selectedModalNode) return;
       const { route, index } = state.selectedModalNode;
       const list = state.roadmaps[route];
+      const completedNode = list[index];
       list[index].status = 'completed';
 
       if (index + 1 < list.length && list[index + 1].status === 'locked') {
@@ -2923,6 +3000,13 @@
       closeLessonModal();
       renderRoadmapsScreen();
       await saveUserProgressToCloud();
+      trackGAEvent('lesson_completed', {
+        route,
+        lesson_id: completedNode?.id || '',
+        lesson_title: completedNode?.title || '',
+        stage_number: state.currentStage,
+        mode: state.mode
+      });
       showToast('¡Excelente! Sesión breve completada sin estrés.', '🌟');
     }
 
@@ -3075,6 +3159,11 @@
       closeBehaviorModal();
       renderRoadmapsScreen();
       await saveUserProgressToCloud();
+      trackGAEvent('behavior_added', {
+        behavior_title: title,
+        is_suggested: Boolean(matched),
+        mode: state.mode
+      });
       showToast(`"${title}" agregado a la Ruta del Tutor y del Can`, '🚀');
     }
 
@@ -3324,6 +3413,11 @@
             normalizeRouteStatuses('dog');
             renderRoadmapsScreen();
             await saveUserProgressToCloud();
+            trackGAEvent('next_stage_generated', {
+              stage_number: nextStage,
+              source: 'gemini_ai',
+              mode: state.mode
+            });
             showToast(`¡Etapa ${nextStage} generada por Gemini sin repetir ejercicios!`, '🤖');
             return;
           }
@@ -3341,6 +3435,11 @@
         normalizeRouteStatuses('dog');
         renderRoadmapsScreen();
         await saveUserProgressToCloud();
+        trackGAEvent('next_stage_generated', {
+          stage_number: nextStage,
+          source: 'local_fallback',
+          mode: state.mode
+        });
         showToast(`Etapa ${nextStage} generada con nuevos ejercicios.`, '✨');
       } finally {
         btn.disabled = false;
@@ -3448,11 +3547,39 @@
       }
     }
 
+    // =========================================================================
+    // CONTROL DE PANTALLA DE CARGA (SPLASH SCREEN)
+    // =========================================================================
+    let splashHidden = false;
+    function hideSplashScreen() {
+      if (splashHidden) return;
+      splashHidden = true;
+      const splashEl = document.getElementById('splash-screen');
+      if (!splashEl) return;
+      splashEl.style.opacity = '0';
+      splashEl.style.pointerEvents = 'none';
+      setTimeout(() => {
+        splashEl.style.display = 'none';
+      }, 460);
+    }
+
     // Inicialización al cargar la página
     document.addEventListener('touchstart', function () {}, { passive: true });
     renderSensoryInputs();
-    restoreActiveSessionOnBoot();
-    setTimeout(maybeShowInstallPrompt, 1400);
+
+    // Tope máximo de 1.7 segundos para que nunca resulte pesada en entradas repetidas
+    const splashMaxTimer = setTimeout(hideSplashScreen, 1700);
+
+    // Esperamos la restauración inicial de sesión (con un tope breve) y ocultamos suavemente
+    Promise.race([
+      restoreActiveSessionOnBoot(),
+      new Promise(resolve => setTimeout(resolve, 1400))
+    ]).finally(() => {
+      clearTimeout(splashMaxTimer);
+      setTimeout(hideSplashScreen, 350);
+    });
+
+    setTimeout(maybeShowInstallPrompt, 2100);
   </script>
 </body>
 </html>
