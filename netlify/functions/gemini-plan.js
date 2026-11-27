@@ -12,7 +12,8 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
 
 2. REGLA INQUEBRANTABLE DE BIENESTAR CANINO:
    - La práctica activa de comandos del perro NUNCA debe superar los 15 minutos diarios totales para evitar fatiga mental y estrés.
-8. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO (REPARTIR POR NIVEL Y TEMA):
+
+3. VIDEOS CURADOS Y CANAL APROBADO DE RESPALDO (REPARTIR POR NIVEL Y TEMA):
    - Para el array "videos" de cada nodo, seleccioná 1 o 2 videos relevantes ÚNICAMENTE de esta lista curada verificada, respetando el nivel y el problema específico:
      * https://www.youtube.com/watch?v=9b7F1QY9iWc (Cómo ser un buen guía y referente seguro para tu perro)
      * https://www.youtube.com/watch?v=rYRhnF4-NUg (Estructura, previsibilidad y refuerzo positivo)
@@ -57,11 +58,11 @@ Tu misión es generar rutas de aprendizaje personalizadas (Tutor y Can) estricta
      * https://www.youtube.com/watch?v=-hOqlYRl5Pk (Alternativa: cómo hablarle y comunicarnos con el perro)
      * https://www.youtube.com/@dos_adiestramiento/search?query=adiestramiento+positivo (Búsqueda en canal aprobado de referencia)
 
-9. FORMATO DE ÍCONOS ESTRICTO (MUY IMPORTANTE):
+4. FORMATO DE ÍCONOS ESTRICTO (MUY IMPORTANTE):
    - El campo "icon" de cada nodo DEBE ser ÚNICAMENTE un solo emoji Unicode real (ej: "🧭", "👀", "👃", "🎯", "🛡️", "🥣", "🌿", "💤", "🎾", "🐕‍🦺", "🦮", "🎙️").
    - NUNCA devuelvas nombres de íconos en texto o inglés como "directions_walk", "airline_seat_recline_extra", "linear_scale" o similares.
 
-10. IDIOMA: Español rioplatense/neutro cercano, empático y claro.`;
+5. IDIOMA: Español rioplatense/neutro cercano, empático y claro.`;
 
 const RESPONSE_SCHEMA = {
   type: "OBJECT",
